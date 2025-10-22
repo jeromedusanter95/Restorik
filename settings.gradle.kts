@@ -1,4 +1,5 @@
 pluginManagement {
+    includeBuild("build-logic") // Before configuring my app, compile the stuff in build-logic/ and make any plugins it exposes available by ID
     repositories {
         google {
             content {
