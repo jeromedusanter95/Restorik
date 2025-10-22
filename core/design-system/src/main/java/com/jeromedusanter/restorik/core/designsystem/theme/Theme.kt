@@ -1,6 +1,5 @@
-package com.jeromedusanter.restorik.ui.theme
+package com.jeromedusanter.restorik.core.designsystem.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

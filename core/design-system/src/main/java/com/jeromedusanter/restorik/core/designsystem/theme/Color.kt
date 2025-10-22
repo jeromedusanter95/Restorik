@@ -1,4 +1,4 @@
-package com.jeromedusanter.restorik.ui.theme
+package com.jeromedusanter.restorik.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 
