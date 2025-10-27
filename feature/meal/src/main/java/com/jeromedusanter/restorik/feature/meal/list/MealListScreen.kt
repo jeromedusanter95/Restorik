@@ -1,4 +1,4 @@
-package com.jeromedusanter.restorik.feature.meal
+package com.jeromedusanter.restorik.feature.meal.list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -9,24 +9,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
+import com.jeromedusanter.restorik.feature.meal.MealViewModel
 
 @Composable
-fun MealDetailScreen(modifier: Modifier = Modifier) {
+fun MealListScreen(
+    modifier: Modifier = Modifier,
+    mealListViewModel: MealViewModel = hiltViewModel()
+) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Meal Detail Screen !")
+            Text(text = "Meal List Screen !")
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun MealDetailScreenPreview() {
+private fun MealListScreenPreview() {
     RestorikTheme {
-        MealDetailScreen()
+        MealListScreen()
     }
 }
