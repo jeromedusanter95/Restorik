@@ -60,4 +60,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     ksp(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.compose.ui.test)
+    implementation(libs.androidx.compose.material.iconsExtended)
 }

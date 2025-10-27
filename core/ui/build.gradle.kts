@@ -6,3 +6,7 @@ plugins {
 android {
     namespace = "com.jeromedusanter.restorik.core.ui"
 }
+
+dependencies {
+    api(projects.core.designSystem)
+}

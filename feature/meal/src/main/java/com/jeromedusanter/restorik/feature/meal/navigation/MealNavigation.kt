@@ -11,7 +11,11 @@ import com.jeromedusanter.restorik.feature.meal.list.MealListScreen
 
 const val mealBaseRoute = "meal"
 
-fun NavController.navigateToMeal(navOptions: NavOptions) = navigate(route = mealBaseRoute, navOptions)
+fun NavController.navigateToMeal(navOptions: NavOptions) =
+    navigate(route = mealBaseRoute, navOptions)
+
+fun NavController.navigateToMealEditor(navOptions: NavOptions? = null) =
+    navigate(route = MealDestinations.MealEditor.route, navOptions)
 
 fun NavGraphBuilder.mealSection() {
     navigation(
