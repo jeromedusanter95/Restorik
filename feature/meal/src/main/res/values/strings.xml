@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_meal_list_title">Restorik</string>
+    <string name="feature_meal_editor_title">Ajouter un repas</string>
+    <string name="feature_meal_detail_title">Détail du repas</string>
+</resources>

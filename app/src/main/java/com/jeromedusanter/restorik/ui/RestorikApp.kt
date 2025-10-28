@@ -9,6 +9,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
@@ -24,7 +25,15 @@ fun RestorikApp(modifier: Modifier = Modifier) {
 
     Scaffold(
         modifier = modifier,
-        topBar = {},
+        topBar = {
+            RestorikTopBar(
+                modifier = modifier,
+                title = stringResource(MealDestinations.getLabelByResId(currentRoute)),
+                shouldShowBackButton = currentRoute != MealDestinations.MealList.route,
+                onBackButtonClick = { navController.popBackStack() },
+                onSearchButtonClick = { TODO() }
+            )
+        },
         bottomBar = {},
         snackbarHost = {},
         floatingActionButton = {
