@@ -11,12 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
-import com.jeromedusanter.restorik.feature.meal.MealViewModel
 
 @Composable
 fun MealListScreen(
     modifier: Modifier = Modifier,
-    mealListViewModel: MealViewModel = hiltViewModel()
+    viewModel: MealListViewModel = hiltViewModel()
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
