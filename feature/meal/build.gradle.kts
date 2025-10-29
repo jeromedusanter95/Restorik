@@ -8,5 +8,6 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.camera)
     implementation(libs.androidx.compose.material.iconsExtended)
 }

@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
+import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,8 +34,10 @@ class MealEditorViewModel @Inject constructor() : ViewModel() {
         _uiState.value = _uiState.value.copy(ratingOnFive = ratingOnFive)
     }
 
-    fun addPicture() {
-        Log.d("MealEditorViewModel", "Saving meal: ${uiState.value}")
+    fun onPhotoCaptured(uri: Uri) {
+        _uiState.value = _uiState.value.copy(
+            picturePathList = _uiState.value.picturePathList + uri.toString()
+        )
     }
 
     fun saveMeal() {

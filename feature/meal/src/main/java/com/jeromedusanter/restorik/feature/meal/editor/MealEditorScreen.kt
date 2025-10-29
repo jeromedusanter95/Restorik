@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.jeromedusanter.restorik.core.camera.CapturePhotoContract
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.ui.AddPhotoButton
 import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
@@ -32,6 +34,12 @@ fun MealEditorScreen(
 ) {
 
     val uiState = viewModel.uiState.collectAsState()
+
+    val captureLauncher = rememberLauncherForActivityResult(CapturePhotoContract()) { uri ->
+        if (uri != null) {
+            viewModel.onPhotoCaptured(uri)
+        }
+    }
 
     Surface(
         modifier = Modifier
@@ -55,7 +63,7 @@ fun MealEditorScreen(
                 onValueChange = viewModel::updateRestaurantName,
                 label = "Nom du restaurant"
             )
-            
+
             RestorikOutlineTextField(
                 modifier = modifier.fillMaxWidth(),
                 value = uiState.value.comment,
@@ -87,7 +95,7 @@ fun MealEditorScreen(
                 onValueChanged = viewModel::updateRating
             )
 
-            AddPhotoButton(viewModel::addPicture)
+            AddPhotoButton(onClick = { captureLauncher.launch(Unit) })
 
             Button(
                 onClick = viewModel::saveMeal,

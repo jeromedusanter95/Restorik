@@ -2,6 +2,7 @@ package com.jeromedusanter.restorik.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,7 +27,7 @@ fun RestorikTopBar(
         navigationIcon = {
             if (shouldShowBackButton) {
                 IconButton(onClick = onBackButtonClick) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.Filled.ArrowBackIosNew, contentDescription = "Back")
                 }
             } else {
                 IconButton(onClick = onSearchButtonClick) {
