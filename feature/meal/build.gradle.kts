@@ -6,3 +6,7 @@ plugins {
 android {
     namespace = "com.jeromedusanter.restorik.feature.meal"
 }
+
+dependencies {
+    implementation(libs.androidx.compose.material.iconsExtended)
+}

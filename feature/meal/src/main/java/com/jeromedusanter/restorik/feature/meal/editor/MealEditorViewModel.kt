@@ -29,8 +29,12 @@ class MealEditorViewModel @Inject constructor() : ViewModel() {
         _uiState.value = _uiState.value.copy(priceAsString = price)
     }
 
-    fun updateRatingOnFive(ratingOnFive: String) {
-        _uiState.value = _uiState.value.copy(ratingOnFiveAsStars = ratingOnFive)
+    fun updateRating(ratingOnFive: Int) {
+        _uiState.value = _uiState.value.copy(ratingOnFive = ratingOnFive)
+    }
+
+    fun addPicture() {
+        Log.d("MealEditorViewModel", "Saving meal: ${uiState.value}")
     }
 
     fun saveMeal() {

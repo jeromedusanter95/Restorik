@@ -3,19 +3,27 @@ package com.jeromedusanter.restorik.feature.meal.editor
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Euro
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
+import com.jeromedusanter.restorik.core.ui.AddPhotoButton
+import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
+import com.jeromedusanter.restorik.core.ui.RestorikRatingBar
 
 @Composable
 fun MealEditorScreen(
@@ -25,48 +33,61 @@ fun MealEditorScreen(
 
     val uiState = viewModel.uiState.collectAsState()
 
-    Surface(modifier = Modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
         Column(
             modifier = modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceAround
+            verticalArrangement = Arrangement.SpaceAround,
         ) {
-            Text("Nom du restaurant")
-            TextField(
-                value = uiState.value.restaurantName,
-                onValueChange = viewModel::updateRestaurantName
-            )
-
-            Text("Nom du repas")
-            TextField(
+            RestorikOutlineTextField(
+                modifier = modifier.fillMaxWidth(),
                 value = uiState.value.name,
-                onValueChange = viewModel::updateMealName
+                onValueChange = viewModel::updateMealName,
+                label = "Nom du repas"
             )
 
-            Text("Commentaire")
-            TextField(
+            RestorikOutlineTextField(
+                modifier = modifier.fillMaxWidth(),
+                value = uiState.value.restaurantName,
+                onValueChange = viewModel::updateRestaurantName,
+                label = "Nom du restaurant"
+            )
+            
+            RestorikOutlineTextField(
+                modifier = modifier.fillMaxWidth(),
                 value = uiState.value.comment,
-                onValueChange = viewModel::updateMealComment
+                onValueChange = viewModel::updateMealComment,
+                singleLine = false,
+                label = "Commentaire"
             )
 
-            Text("Prix")
-            TextField(
+            RestorikOutlineTextField(
+                modifier = modifier.fillMaxWidth(),
                 value = uiState.value.priceAsString,
-                onValueChange = viewModel::updateRestaurantName
+                onValueChange = viewModel::updatePrice,
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Euro,
+                        contentDescription = "Euro"
+                    )
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                label = "Prix"
             )
 
             Text("Note")
-            TextField(
-                value = uiState.value.ratingOnFiveAsStars,
-                onValueChange = viewModel::updateRatingOnFive
+            RestorikRatingBar(
+                modifier = modifier.align(alignment = Alignment.CenterHorizontally),
+                value = uiState.value.ratingOnFive,
+                onValueChanged = viewModel::updateRating
             )
 
-            Text("Add photo")
-            TextField(
-                value = uiState.value.restaurantName,
-                onValueChange = viewModel::updateRestaurantName
-            )
+            AddPhotoButton(viewModel::addPicture)
 
             Button(
                 onClick = viewModel::saveMeal,

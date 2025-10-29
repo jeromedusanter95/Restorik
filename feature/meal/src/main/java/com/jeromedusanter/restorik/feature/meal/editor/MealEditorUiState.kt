@@ -9,7 +9,7 @@ data class MealEditorUiState(
     val name: String,
     val comment: String,
     val priceAsString: String,
-    val ratingOnFiveAsStars: String,
+    val ratingOnFive: Int,
     val picturePathList: List<String>
 ) {
     companion object {
@@ -19,7 +19,7 @@ data class MealEditorUiState(
             name = "",
             comment = "",
             priceAsString = "0.0",
-            ratingOnFiveAsStars = "0",
+            ratingOnFive = 0,
             picturePathList = emptyList()
         )
     }
