@@ -10,4 +10,5 @@ android {
 dependencies {
     implementation(projects.core.camera)
     implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.coil.kt.compose)
 }

@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
+import android.net.Uri
 import androidx.compose.runtime.Immutable
 
 @Immutable
@@ -10,7 +11,7 @@ data class MealEditorUiState(
     val comment: String,
     val priceAsString: String,
     val ratingOnFive: Int,
-    val picturePathList: List<String>
+    val picturePathList: List<Uri>
 ) {
     companion object {
         val EMPTY = MealEditorUiState(

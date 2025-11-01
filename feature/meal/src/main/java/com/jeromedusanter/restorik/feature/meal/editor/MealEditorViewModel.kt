@@ -34,9 +34,15 @@ class MealEditorViewModel @Inject constructor() : ViewModel() {
         _uiState.value = _uiState.value.copy(ratingOnFive = ratingOnFive)
     }
 
-    fun onPhotoCaptured(uri: Uri) {
+    fun addPicture(uri: Uri) {
         _uiState.value = _uiState.value.copy(
-            picturePathList = _uiState.value.picturePathList + uri.toString()
+            picturePathList = _uiState.value.picturePathList + uri
+        )
+    }
+
+    fun removePicture(uri: Uri) {
+        _uiState.value = _uiState.value.copy(
+            picturePathList = _uiState.value.picturePathList - uri
         )
     }
 
