@@ -37,7 +37,7 @@ fun MealEditorScreen(
 
     val captureLauncher = rememberLauncherForActivityResult(CapturePhotoContract()) { uri ->
         if (uri != null) {
-            viewModel.addPicture(uri)
+            viewModel.addPhoto(uri)
         }
     }
 
@@ -96,13 +96,13 @@ fun MealEditorScreen(
             )
 
 
-            if (uiState.value.picturePathList.isEmpty()) {
+            if (uiState.value.photoUriList.isEmpty()) {
                 AddPhotoButton(onClick = { captureLauncher.launch(Unit) })
             } else {
-                Text("Photos ${uiState.value.picturePathList.size}/4")
-                HorizontalPictureList(
-                    pictureList = uiState.value.picturePathList,
-                    onClickDelete = viewModel::removePicture
+                Text("Photos ${uiState.value.photoUriList.size}/4")
+                HorizontalPhotoList(
+                    photoUriList = uiState.value.photoUriList,
+                    onClickDelete = viewModel::removePhoto
                 )
             }
 

@@ -7,14 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HorizontalPictureList(
+fun HorizontalPhotoList(
     modifier: Modifier = Modifier,
-    pictureList: List<Uri>,
+    photoUriList: List<Uri>,
     onClickDelete: (Uri) -> Unit
 ) {
     LazyRow {
-        items(pictureList) { it ->
-            PictureItem(
+        items(photoUriList) { it ->
+            PhotoItem(
                 modifier = modifier,
                 uri = it,
                 onClickDelete = onClickDelete

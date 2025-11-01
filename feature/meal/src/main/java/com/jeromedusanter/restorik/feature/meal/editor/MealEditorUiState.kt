@@ -11,7 +11,7 @@ data class MealEditorUiState(
     val comment: String,
     val priceAsString: String,
     val ratingOnFive: Int,
-    val picturePathList: List<Uri>
+    val photoUriList: List<Uri>
 ) {
     companion object {
         val EMPTY = MealEditorUiState(
@@ -21,7 +21,7 @@ data class MealEditorUiState(
             comment = "",
             priceAsString = "0.0",
             ratingOnFive = 0,
-            picturePathList = emptyList()
+            photoUriList = emptyList()
         )
     }
 }

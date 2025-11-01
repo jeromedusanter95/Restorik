@@ -22,7 +22,7 @@ import coil.compose.AsyncImage
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 
 @Composable
-fun PictureItem(
+fun PhotoItem(
     modifier: Modifier = Modifier,
     uri: Uri,
     onClickDelete: (Uri) -> Unit = {},
@@ -58,6 +58,6 @@ fun PictureItem(
 @Composable
 private fun PictureItemPreview() {
     RestorikTheme {
-        PictureItem(uri = Uri.EMPTY)
+        PhotoItem(uri = Uri.EMPTY)
     }
 }
