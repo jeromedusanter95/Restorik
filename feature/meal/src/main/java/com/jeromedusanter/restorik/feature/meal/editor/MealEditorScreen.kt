@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,6 +39,8 @@ fun MealEditorScreen(
 ) {
 
     val uiState = viewModel.uiState.collectAsState()
+
+    var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
 
     val maxPhotoCount = 4
 
@@ -106,8 +113,15 @@ fun MealEditorScreen(
                     photoUriList = uiState.value.photoUriList,
                     showAddPhotoItem = uiState.value.photoUriList.size < maxPhotoCount,
                     onClickDelete = viewModel::deletePhoto,
-                    onClickAdd = { captureLauncher.launch(Unit) }
+                    onClickAdd = { captureLauncher.launch(Unit) },
+                    onClickItem = { uri -> selectedPhotoUri = uri }
                 )
+                selectedPhotoUri?.let { photoUri ->
+                    PhotoViewDialog(
+                        photoUri = photoUri,
+                        onDismiss = { selectedPhotoUri = null }
+                    )
+                }
             }
 
             Button(
