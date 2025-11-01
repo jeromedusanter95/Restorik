@@ -36,7 +36,7 @@ fun PhotoItem(
             modifier = Modifier
                 .size(imageSize)
                 .align(Alignment.Center)
-                .clip(RoundedCornerShape(size = 8.dp)),
+                .clip(RoundedCornerShape(size = 12.dp)),
             contentScale = ContentScale.Crop,
         )
         Icon(

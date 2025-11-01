@@ -40,7 +40,7 @@ class MealEditorViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    fun removePhoto(uri: Uri) {
+    fun deletePhoto(uri: Uri) {
         _uiState.value = _uiState.value.copy(
             photoUriList = _uiState.value.photoUriList - uri
         )

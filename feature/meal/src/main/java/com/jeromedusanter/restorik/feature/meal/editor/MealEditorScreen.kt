@@ -35,6 +35,8 @@ fun MealEditorScreen(
 
     val uiState = viewModel.uiState.collectAsState()
 
+    val maxPhotoCount = 4
+
     val captureLauncher = rememberLauncherForActivityResult(CapturePhotoContract()) { uri ->
         if (uri != null) {
             viewModel.addPhoto(uri)
@@ -99,10 +101,12 @@ fun MealEditorScreen(
             if (uiState.value.photoUriList.isEmpty()) {
                 AddPhotoButton(onClick = { captureLauncher.launch(Unit) })
             } else {
-                Text("Photos ${uiState.value.photoUriList.size}/4")
+                Text("Photos (${uiState.value.photoUriList.size}/$maxPhotoCount)")
                 HorizontalPhotoList(
                     photoUriList = uiState.value.photoUriList,
-                    onClickDelete = viewModel::removePhoto
+                    showAddPhotoItem = uiState.value.photoUriList.size < maxPhotoCount,
+                    onClickDelete = viewModel::deletePhoto,
+                    onClickAdd = { captureLauncher.launch(Unit) }
                 )
             }
 
