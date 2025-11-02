@@ -2,6 +2,7 @@ package com.jeromedusanter.restorik.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.dao.RestaurantDao
 import com.jeromedusanter.restorik.core.database.model.MealEntity
@@ -14,6 +15,9 @@ import com.jeromedusanter.restorik.core.database.model.RestaurantEntity
     ],
     version = 1,
     exportSchema = true,
+)
+@TypeConverters(
+    Converters::class,
 )
 internal abstract class RestorikDatabase : RoomDatabase() {
     abstract fun mealDao(): MealDao

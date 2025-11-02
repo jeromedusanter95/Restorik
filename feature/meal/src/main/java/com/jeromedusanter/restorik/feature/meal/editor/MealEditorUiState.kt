@@ -11,17 +11,42 @@ data class MealEditorUiState(
     val comment: String,
     val priceAsString: String,
     val ratingOnFive: Int,
-    val photoUriList: List<Uri>
+    val photoUriList: List<Uri>,
+    val isLoading: Boolean,
+    val showAddButtonPhoto: Boolean,
+    val showAddButtonPhotoItem: Boolean,
+    val photoTitleSuffix: String,
+    val errorMessage: String? = null,
+    val fieldErrors: FieldErrors = FieldErrors()
 ) {
     companion object {
         val EMPTY = MealEditorUiState(
-            id = -1,
+            id = 0,
             restaurantName = "",
             name = "",
             comment = "",
             priceAsString = "0.0",
             ratingOnFive = 0,
-            photoUriList = emptyList()
+            photoUriList = emptyList(),
+            isLoading = false,
+            showAddButtonPhoto = true,
+            showAddButtonPhotoItem = false,
+            photoTitleSuffix = ""
         )
     }
+}
+
+@Immutable
+data class FieldErrors(
+    val restaurantNameError: String? = null,
+    val mealNameError: String? = null,
+    val priceError: String? = null
+) {
+    fun hasErrors(): Boolean = restaurantNameError != null || mealNameError != null || priceError != null
+}
+
+enum class MealEditorField {
+    RESTAURANT_NAME,
+    MEAL_NAME,
+    PRICE
 }

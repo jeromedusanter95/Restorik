@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
+import com.jeromedusanter.restorik.feature.meal.R
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 
 @Composable
@@ -62,7 +64,7 @@ fun PhotoViewDialog(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close"
+                    contentDescription = stringResource(R.string.feature_meal_close_content_description)
                 )
             }
         }

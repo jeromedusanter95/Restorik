@@ -10,5 +10,8 @@ import dagger.hilt.components.SingletonComponent
 abstract class DataModule {
 
     @Binds
-    internal abstract fun bindsMealRepository(mealRepository: MealRepositoryImpl): MealRepository
+    internal abstract fun bindsMealRepository(repository: MealRepositoryImpl): MealRepository
+
+    @Binds
+    internal abstract fun bindsRestaurantRepository(repository: RestaurantRepositoryImpl): RestaurantRepository
 }

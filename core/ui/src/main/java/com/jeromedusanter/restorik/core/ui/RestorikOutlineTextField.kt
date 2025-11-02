@@ -1,6 +1,7 @@
 package com.jeromedusanter.restorik.core.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -22,7 +23,12 @@ fun RestorikOutlineTextField(
     maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     trailingIcon: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
-    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    enabled: Boolean = true,
+    isError: Boolean = false,
+    supportingText: String? = null,
+    isRequired: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
@@ -32,10 +38,20 @@ fun RestorikOutlineTextField(
         maxLines = maxLines,
         trailingIcon = trailingIcon,
         leadingIcon = leadingIcon,
-        label = label?.takeIf { it.isNotBlank() }?.let { { Text(it) } },
+        label = label?.takeIf { it.isNotBlank() }?.let { labelText ->
+            {
+                Text(
+                    text = if (isRequired) "$labelText *" else labelText
+                )
+            }
+        },
         placeholder = placeholder?.takeIf { it.isNotBlank() }?.let { { Text(it) } },
+        supportingText = supportingText?.takeIf { it.isNotBlank() }?.let { { Text(it) } },
         shape = RoundedCornerShape(16.dp),
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions,
+        enabled = enabled,
+        isError = isError
     )
 }
 

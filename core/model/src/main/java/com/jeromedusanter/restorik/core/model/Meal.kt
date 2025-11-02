@@ -5,10 +5,10 @@ import java.time.LocalDateTime
 data class Meal(
     val id: Int,
     val restaurantId: Int,
-    val title: String,
+    val name: String,
     val comment: String,
     val price: Double,
     val dateTime: LocalDateTime,
     val ratingOnFive: Int,
-    val picturePathList: List<String>
+    val photoList: List<String>
 )

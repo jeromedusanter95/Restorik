@@ -6,8 +6,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,6 +25,7 @@ fun RestorikApp(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(
         modifier = modifier,
@@ -35,7 +39,9 @@ fun RestorikApp(modifier: Modifier = Modifier) {
             )
         },
         bottomBar = {},
-        snackbarHost = {},
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        },
         floatingActionButton = {
             if (currentRoute == MealDestinations.MealList.route) {
                 FloatingActionButton(onClick = { navController.navigateToMealEditor() }) {
@@ -46,7 +52,8 @@ fun RestorikApp(modifier: Modifier = Modifier) {
     ) { innerPadding ->
         RestorikNavHost(
             modifier = modifier.padding(innerPadding),
-            navController = navController
+            navController = navController,
+            snackbarHostState = snackbarHostState
         )
     }
 }

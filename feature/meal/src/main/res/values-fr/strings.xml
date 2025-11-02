@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen titles -->
+    <string name="feature_meal_list_title">Restorik</string>
+    <string name="feature_meal_editor_title">Ajouter un repas</string>
+    <string name="feature_meal_detail_title">Détail du repas</string>
+
+    <!-- Form labels -->
+    <string name="feature_meal_meal_name_label">Nom du repas</string>
+    <string name="feature_meal_restaurant_name_label">Nom du restaurant</string>
+    <string name="feature_meal_comment_label">Commentaire</string>
+    <string name="feature_meal_price_label">Prix</string>
+    <string name="feature_meal_rating_label">Note</string>
+
+    <!-- Buttons -->
+    <string name="feature_meal_save_button">Enregistrer</string>
+
+    <!-- Content descriptions -->
+    <string name="feature_meal_euro_content_description">Euro</string>
+    <string name="feature_meal_close_content_description">Fermer</string>
+
+    <!-- Validation errors -->
+    <string name="feature_meal_error_fix_above">Veuillez corriger les erreurs ci-dessus</string>
+    <string name="feature_meal_error_invalid_input">Entrée invalide</string>
+    <string name="feature_meal_error_invalid_state">État invalide</string>
+    <string name="feature_meal_error_unknown">Erreur inconnue</string>
+    <string name="feature_meal_error_save_meal_failed">Échec de l\'enregistrement du repas : %s</string>
+    <string name="feature_meal_error_restaurant_name_required">Le nom du restaurant est requis</string>
+    <string name="feature_meal_error_meal_name_required">Le nom du repas est requis</string>
+    <string name="feature_meal_error_price_required">Le prix est requis</string>
+    <string name="feature_meal_error_invalid_price_format">Format de prix invalide</string>
+    <string name="feature_meal_error_price_negative">Le prix ne peut pas être négatif</string>
+
+    <!-- Database errors -->
+    <string name="feature_meal_error_db_no_space">Espace de stockage insuffisant</string>
+    <string name="feature_meal_error_db_corrupted">Base de données corrompue</string>
+    <string name="feature_meal_error_db_locked">Base de données verrouillée, veuillez réessayer</string>
+    <string name="feature_meal_error_db_unable_to_save">Impossible d\'enregistrer dans la base de données</string>
+    <string name="feature_meal_error_db_generic">Erreur de base de données : %s</string>
+</resources>
