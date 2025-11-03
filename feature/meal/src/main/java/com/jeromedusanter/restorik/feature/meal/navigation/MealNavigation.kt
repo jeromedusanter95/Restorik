@@ -1,7 +1,9 @@
 package com.jeromedusanter.restorik.feature.meal.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -17,7 +19,10 @@ fun NavController.navigateToMeal(navOptions: NavOptions) =
 fun NavController.navigateToMealEditor(navOptions: NavOptions? = null) =
     navigate(route = MealDestinations.MealEditor.route, navOptions)
 
-fun NavGraphBuilder.mealSection() {
+fun NavGraphBuilder.mealSection(
+    navController: NavHostController,
+    snackbarHostState: SnackbarHostState
+) {
     navigation(
         startDestination = MealDestinations.MealList.route,
         route = mealBaseRoute
@@ -34,7 +39,10 @@ fun NavGraphBuilder.mealSection() {
             )
         }
         composable(route = MealDestinations.MealEditor.route) {
-            MealEditorScreen()
+            MealEditorScreen(
+                onMealSaved = navController::popBackStack,
+                snackbarHostState = snackbarHostState
+            )
         }
     }
 }

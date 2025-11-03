@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen titles -->
+    <string name="feature_meal_list_title">Restorik</string>
+    <string name="feature_meal_editor_title">Add a meal</string>
+    <string name="feature_meal_detail_title">Meal details</string>
+
+    <!-- Form labels -->
+    <string name="feature_meal_meal_name_label">Meal name</string>
+    <string name="feature_meal_restaurant_name_label">Restaurant name</string>
+    <string name="feature_meal_comment_label">Comment</string>
+    <string name="feature_meal_price_label">Price</string>
+    <string name="feature_meal_rating_label">Rating</string>
+
+    <!-- Buttons -->
+    <string name="feature_meal_save_button">Save</string>
+
+    <!-- Content descriptions -->
+    <string name="feature_meal_euro_content_description">Euro</string>
+    <string name="feature_meal_close_content_description">Close</string>
+
+    <!-- Validation errors -->
+    <string name="feature_meal_error_fix_above">Please fix the errors above</string>
+    <string name="feature_meal_error_invalid_input">Invalid input</string>
+    <string name="feature_meal_error_invalid_state">Invalid state</string>
+    <string name="feature_meal_error_unknown">Unknown error</string>
+    <string name="feature_meal_error_save_meal_failed">Failed to save meal: %s</string>
+    <string name="feature_meal_error_restaurant_name_required">Restaurant name is required</string>
+    <string name="feature_meal_error_meal_name_required">Meal name is required</string>
+    <string name="feature_meal_error_price_required">Price is required</string>
+    <string name="feature_meal_error_invalid_price_format">Invalid price format</string>
+    <string name="feature_meal_error_price_negative">Price cannot be negative</string>
+
+    <!-- Database errors -->
+    <string name="feature_meal_error_db_no_space">Not enough storage space</string>
+    <string name="feature_meal_error_db_corrupted">Database is corrupted</string>
+    <string name="feature_meal_error_db_locked">Database is locked, please try again</string>
+    <string name="feature_meal_error_db_unable_to_save">Unable to save to database</string>
+    <string name="feature_meal_error_db_generic">Database error: %s</string>
+</resources>
