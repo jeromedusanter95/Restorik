@@ -4,10 +4,12 @@ import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.model.MealEntity
 import com.jeromedusanter.restorik.core.model.Meal
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MealRepositoryImpl @Inject constructor(
-    private val mealDao: MealDao
+    private val mealDao: MealDao,
+    private val mealMapper: MealMapper
 ) : MealRepository {
 
     override fun observeMealById(id: Int): Flow<Meal> {
@@ -15,7 +17,9 @@ class MealRepositoryImpl @Inject constructor(
     }
 
     override fun observeAll(): Flow<List<Meal>> {
-        TODO("Not yet implemented")
+        return mealDao.getAll().map { list ->
+            list.map { mealMapper.mapEntityModelToDomainModel(it) }
+        }
     }
 
     override suspend fun saveMealInLocalDb(meal: Meal) {
