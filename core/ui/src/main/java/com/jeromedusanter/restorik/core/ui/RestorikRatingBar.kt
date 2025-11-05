@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
+import com.jeromedusanter.restorik.core.designsystem.theme.gold
 
 @Composable
 fun RestorikRatingBar(
@@ -37,7 +38,7 @@ fun RestorikRatingBar(
                     imageVector = Icons.Filled.Star,
                     contentDescription = "$i stars",
                     tint = if (isSelected)
-                        Color(0xFFFFC107)
+                        gold
                     else
                         Color.LightGray
                 )
