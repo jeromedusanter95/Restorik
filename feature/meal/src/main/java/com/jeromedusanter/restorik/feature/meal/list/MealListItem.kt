@@ -12,6 +12,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -33,9 +36,9 @@ import com.jeromedusanter.restorik.core.designsystem.theme.gold
 
 @Composable
 fun MealListItem(
+    modifier: Modifier = Modifier,
     mealUiModel: MealUiModel,
     onClickItem: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClickItem,
@@ -61,29 +64,59 @@ fun MealListItem(
             // Content
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
                     text = mealUiModel.name,
                     style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Text(
-                    text = mealUiModel.restaurantName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Restaurant,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = mealUiModel.restaurantName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
 
-                Text(
-                    text = mealUiModel.date,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = mealUiModel.date,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
 
             // Rating badge
             RatingBadge(rating = mealUiModel.rating)
+
+            // Chevron icon
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+            )
         }
     }
 }
@@ -108,7 +141,7 @@ private fun MealImage(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Default.Restaurant,
+                imageVector = Icons.Default.Fastfood,
                 contentDescription = null,
                 modifier = Modifier.size(24.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -123,7 +156,10 @@ private fun RatingBadge(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(gold.copy(alpha = 0.15f))
+            .padding(horizontal = 10.dp, vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -136,7 +172,8 @@ private fun RatingBadge(
         Text(
             text = rating.toString(),
             style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

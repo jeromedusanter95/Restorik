@@ -172,7 +172,7 @@ fun MealEditorScreen(
                     onClick = { captureLauncher.launch(Unit) }
                 )
             } else {
-                Text("Photos ${uiState.value.photoTitleSuffix}")
+                Text("${stringResource(R.string.feature_meal_photos_label)} ${uiState.value.photoTitleSuffix}")
                 HorizontalPhotoList(
                     photoUriList = uiState.value.photoUriList,
                     showAddPhotoItem = uiState.value.showAddButtonPhoto,

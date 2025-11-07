@@ -1,12 +1,15 @@
 package com.jeromedusanter.restorik.feature.meal.list
 
+import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
+import com.jeromedusanter.restorik.core.domain.GetMealListUseCase
 import com.jeromedusanter.restorik.core.model.Meal
+import com.jeromedusanter.restorik.feature.meal.R
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -16,20 +19,29 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MealListViewModel @Inject constructor(
-    private val mealRepository: MealRepository,
-    private val restaurantRepository: RestaurantRepository
+    getMealListUseCase: GetMealListUseCase,
+    restaurantRepository: RestaurantRepository,
+    @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     val uiState: StateFlow<MealListUiState> = combine(
-        mealRepository.observeAll(),
+        getMealListUseCase(),
         restaurantRepository.observeAll()
-    ) { mealList, restaurantList ->
+    ) { groupedMealList, restaurantList ->
         val restaurantMap = restaurantList.associateBy { it.id }
+        val unknownRestaurant = context.getString(R.string.feature_meal_unknown_restaurant)
+        val groupedMealUiModelList = groupedMealList.map { mealGroup ->
+            MealGroupUiModel(
+                title = mealGroup.groupDate.toLocalizedString(context = context),
+                mealList = mealGroup.mealList.map { meal ->
+                    val restaurantName = restaurantMap[meal.restaurantId]?.name ?: unknownRestaurant
+                    meal.toUiModel(restaurantName = restaurantName)
+                }
+            )
+        }
+
         MealListUiState(
-            mealList = mealList.map { meal ->
-                val restaurantName = restaurantMap[meal.restaurantId]?.name ?: "Unknown"
-                meal.toUiModel(restaurantName = restaurantName)
-            },
+            groupedMealList = groupedMealUiModelList,
             isLoading = false
         )
     }.stateIn(
@@ -37,15 +49,4 @@ class MealListViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
         initialValue = MealListUiState.EMPTY
     )
-
-    private fun Meal.toUiModel(restaurantName: String): MealUiModel {
-        return MealUiModel(
-            id = id,
-            name = name,
-            restaurantName = restaurantName,
-            date = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
-            rating = ratingOnFive,
-            photoUri = photoList.firstOrNull()?.toUri()
-        )
-    }
 }

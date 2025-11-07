@@ -9,6 +9,7 @@ android {
 
 dependencies {
     implementation(projects.core.camera)
+    implementation(projects.core.domain)
     implementation(libs.androidx.compose.material.iconsExtended)
     implementation(libs.coil.kt.compose)
     implementation(libs.zoomable.image.coil)

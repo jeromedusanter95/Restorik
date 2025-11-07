@@ -4,13 +4,13 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class MealListUiState(
-    val mealList: List<MealUiModel>,
+    val groupedMealList: List<MealGroupUiModel>,
     val isLoading: Boolean
 ) {
     companion object {
         val EMPTY = MealListUiState(
-            mealList = emptyList(),
-            isLoading = false,
+            groupedMealList = emptyList(),
+            isLoading = true,
         )
     }
 }
