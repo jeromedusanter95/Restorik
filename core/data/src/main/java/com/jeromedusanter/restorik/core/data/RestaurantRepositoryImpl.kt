@@ -4,6 +4,7 @@ import com.jeromedusanter.restorik.core.database.dao.RestaurantDao
 import com.jeromedusanter.restorik.core.database.model.RestaurantEntity
 import com.jeromedusanter.restorik.core.model.Restaurant
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class RestaurantRepositoryImpl @Inject constructor(
@@ -15,7 +16,9 @@ class RestaurantRepositoryImpl @Inject constructor(
     }
 
     override fun observeAll(): Flow<List<Restaurant>> {
-        TODO("Not yet implemented")
+        return restaurantDao.observeAll().map { entities ->
+            entities.map { it.toModel() }
+        }
     }
 
     override suspend fun saveByNameAndGetLocal(restaurantName: String): Restaurant {

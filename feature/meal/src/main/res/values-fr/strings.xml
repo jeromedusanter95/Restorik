@@ -37,4 +37,20 @@
     <string name="feature_meal_error_db_locked">Base de données verrouillée, veuillez réessayer</string>
     <string name="feature_meal_error_db_unable_to_save">Impossible d\'enregistrer dans la base de données</string>
     <string name="feature_meal_error_db_generic">Erreur de base de données : %s</string>
+
+    <!-- UI messages -->
+    <string name="feature_meal_meal_added_successfully">Repas ajouté avec succès</string>
+    <string name="feature_meal_loading_meals">Chargement des repas…</string>
+    <string name="feature_meal_no_meals_yet">Pas encore de repas</string>
+    <string name="feature_meal_tap_to_add_first_meal">Appuyez sur le bouton + ci-dessous pour ajouter votre premier repas</string>
+    <string name="feature_meal_photos_label">Photos</string>
+    <string name="feature_meal_detail_screen_title">Écran de détail du repas !</string>
+    <string name="feature_meal_unknown_restaurant">Inconnu</string>
+
+    <!-- Date categories -->
+    <string name="feature_meal_date_category_today">Aujourd\'hui</string>
+    <string name="feature_meal_date_category_yesterday">Hier</string>
+    <string name="feature_meal_date_category_this_week">Cette semaine</string>
+    <string name="feature_meal_date_category_this_month">Ce mois-ci</string>
+    <string name="feature_meal_date_category_older">Plus ancien</string>
 </resources>

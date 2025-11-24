@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface RestaurantDao {
     @Query("SELECT * FROM restaurants")
-    fun getAll(): Flow<List<RestaurantEntity>>
+    fun observeAll(): Flow<List<RestaurantEntity>>
 
     @Query("SELECT * FROM restaurants WHERE id = :id")
     fun observeById(id: Int): Flow<RestaurantEntity?>

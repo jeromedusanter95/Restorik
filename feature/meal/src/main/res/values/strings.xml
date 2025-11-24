@@ -37,4 +37,20 @@
     <string name="feature_meal_error_db_locked">Database is locked, please try again</string>
     <string name="feature_meal_error_db_unable_to_save">Unable to save to database</string>
     <string name="feature_meal_error_db_generic">Database error: %s</string>
+
+    <!-- UI messages -->
+    <string name="feature_meal_meal_added_successfully">Meal added successfully</string>
+    <string name="feature_meal_loading_meals">Loading meals…</string>
+    <string name="feature_meal_no_meals_yet">No meals yet</string>
+    <string name="feature_meal_tap_to_add_first_meal">Tap the + button below to add your first meal</string>
+    <string name="feature_meal_photos_label">Photos</string>
+    <string name="feature_meal_detail_screen_title">Meal Detail Screen !</string>
+    <string name="feature_meal_unknown_restaurant">Unknown</string>
+
+    <!-- Date categories -->
+    <string name="feature_meal_date_category_today">Today</string>
+    <string name="feature_meal_date_category_yesterday">Yesterday</string>
+    <string name="feature_meal_date_category_this_week">This Week</string>
+    <string name="feature_meal_date_category_this_month">This Month</string>
+    <string name="feature_meal_date_category_older">Older</string>
 </resources>
