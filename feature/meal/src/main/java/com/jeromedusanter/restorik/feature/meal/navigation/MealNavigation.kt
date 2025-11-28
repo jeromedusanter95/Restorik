@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.jeromedusanter.restorik.feature.meal.detail.MealDetailScreen
+import com.jeromedusanter.restorik.feature.meal.detail.MealDetailRoute
 import com.jeromedusanter.restorik.feature.meal.editor.MealEditorScreen
 import com.jeromedusanter.restorik.feature.meal.list.MealListScreen
 
@@ -15,6 +15,10 @@ const val mealBaseRoute = "meal"
 
 fun NavController.navigateToMeal(navOptions: NavOptions) =
     navigate(route = mealBaseRoute, navOptions)
+
+fun NavController.navigateToMealDetail(mealId: Int) {
+    navigate(route = "${MealDestinations.MealDetail.route}/$mealId")
+}
 
 fun NavController.navigateToMealEditor(navOptions: NavOptions? = null) =
     navigate(route = MealDestinations.MealEditor.route, navOptions)
@@ -38,10 +42,8 @@ fun NavGraphBuilder.mealSection(
         composable(
             route = MealDestinations.MealDetail.routeWithArgs,
             arguments = MealDestinations.MealDetail.arguments
-        ) { navBackStackEntry ->
-            MealDetailScreen(
-                mealId = navBackStackEntry.arguments?.getInt(MealDestinations.MealDetail.mealIdArg),
-            )
+        ) {
+            MealDetailRoute()
         }
         composable(route = MealDestinations.MealEditor.route) {
             MealEditorScreen(

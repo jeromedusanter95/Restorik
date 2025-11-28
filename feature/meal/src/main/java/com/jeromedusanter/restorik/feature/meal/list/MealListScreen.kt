@@ -30,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.feature.meal.navigation.MEAL_SAVED_RESULT_KEY
+import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealDetail
 
 @Composable
 fun MealListScreen(
@@ -97,7 +98,7 @@ fun MealListScreen(
                         ) {
                             MealListItem(
                                 mealUiModel = meal,
-                                onClickItem = { /* TODO: Navigate to detail */ }
+                                onClickItem = { navController.navigateToMealDetail(mealId = meal.id) }
                             )
                         }
                     }
