@@ -3,9 +3,7 @@ package com.jeromedusanter.restorik.feature.meal.detail
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 
 @Composable
 fun MealDetailRoute(

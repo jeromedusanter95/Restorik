@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 interface MealDao {
 
     @Query("SELECT * FROM meals")
-    fun getAll(): Flow<List<MealEntity>>
+    fun observeAll(): Flow<List<MealEntity>>
 
     @Query("SELECT * FROM meals WHERE id = :id")
-    fun getById(id: String): Flow<MealEntity?>
+    fun observerById(id: Int): Flow<MealEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(meal: MealEntity)

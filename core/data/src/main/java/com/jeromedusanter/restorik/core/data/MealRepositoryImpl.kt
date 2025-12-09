@@ -5,6 +5,7 @@ import com.jeromedusanter.restorik.core.database.model.MealEntity
 import com.jeromedusanter.restorik.core.model.Meal
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import javax.inject.Inject
 
 class MealRepositoryImpl @Inject constructor(
@@ -13,11 +14,13 @@ class MealRepositoryImpl @Inject constructor(
 ) : MealRepository {
 
     override fun observeMealById(id: Int): Flow<Meal> {
-        TODO("Not yet implemented")
+        return mealDao.observerById(id = id).mapNotNull { mealEntity ->
+            mealEntity?.let { mealMapper.mapEntityModelToDomainModel(it) }
+        }
     }
 
     override fun observeAll(): Flow<List<Meal>> {
-        return mealDao.getAll().map { list ->
+        return mealDao.observeAll().map { list ->
             list.map { mealMapper.mapEntityModelToDomainModel(it) }
         }
     }

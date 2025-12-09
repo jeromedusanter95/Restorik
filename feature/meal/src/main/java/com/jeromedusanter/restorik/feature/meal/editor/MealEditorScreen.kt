@@ -124,12 +124,6 @@ fun MealEditorScreen(
                 singleLine = false,
                 label = stringResource(R.string.feature_meal_comment_label),
                 enabled = !uiState.value.isLoading,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
             )
 
             RestorikOutlineTextField(
@@ -175,7 +169,7 @@ fun MealEditorScreen(
                 Text("${stringResource(R.string.feature_meal_photos_label)} ${uiState.value.photoTitleSuffix}")
                 HorizontalPhotoList(
                     photoUriList = uiState.value.photoUriList,
-                    showAddPhotoItem = uiState.value.showAddButtonPhoto,
+                    showAddPhotoItem = uiState.value.showAddButtonPhotoItem,
                     onClickDelete = viewModel::deletePhoto,
                     onClickAdd = { captureLauncher.launch(Unit) },
                     onClickItem = { uri -> selectedPhotoUri = uri }

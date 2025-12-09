@@ -1,13 +1,23 @@
 package com.jeromedusanter.restorik.feature.meal.detail
 
-import com.jeromedusanter.restorik.feature.meal.editor.MealEditorUiState
+import android.net.Uri
 
 data class MealDetailUiState(
-    val title: String,
+    val restaurantName: String,
+    val name: String,
+    val comment: String,
+    val priceAsString: String,
+    val ratingOnFive: Int,
+    val photoUriList: List<Uri>,
 ) {
     companion object {
         val EMPTY = MealDetailUiState(
-            title = ""
+            name = "",
+            restaurantName = "",
+            comment = "",
+            priceAsString = "0.0",
+            ratingOnFive = 0,
+            photoUriList = emptyList(),
         )
     }
 }
