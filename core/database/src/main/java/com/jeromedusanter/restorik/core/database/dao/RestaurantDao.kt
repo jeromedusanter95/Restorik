@@ -21,6 +21,9 @@ interface RestaurantDao {
     @Query("SELECT * FROM restaurants WHERE name = :name")
     suspend fun getByName(name: String): RestaurantEntity?
 
+    @Query("SELECT * FROM restaurants WHERE name LIKE :query || '%' ORDER BY name ASC LIMIT 5")
+    suspend fun searchByNamePrefix(query: String): List<RestaurantEntity>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: RestaurantEntity): Long
 

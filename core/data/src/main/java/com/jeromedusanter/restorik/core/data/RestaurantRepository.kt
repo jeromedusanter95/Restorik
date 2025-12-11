@@ -8,4 +8,5 @@ interface RestaurantRepository {
     fun observeAll(): Flow<List<Restaurant>>
     suspend fun saveByNameAndGetLocal(restaurantName: String): Restaurant
     suspend fun getRestaurantByName(name: String): Restaurant?
+    suspend fun searchByNamePrefix(query: String): List<Restaurant>
 }

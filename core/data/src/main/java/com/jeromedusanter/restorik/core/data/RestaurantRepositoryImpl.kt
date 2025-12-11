@@ -50,6 +50,11 @@ class RestaurantRepositoryImpl @Inject constructor(
     override suspend fun getRestaurantByName(name: String): Restaurant? {
         return restaurantDao.getByName(name)?.toModel()
     }
+
+    override suspend fun searchByNamePrefix(query: String): List<Restaurant> {
+        if (query.isBlank()) return emptyList()
+        return restaurantDao.searchByNamePrefix(query = query).map { it.toModel() }
+    }
 }
 
 private fun RestaurantEntity?.toModel(): Restaurant {

@@ -2,6 +2,7 @@ package com.jeromedusanter.restorik.feature.meal.editor
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,9 +12,15 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Euro
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -98,25 +105,59 @@ fun MealEditorScreen(
                 )
             )
 
-            RestorikOutlineTextField(
-                modifier = modifier.fillMaxWidth(),
-                value = uiState.value.restaurantName,
-                onValueChange = { newValue ->
-                    viewModel.updateRestaurantName(newValue)
-                    viewModel.clearFieldError(MealEditorField.RESTAURANT_NAME)
-                },
-                label = stringResource(R.string.feature_meal_restaurant_name_label),
-                enabled = !uiState.value.isLoading,
-                isRequired = true,
-                isError = uiState.value.fieldErrors.restaurantNameError != null,
-                supportingText = uiState.value.fieldErrors.restaurantNameError,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            Column(modifier = modifier.fillMaxWidth()) {
+                RestorikOutlineTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = uiState.value.restaurantName,
+                    onValueChange = { newValue ->
+                        viewModel.updateRestaurantName(restaurantName = newValue)
+                        viewModel.clearFieldError(field = MealEditorField.RESTAURANT_NAME)
+                    },
+                    label = stringResource(R.string.feature_meal_restaurant_name_label),
+                    enabled = !uiState.value.isLoading,
+                    isRequired = true,
+                    isError = uiState.value.fieldErrors.restaurantNameError != null,
+                    supportingText = uiState.value.fieldErrors.restaurantNameError,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
-            )
+
+                // Restaurant suggestions dropdown
+                if (uiState.value.restaurantSuggestionList.isNotEmpty()) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Column {
+                            uiState.value.restaurantSuggestionList.forEachIndexed { index, restaurant ->
+                                ListItem(
+                                    headlineContent = { Text(text = restaurant.name) },
+                                    leadingContent = {
+                                        Icon(
+                                            imageVector = Icons.Default.Restaurant,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    modifier = Modifier.clickable {
+                                        viewModel.selectRestaurantSuggestion(suggestion = restaurant)
+                                    }
+                                )
+                                if (index < uiState.value.restaurantSuggestionList.size - 1) {
+                                    HorizontalDivider()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             RestorikOutlineTextField(
                 modifier = modifier.fillMaxWidth(),
