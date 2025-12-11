@@ -25,6 +25,14 @@ sealed class MealDestinations {
 
     data object MealEditor : MealDestinations() {
         override val route: String = "meal_editor"
+        const val mealIdArg = "meal_id"
+        val routeWithArgs = "${route}?${mealIdArg}={${mealIdArg}}"
+        val arguments = listOf(
+            navArgument(mealIdArg) {
+                type = NavType.IntType
+                defaultValue = -1
+            }
+        )
         override val labelResId = R.string.feature_meal_editor_title
     }
 

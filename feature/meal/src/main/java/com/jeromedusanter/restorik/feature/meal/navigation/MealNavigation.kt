@@ -20,10 +20,17 @@ fun NavController.navigateToMealDetail(mealId: Int) {
     navigate(route = "${MealDestinations.MealDetail.route}/$mealId")
 }
 
-fun NavController.navigateToMealEditor(navOptions: NavOptions? = null) =
-    navigate(route = MealDestinations.MealEditor.route, navOptions)
+fun NavController.navigateToMealEditor(mealId: Int? = null, navOptions: NavOptions? = null) {
+    val route = if (mealId != null) {
+        "${MealDestinations.MealEditor.route}?${MealDestinations.MealEditor.mealIdArg}=$mealId"
+    } else {
+        MealDestinations.MealEditor.route
+    }
+    navigate(route = route, navOptions = navOptions)
+}
 
 const val MEAL_SAVED_RESULT_KEY = "meal_saved_result"
+const val MEAL_EDITED_RESULT_KEY = "meal_edited_result"
 const val MEAL_DELETED_RESULT_KEY = "meal_deleted_result"
 
 fun NavGraphBuilder.mealSection(
@@ -50,15 +57,23 @@ fun NavGraphBuilder.mealSection(
                         ?.savedStateHandle
                         ?.set(MEAL_DELETED_RESULT_KEY, true)
                     navController.popBackStack()
-                }
+                },
+                navController = navController,
+                snackbarHostState = snackbarHostState
             )
         }
-        composable(route = MealDestinations.MealEditor.route) {
+        composable(
+            route = MealDestinations.MealEditor.routeWithArgs,
+            arguments = MealDestinations.MealEditor.arguments
+        ) { backStackEntry ->
+            val mealId = backStackEntry.arguments?.getInt(MealDestinations.MealEditor.mealIdArg, -1) ?: -1
+            val isEditMode = mealId != -1
+
             MealEditorScreen(
                 onMealSaved = {
                     navController.previousBackStackEntry
                         ?.savedStateHandle
-                        ?.set(MEAL_SAVED_RESULT_KEY, true)
+                        ?.set(if (isEditMode) MEAL_EDITED_RESULT_KEY else MEAL_SAVED_RESULT_KEY, true)
                     navController.popBackStack()
                 },
                 snackbarHostState = snackbarHostState
