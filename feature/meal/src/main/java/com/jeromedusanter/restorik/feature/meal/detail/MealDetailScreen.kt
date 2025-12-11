@@ -1,6 +1,8 @@
 package com.jeromedusanter.restorik.feature.meal.detail
 
+import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.designsystem.theme.gold
+import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.feature.meal.R
 
 @Composable
@@ -46,6 +53,8 @@ fun MealDetailScreen(
     modifier: Modifier = Modifier,
     uiState: MealDetailUiState
 ) {
+    var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
+
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -68,7 +77,9 @@ fun MealDetailScreen(
                         AsyncImage(
                             model = uiState.photoUriList[page],
                             contentDescription = "Meal photo ${page + 1}",
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clickable { selectedPhotoUri = uiState.photoUriList[page] },
                             contentScale = ContentScale.Crop
                         )
                     }
@@ -237,6 +248,14 @@ fun MealDetailScreen(
                     }
                 }
             }
+        }
+
+        // Photo View Dialog
+        selectedPhotoUri?.let { photoUri ->
+            PhotoViewDialog(
+                photoUri = photoUri,
+                onDismiss = { selectedPhotoUri = null }
+            )
         }
     }
 }

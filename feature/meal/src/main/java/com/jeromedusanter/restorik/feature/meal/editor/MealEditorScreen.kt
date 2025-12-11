@@ -38,6 +38,7 @@ import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.core.camera.CapturePhotoContract
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.ui.AddPhotoButton
+import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
 import com.jeromedusanter.restorik.core.ui.RestorikRatingBar
 

@@ -1,11 +1,9 @@
-package com.jeromedusanter.restorik.feature.meal.editor
+package com.jeromedusanter.restorik.core.ui
 
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -18,12 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import coil.compose.AsyncImage
-import com.jeromedusanter.restorik.feature.meal.R
 import me.saket.telephoto.zoomable.coil.ZoomableAsyncImage
 
 @Composable
@@ -64,7 +59,7 @@ fun PhotoViewDialog(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(R.string.feature_meal_close_content_description)
+                    contentDescription = "Close"
                 )
             }
         }
