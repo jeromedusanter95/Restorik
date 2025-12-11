@@ -16,6 +16,7 @@ data class MealEditorUiState(
     val showAddButtonPhoto: Boolean,
     val showAddButtonPhotoItem: Boolean,
     val photoTitleSuffix: String,
+    val showPhotoSelectionBottomSheet: Boolean,
     val errorMessage: String? = null,
     val fieldErrors: FieldErrors = FieldErrors(),
     val restaurantSuggestionList: List<RestaurantSuggestion> = emptyList()
@@ -32,7 +33,8 @@ data class MealEditorUiState(
             isLoading = false,
             showAddButtonPhoto = true,
             showAddButtonPhotoItem = false,
-            photoTitleSuffix = ""
+            photoTitleSuffix = "",
+            showPhotoSelectionBottomSheet = false
         )
     }
 }

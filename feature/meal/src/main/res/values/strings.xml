@@ -55,6 +55,9 @@
     <string name="feature_meal_photos_label">Photos</string>
     <string name="feature_meal_detail_screen_title">Meal Detail Screen !</string>
     <string name="feature_meal_unknown_restaurant">Unknown</string>
+    <string name="feature_meal_photo_selection_title">Add a photo</string>
+    <string name="feature_meal_photo_selection_take_photo">Take a photo</string>
+    <string name="feature_meal_photo_selection_choose_gallery">Choose from gallery</string>
 
     <!-- Date categories -->
     <string name="feature_meal_date_category_today">Today</string>

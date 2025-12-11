@@ -269,6 +269,14 @@ class MealEditorViewModel @Inject constructor(
         _uiState.update { it.copy(errorMessage = null) }
     }
 
+    fun showPhotoSelectionBottomSheet() {
+        _uiState.update { it.copy(showPhotoSelectionBottomSheet = true) }
+    }
+
+    fun hidePhotoSelectionBottomSheet() {
+        _uiState.update { it.copy(showPhotoSelectionBottomSheet = false) }
+    }
+
     companion object {
         const val MAX_PHOTO_COUNT = 5
     }

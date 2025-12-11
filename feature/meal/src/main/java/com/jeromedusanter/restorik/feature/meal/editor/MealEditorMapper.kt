@@ -46,7 +46,8 @@ class MealEditorMapper @Inject constructor() {
             isLoading = false,
             showAddButtonPhoto = photoUriList.isEmpty(),
             showAddButtonPhotoItem = photoCount < maxPhotoCount,
-            photoTitleSuffix = "($photoCount/$maxPhotoCount)"
+            photoTitleSuffix = "($photoCount/$maxPhotoCount)",
+            showPhotoSelectionBottomSheet = false
         )
     }
 
