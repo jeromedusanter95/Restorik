@@ -14,6 +14,9 @@
 
     <!-- Buttons -->
     <string name="feature_meal_save_button">Enregistrer</string>
+    <string name="feature_meal_delete_button">Supprimer le repas</string>
+    <string name="feature_meal_delete_confirm_button">Supprimer</string>
+    <string name="feature_meal_delete_cancel_button">Annuler</string>
 
     <!-- Content descriptions -->
     <string name="feature_meal_euro_content_description">Euro</string>
@@ -40,6 +43,9 @@
 
     <!-- UI messages -->
     <string name="feature_meal_meal_added_successfully">Repas ajouté avec succès</string>
+    <string name="feature_meal_meal_deleted_successfully">Repas supprimé avec succès</string>
+    <string name="feature_meal_delete_confirm_title">Supprimer le repas ?</string>
+    <string name="feature_meal_delete_confirm_message">Êtes-vous sûr de vouloir supprimer ce repas ? Cette action ne peut pas être annulée.</string>
     <string name="feature_meal_loading_meals">Chargement des repas…</string>
     <string name="feature_meal_no_meals_yet">Pas encore de repas</string>
     <string name="feature_meal_tap_to_add_first_meal">Appuyez sur le bouton + ci-dessous pour ajouter votre premier repas</string>

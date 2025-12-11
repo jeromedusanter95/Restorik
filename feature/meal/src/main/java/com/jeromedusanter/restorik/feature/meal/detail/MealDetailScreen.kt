@@ -22,6 +22,8 @@ import androidx.compose.material.icons.filled.Euro
 import androidx.compose.material.icons.filled.Fastfood
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -51,9 +53,11 @@ import com.jeromedusanter.restorik.feature.meal.R
 @Composable
 fun MealDetailScreen(
     modifier: Modifier = Modifier,
-    uiState: MealDetailUiState
+    uiState: MealDetailUiState,
+    onDeleteClick: () -> Unit = {}
 ) {
     var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Surface(modifier = modifier.fillMaxSize()) {
         Column(
@@ -247,6 +251,22 @@ fun MealDetailScreen(
                         }
                     }
                 }
+
+                // Delete Button
+                Button(
+                    onClick = { showDeleteDialog = true },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.feature_meal_delete_button),
+                        style = MaterialTheme.typography.labelLarge
+                    )
+                }
             }
         }
 
@@ -255,6 +275,17 @@ fun MealDetailScreen(
             PhotoViewDialog(
                 photoUri = photoUri,
                 onDismiss = { selectedPhotoUri = null }
+            )
+        }
+
+        // Delete Confirmation Dialog
+        if (showDeleteDialog) {
+            DeleteConfirmDialog(
+                onConfirm = {
+                    showDeleteDialog = false
+                    onDeleteClick()
+                },
+                onDismiss = { showDeleteDialog = false }
             )
         }
     }

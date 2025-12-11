@@ -24,6 +24,7 @@ fun NavController.navigateToMealEditor(navOptions: NavOptions? = null) =
     navigate(route = MealDestinations.MealEditor.route, navOptions)
 
 const val MEAL_SAVED_RESULT_KEY = "meal_saved_result"
+const val MEAL_DELETED_RESULT_KEY = "meal_deleted_result"
 
 fun NavGraphBuilder.mealSection(
     navController: NavHostController,
@@ -43,7 +44,14 @@ fun NavGraphBuilder.mealSection(
             route = MealDestinations.MealDetail.routeWithArgs,
             arguments = MealDestinations.MealDetail.arguments
         ) {
-            MealDetailRoute()
+            MealDetailRoute(
+                onMealDeleted = {
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set(MEAL_DELETED_RESULT_KEY, true)
+                    navController.popBackStack()
+                }
+            )
         }
         composable(route = MealDestinations.MealEditor.route) {
             MealEditorScreen(

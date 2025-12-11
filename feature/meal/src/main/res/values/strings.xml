@@ -14,6 +14,9 @@
 
     <!-- Buttons -->
     <string name="feature_meal_save_button">Save</string>
+    <string name="feature_meal_delete_button">Delete meal</string>
+    <string name="feature_meal_delete_confirm_button">Delete</string>
+    <string name="feature_meal_delete_cancel_button">Cancel</string>
 
     <!-- Content descriptions -->
     <string name="feature_meal_euro_content_description">Euro</string>
@@ -40,6 +43,9 @@
 
     <!-- UI messages -->
     <string name="feature_meal_meal_added_successfully">Meal added successfully</string>
+    <string name="feature_meal_meal_deleted_successfully">Meal deleted successfully</string>
+    <string name="feature_meal_delete_confirm_title">Delete meal?</string>
+    <string name="feature_meal_delete_confirm_message">Are you sure you want to delete this meal? This action cannot be undone.</string>
     <string name="feature_meal_loading_meals">Loading meals…</string>
     <string name="feature_meal_no_meals_yet">No meals yet</string>
     <string name="feature_meal_tap_to_add_first_meal">Tap the + button below to add your first meal</string>

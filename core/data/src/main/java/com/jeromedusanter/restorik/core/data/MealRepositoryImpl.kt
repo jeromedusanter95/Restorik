@@ -39,4 +39,8 @@ class MealRepositoryImpl @Inject constructor(
             )
         )
     }
+
+    override suspend fun deleteMeal(id: Int) {
+        mealDao.deleteById(id = id)
+    }
 }

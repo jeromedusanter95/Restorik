@@ -12,12 +12,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MealDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    mealRepository: MealRepository,
+    private val mealRepository: MealRepository,
     restaurantRepository: RestaurantRepository,
     mapper: MealDetailMapper
 ) : ViewModel() {
@@ -39,4 +40,11 @@ class MealDetailViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),
             initialValue = MealDetailUiState.EMPTY
         )
+
+    fun deleteMeal(onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            mealRepository.deleteMeal(id = mealId)
+            onSuccess()
+        }
+    }
 }

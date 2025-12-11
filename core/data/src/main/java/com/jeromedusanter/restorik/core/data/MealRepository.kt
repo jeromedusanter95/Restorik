@@ -7,4 +7,5 @@ interface MealRepository {
     fun observeMealById(id: Int): Flow<Meal>
     fun observeAll(): Flow<List<Meal>>
     suspend fun saveMealInLocalDb(meal: Meal)
+    suspend fun deleteMeal(id: Int)
 }
