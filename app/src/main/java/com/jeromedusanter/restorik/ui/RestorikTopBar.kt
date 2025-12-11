@@ -19,7 +19,8 @@ fun RestorikTopBar(
     title: String,
     shouldShowBackButton: Boolean = false,
     onBackButtonClick: () -> Unit = {},
-    onSearchButtonClick: () -> Unit = {}
+    onSearchButtonClick: () -> Unit = {},
+    actions: @Composable () -> Unit = {}
 ) {
     CenterAlignedTopAppBar(
         title = { Text(text = title) },
@@ -35,5 +36,6 @@ fun RestorikTopBar(
                 }
             }
         },
+        actions = { actions() }
     )
 }

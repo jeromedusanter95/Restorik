@@ -11,9 +11,7 @@ class RestaurantRepositoryImpl @Inject constructor(
     private val restaurantDao: RestaurantDao
 ) : RestaurantRepository {
 
-    override fun observeById(id: Int): Flow<Restaurant> {
-        TODO("Not yet implemented")
-    }
+    override fun observeById(id: Int) = restaurantDao.observeById(id).map { it.toModel() }
 
     override fun observeAll(): Flow<List<Restaurant>> {
         return restaurantDao.observeAll().map { entities ->

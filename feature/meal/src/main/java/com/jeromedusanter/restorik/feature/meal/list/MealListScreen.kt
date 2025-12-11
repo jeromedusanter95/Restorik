@@ -24,12 +24,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.feature.meal.R
+import com.jeromedusanter.restorik.feature.meal.navigation.MEAL_DELETED_RESULT_KEY
 import com.jeromedusanter.restorik.feature.meal.navigation.MEAL_SAVED_RESULT_KEY
+import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealDetail
 
 @Composable
 fun MealListScreen(
@@ -38,11 +39,10 @@ fun MealListScreen(
     snackbarHostState: SnackbarHostState,
     navController: NavHostController
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
     val mealAddedSuccessMessage = stringResource(R.string.feature_meal_meal_added_successfully)
+    val mealDeletedSuccessMessage = stringResource(R.string.feature_meal_meal_deleted_successfully)
 
-    LaunchedEffect(lifecycleOwner) {
+    LaunchedEffect(Unit) {
         val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
         savedStateHandle?.getStateFlow(MEAL_SAVED_RESULT_KEY, false)?.collect { mealSaved ->
             if (mealSaved) {
@@ -51,6 +51,19 @@ fun MealListScreen(
                     duration = SnackbarDuration.Short
                 )
                 savedStateHandle[MEAL_SAVED_RESULT_KEY] = false
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getStateFlow(MEAL_DELETED_RESULT_KEY, false)?.collect { mealDeleted ->
+            if (mealDeleted) {
+                snackbarHostState.showSnackbar(
+                    message = mealDeletedSuccessMessage,
+                    duration = SnackbarDuration.Short
+                )
+                savedStateHandle[MEAL_DELETED_RESULT_KEY] = false
             }
         }
     }
@@ -97,7 +110,7 @@ fun MealListScreen(
                         ) {
                             MealListItem(
                                 mealUiModel = meal,
-                                onClickItem = { /* TODO: Navigate to detail */ }
+                                onClickItem = { navController.navigateToMealDetail(mealId = meal.id) }
                             )
                         }
                     }

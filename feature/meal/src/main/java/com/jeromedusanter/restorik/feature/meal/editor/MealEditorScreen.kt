@@ -38,6 +38,7 @@ import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.core.camera.CapturePhotoContract
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.ui.AddPhotoButton
+import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
 import com.jeromedusanter.restorik.core.ui.RestorikRatingBar
 
@@ -124,12 +125,6 @@ fun MealEditorScreen(
                 singleLine = false,
                 label = stringResource(R.string.feature_meal_comment_label),
                 enabled = !uiState.value.isLoading,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
-                )
             )
 
             RestorikOutlineTextField(
@@ -175,7 +170,7 @@ fun MealEditorScreen(
                 Text("${stringResource(R.string.feature_meal_photos_label)} ${uiState.value.photoTitleSuffix}")
                 HorizontalPhotoList(
                     photoUriList = uiState.value.photoUriList,
-                    showAddPhotoItem = uiState.value.showAddButtonPhoto,
+                    showAddPhotoItem = uiState.value.showAddButtonPhotoItem,
                     onClickDelete = viewModel::deletePhoto,
                     onClickAdd = { captureLauncher.launch(Unit) },
                     onClickItem = { uri -> selectedPhotoUri = uri }

@@ -3,16 +3,19 @@ package com.jeromedusanter.restorik.feature.meal.editor
 import android.content.Context
 import android.database.sqlite.SQLiteException
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.feature.meal.R
+import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,14 +23,55 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MealEditorViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val mealRepository: MealRepository,
     private val restaurantRepository: RestaurantRepository,
     private val mealEditorMapper: MealEditorMapper,
     @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
 
+    private val mealId: Int = savedStateHandle[MealDestinations.MealEditor.mealIdArg] ?: -1
+    val isEditMode: Boolean = mealId != -1
+
     private val _uiState = MutableStateFlow(MealEditorUiState.EMPTY)
     val uiState: StateFlow<MealEditorUiState> = _uiState
+
+    init {
+        if (isEditMode) {
+            loadMeal()
+        }
+    }
+
+    private fun loadMeal() {
+        viewModelScope.launch {
+            try {
+                val meal = mealRepository.observeMealById(id = mealId).first()
+                val restaurant = restaurantRepository.observeById(id = meal.restaurantId).first()
+
+                val photoUriList = meal.photoList.map { Uri.parse(it) }
+                val photoCount = photoUriList.size
+                _uiState.update {
+                    it.copy(
+                        restaurantName = restaurant.name,
+                        name = meal.name,
+                        comment = meal.comment,
+                        priceAsString = meal.price.toString(),
+                        ratingOnFive = meal.ratingOnFive,
+                        photoUriList = photoUriList,
+                        showAddButtonPhoto = photoUriList.isEmpty(),
+                        showAddButtonPhotoItem = photoCount < MAX_PHOTO_COUNT,
+                        photoTitleSuffix = "($photoCount/$MAX_PHOTO_COUNT)"
+                    )
+                }
+            } catch (e: Exception) {
+                _uiState.update {
+                    it.copy(
+                        errorMessage = context.getString(R.string.feature_meal_error_unknown)
+                    )
+                }
+            }
+        }
+    }
 
     fun updateRestaurantName(restaurantName: String) {
         _uiState.value = _uiState.value.copy(restaurantName = restaurantName)
@@ -103,13 +147,17 @@ class MealEditorViewModel @Inject constructor(
                         restaurant = restaurantRepository.saveByNameAndGetLocal(uiState.value.restaurantName)
                     }
 
-                    // Save meal
-                    mealRepository.saveMealInLocalDb(
-                        mealEditorMapper.toModel(
-                            mealEditorUiState = uiState.value,
-                            restaurantId = restaurant.id,
-                        )
+                    // Save meal (with existing ID if editing)
+                    val meal = mealEditorMapper.toModel(
+                        mealEditorUiState = uiState.value,
+                        restaurantId = restaurant.id,
                     )
+                    val finalMeal = if (isEditMode) {
+                        meal.copy(id = mealId)
+                    } else {
+                        meal
+                    }
+                    mealRepository.saveMealInLocalDb(meal = finalMeal)
                 }
 
                 // Success - reset loading state
