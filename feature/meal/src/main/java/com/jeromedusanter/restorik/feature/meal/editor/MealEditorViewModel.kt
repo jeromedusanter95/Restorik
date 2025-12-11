@@ -48,21 +48,11 @@ class MealEditorViewModel @Inject constructor(
                 val meal = mealRepository.observeMealById(id = mealId).first()
                 val restaurant = restaurantRepository.observeById(id = meal.restaurantId).first()
 
-                val photoUriList = meal.photoList.map { Uri.parse(it) }
-                val photoCount = photoUriList.size
-                _uiState.update {
-                    it.copy(
-                        restaurantName = restaurant.name,
-                        name = meal.name,
-                        comment = meal.comment,
-                        priceAsString = meal.price.toString(),
-                        ratingOnFive = meal.ratingOnFive,
-                        photoUriList = photoUriList,
-                        showAddButtonPhoto = photoUriList.isEmpty(),
-                        showAddButtonPhotoItem = photoCount < MAX_PHOTO_COUNT,
-                        photoTitleSuffix = "($photoCount/$MAX_PHOTO_COUNT)"
-                    )
-                }
+                _uiState.value = mealEditorMapper.toUiState(
+                    meal = meal,
+                    restaurantName = restaurant.name,
+                    maxPhotoCount = MAX_PHOTO_COUNT
+                )
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
@@ -75,6 +65,32 @@ class MealEditorViewModel @Inject constructor(
 
     fun updateRestaurantName(restaurantName: String) {
         _uiState.value = _uiState.value.copy(restaurantName = restaurantName)
+        searchRestaurants(query = restaurantName)
+    }
+
+    private fun searchRestaurants(query: String) {
+        viewModelScope.launch {
+            try {
+                val suggestionList = if (query.length >= 2) {
+                    restaurantRepository.searchByNamePrefix(query = query)
+                        .map { mealEditorMapper.toRestaurantSuggestion(restaurant = it) }
+                } else {
+                    emptyList()
+                }
+                _uiState.update { it.copy(restaurantSuggestionList = suggestionList) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(restaurantSuggestionList = emptyList()) }
+            }
+        }
+    }
+
+    fun selectRestaurantSuggestion(suggestion: RestaurantSuggestion) {
+        _uiState.update {
+            it.copy(
+                restaurantName = suggestion.name,
+                restaurantSuggestionList = emptyList()
+            )
+        }
     }
 
     fun updateMealName(name: String) {
@@ -251,6 +267,14 @@ class MealEditorViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(errorMessage = null) }
+    }
+
+    fun showPhotoSelectionBottomSheet() {
+        _uiState.update { it.copy(showPhotoSelectionBottomSheet = true) }
+    }
+
+    fun hidePhotoSelectionBottomSheet() {
+        _uiState.update { it.copy(showPhotoSelectionBottomSheet = false) }
     }
 
     companion object {

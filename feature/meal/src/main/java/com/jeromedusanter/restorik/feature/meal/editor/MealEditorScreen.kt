@@ -2,6 +2,9 @@ package com.jeromedusanter.restorik.feature.meal.editor
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,12 +14,20 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Euro
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -42,6 +53,7 @@ import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
 import com.jeromedusanter.restorik.core.ui.RestorikRatingBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealEditorScreen(
     modifier: Modifier = Modifier,
@@ -57,9 +69,19 @@ fun MealEditorScreen(
 
     val captureLauncher = rememberLauncherForActivityResult(CapturePhotoContract()) { uri ->
         if (uri != null) {
-            viewModel.addPhoto(uri)
+            viewModel.addPhoto(uri = uri)
         }
     }
+
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) { uri ->
+        if (uri != null) {
+            viewModel.addPhoto(uri = uri)
+        }
+    }
+
+    val bottomSheetState = rememberModalBottomSheetState()
 
     // Show error snackbar when error message is present
     LaunchedEffect(uiState.value.errorMessage) {
@@ -98,25 +120,59 @@ fun MealEditorScreen(
                 )
             )
 
-            RestorikOutlineTextField(
-                modifier = modifier.fillMaxWidth(),
-                value = uiState.value.restaurantName,
-                onValueChange = { newValue ->
-                    viewModel.updateRestaurantName(newValue)
-                    viewModel.clearFieldError(MealEditorField.RESTAURANT_NAME)
-                },
-                label = stringResource(R.string.feature_meal_restaurant_name_label),
-                enabled = !uiState.value.isLoading,
-                isRequired = true,
-                isError = uiState.value.fieldErrors.restaurantNameError != null,
-                supportingText = uiState.value.fieldErrors.restaurantNameError,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            Column(modifier = modifier.fillMaxWidth()) {
+                RestorikOutlineTextField(
+                    modifier = Modifier.fillMaxWidth(),
+                    value = uiState.value.restaurantName,
+                    onValueChange = { newValue ->
+                        viewModel.updateRestaurantName(restaurantName = newValue)
+                        viewModel.clearFieldError(field = MealEditorField.RESTAURANT_NAME)
+                    },
+                    label = stringResource(R.string.feature_meal_restaurant_name_label),
+                    enabled = !uiState.value.isLoading,
+                    isRequired = true,
+                    isError = uiState.value.fieldErrors.restaurantNameError != null,
+                    supportingText = uiState.value.fieldErrors.restaurantNameError,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                    )
                 )
-            )
+
+                // Restaurant suggestions dropdown
+                if (uiState.value.restaurantSuggestionList.isNotEmpty()) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Column {
+                            uiState.value.restaurantSuggestionList.forEachIndexed { index, restaurant ->
+                                ListItem(
+                                    headlineContent = { Text(text = restaurant.name) },
+                                    leadingContent = {
+                                        Icon(
+                                            imageVector = Icons.Default.Restaurant,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    modifier = Modifier.clickable {
+                                        viewModel.selectRestaurantSuggestion(suggestion = restaurant)
+                                    }
+                                )
+                                if (index < uiState.value.restaurantSuggestionList.size - 1) {
+                                    HorizontalDivider()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             RestorikOutlineTextField(
                 modifier = modifier.fillMaxWidth(),
@@ -164,7 +220,7 @@ fun MealEditorScreen(
 
             if (uiState.value.showAddButtonPhoto) {
                 AddPhotoButton(
-                    onClick = { captureLauncher.launch(Unit) }
+                    onClick = viewModel::showPhotoSelectionBottomSheet
                 )
             } else {
                 Text("${stringResource(R.string.feature_meal_photos_label)} ${uiState.value.photoTitleSuffix}")
@@ -172,7 +228,7 @@ fun MealEditorScreen(
                     photoUriList = uiState.value.photoUriList,
                     showAddPhotoItem = uiState.value.showAddButtonPhotoItem,
                     onClickDelete = viewModel::deletePhoto,
-                    onClickAdd = { captureLauncher.launch(Unit) },
+                    onClickAdd = viewModel::showPhotoSelectionBottomSheet,
                     onClickItem = { uri -> selectedPhotoUri = uri }
                 )
                 selectedPhotoUri?.let { photoUri ->
@@ -181,6 +237,19 @@ fun MealEditorScreen(
                         onDismiss = { selectedPhotoUri = null }
                     )
                 }
+            }
+
+            if (uiState.value.showPhotoSelectionBottomSheet) {
+                PhotoSelectionBottomSheet(
+                    onDismiss = viewModel::hidePhotoSelectionBottomSheet,
+                    onTakePhoto = { captureLauncher.launch(Unit) },
+                    onChooseFromGallery = {
+                        galleryLauncher.launch(
+                            PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
+                    sheetState = bottomSheetState
+                )
             }
 
             Button(

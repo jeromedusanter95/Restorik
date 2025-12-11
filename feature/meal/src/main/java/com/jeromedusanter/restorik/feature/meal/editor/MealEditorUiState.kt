@@ -16,8 +16,10 @@ data class MealEditorUiState(
     val showAddButtonPhoto: Boolean,
     val showAddButtonPhotoItem: Boolean,
     val photoTitleSuffix: String,
+    val showPhotoSelectionBottomSheet: Boolean,
     val errorMessage: String? = null,
-    val fieldErrors: FieldErrors = FieldErrors()
+    val fieldErrors: FieldErrors = FieldErrors(),
+    val restaurantSuggestionList: List<RestaurantSuggestion> = emptyList()
 ) {
     companion object {
         val EMPTY = MealEditorUiState(
@@ -31,7 +33,8 @@ data class MealEditorUiState(
             isLoading = false,
             showAddButtonPhoto = true,
             showAddButtonPhotoItem = false,
-            photoTitleSuffix = ""
+            photoTitleSuffix = "",
+            showPhotoSelectionBottomSheet = false
         )
     }
 }
@@ -50,3 +53,9 @@ enum class MealEditorField {
     MEAL_NAME,
     PRICE
 }
+
+@Immutable
+data class RestaurantSuggestion(
+    val id: Int,
+    val name: String
+)
