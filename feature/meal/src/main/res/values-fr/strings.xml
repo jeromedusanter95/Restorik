@@ -35,6 +35,7 @@
     <string name="feature_meal_error_price_required">Le prix est requis</string>
     <string name="feature_meal_error_invalid_price_format">Format de prix invalide</string>
     <string name="feature_meal_error_price_negative">Le prix ne peut pas être négatif</string>
+    <string name="feature_meal_error_rating_required">La note est requise</string>
 
     <!-- Database errors -->
     <string name="feature_meal_error_db_no_space">Espace de stockage insuffisant</string>
@@ -65,4 +66,17 @@
     <string name="feature_meal_date_category_this_week">Cette semaine</string>
     <string name="feature_meal_date_category_this_month">Ce mois-ci</string>
     <string name="feature_meal_date_category_older">Plus ancien</string>
+
+    <!-- Filter and sort -->
+    <string name="feature_meal_filter_dialog_title">Trier les repas</string>
+    <string name="feature_meal_filter_sort_by_label">Trier par</string>
+    <string name="feature_meal_filter_sort_by_date">Date</string>
+    <string name="feature_meal_filter_sort_by_restaurant">Restaurant</string>
+    <string name="feature_meal_filter_sort_by_rating">Note</string>
+    <string name="feature_meal_filter_order_label">Ordre</string>
+    <string name="feature_meal_filter_order_ascending">Croissant</string>
+    <string name="feature_meal_filter_order_descending">Décroissant</string>
+    <string name="feature_meal_filter_apply_button">Appliquer</string>
+    <string name="feature_meal_filter_cancel_button">Annuler</string>
+    <string name="feature_meal_filter_icon_content_description">Filtrer et trier</string>
 </resources>

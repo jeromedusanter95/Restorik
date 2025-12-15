@@ -235,10 +235,16 @@ class MealEditorViewModel @Inject constructor(
             else -> null
         }
 
+        val ratingError = when {
+            state.ratingOnFive == 0 -> context.getString(R.string.feature_meal_error_rating_required)
+            else -> null
+        }
+
         return FieldErrors(
             restaurantNameError = restaurantNameError,
             mealNameError = mealNameError,
-            priceError = priceError
+            priceError = priceError,
+            ratingError = ratingError
         )
     }
 
@@ -248,6 +254,7 @@ class MealEditorViewModel @Inject constructor(
                 MealEditorField.RESTAURANT_NAME -> it.fieldErrors.copy(restaurantNameError = null)
                 MealEditorField.MEAL_NAME -> it.fieldErrors.copy(mealNameError = null)
                 MealEditorField.PRICE -> it.fieldErrors.copy(priceError = null)
+                MealEditorField.RATING -> it.fieldErrors.copy(ratingError = null)
             }
             it.copy(fieldErrors = newFieldErrors)
         }

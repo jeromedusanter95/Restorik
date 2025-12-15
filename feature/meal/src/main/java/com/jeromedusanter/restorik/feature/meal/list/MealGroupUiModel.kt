@@ -5,5 +5,6 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class MealGroupUiModel(
     val title: String,
-    val mealList: List<MealUiModel>
+    val mealList: List<MealUiModel>,
+    val ratingValue: Int? = null
 )

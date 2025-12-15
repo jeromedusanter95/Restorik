@@ -43,15 +43,17 @@ data class MealEditorUiState(
 data class FieldErrors(
     val restaurantNameError: String? = null,
     val mealNameError: String? = null,
-    val priceError: String? = null
+    val priceError: String? = null,
+    val ratingError: String? = null
 ) {
-    fun hasErrors(): Boolean = restaurantNameError != null || mealNameError != null || priceError != null
+    fun hasErrors(): Boolean = restaurantNameError != null || mealNameError != null || priceError != null || ratingError != null
 }
 
 enum class MealEditorField {
     RESTAURANT_NAME,
     MEAL_NAME,
-    PRICE
+    PRICE,
+    RATING
 }
 
 @Immutable

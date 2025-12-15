@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +50,18 @@ fun RestorikApp(modifier: Modifier = Modifier) {
                 onBackButtonClick = { navController.popBackStack() },
                 onSearchButtonClick = { TODO() },
                 actions = {
+                    // Show filter icon on meal list screen
+                    if (currentRoute == MealDestinations.MealList.route) {
+                        IconButton(onClick = {
+                            // Trigger filter dialog via saved state handle
+                            navController.currentBackStackEntry?.savedStateHandle?.set("show_filter_dialog", true)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.FilterList,
+                                contentDescription = stringResource(com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_filter_icon_content_description)
+                            )
+                        }
+                    }
                     // Show edit icon only on meal detail screen
                     if (currentRoute == MealDestinations.MealDetail.routeWithArgs) {
                         val mealId = navBackStackEntry?.arguments?.getInt(MealDestinations.MealDetail.mealIdArg)
