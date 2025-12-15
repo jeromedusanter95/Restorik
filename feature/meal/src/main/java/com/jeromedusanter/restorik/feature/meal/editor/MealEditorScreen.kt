@@ -210,12 +210,32 @@ fun MealEditorScreen(
                 supportingText = uiState.value.fieldErrors.priceError
             )
 
-            Text(stringResource(R.string.feature_meal_rating_label))
-            RestorikRatingBar(
-                modifier = modifier.align(alignment = Alignment.CenterHorizontally),
-                value = uiState.value.ratingOnFive,
-                onValueChanged = viewModel::updateRating
-            )
+            Column(modifier = modifier.fillMaxWidth()) {
+                Text(
+                    text = stringResource(R.string.feature_meal_rating_label),
+                    color = if (uiState.value.fieldErrors.ratingError != null) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    }
+                )
+                RestorikRatingBar(
+                    modifier = Modifier.align(alignment = Alignment.CenterHorizontally),
+                    value = uiState.value.ratingOnFive,
+                    onValueChanged = { rating ->
+                        viewModel.updateRating(ratingOnFive = rating)
+                        viewModel.clearFieldError(field = MealEditorField.RATING)
+                    }
+                )
+                uiState.value.fieldErrors.ratingError?.let { error ->
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(start = 16.dp, top = 4.dp)
+                    )
+                }
+            }
 
 
             if (uiState.value.showAddButtonPhoto) {

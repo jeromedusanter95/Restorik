@@ -5,11 +5,16 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
@@ -18,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -68,6 +74,16 @@ fun MealListScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getStateFlow("show_filter_dialog", false)?.collect { showDialog ->
+            if (showDialog) {
+                viewModel.showFilterDialog()
+                savedStateHandle["show_filter_dialog"] = false
+            }
+        }
+    }
+
     val uiState = viewModel.uiState.collectAsState()
 
     when {
@@ -86,16 +102,40 @@ fun MealListScreen(
                 verticalArrangement = Arrangement.spacedBy(space = 8.dp)
             ) {
                 uiState.value.groupedMealList.forEach { group ->
-                    item(key = "header_${group.title}") {
-                        Text(
-                            text = group.title,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 8.dp, bottom = 4.dp)
-                        )
+                    item(key = "header_${group.title}_${group.ratingValue}") {
+                        if (group.ratingValue != null) {
+                            // Display rating with star icon
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp, bottom = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "${group.ratingValue}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        } else {
+                            // Display text for date/restaurant groups
+                            Text(
+                                text = group.title,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp, bottom = 4.dp)
+                            )
+                        }
                     }
 
                     itemsIndexed(
@@ -117,6 +157,15 @@ fun MealListScreen(
                 }
             }
         }
+    }
+
+    if (uiState.value.showFilterDialog) {
+        FilterSortDialog(
+            currentSortMode = uiState.value.sortMode,
+            currentSortOrder = uiState.value.sortOrder,
+            onDismiss = viewModel::hideFilterDialog,
+            onApply = viewModel::applySortPreferences
+        )
     }
 }
 
