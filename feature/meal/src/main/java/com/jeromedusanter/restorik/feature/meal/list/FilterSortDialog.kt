@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.list
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.jeromedusanter.restorik.feature.meal.R
 
@@ -36,9 +38,14 @@ fun FilterSortDialog(
     var selectedSortOrder by remember { mutableStateOf(currentSortOrder) }
 
     AlertDialog(
+        containerColor = MaterialTheme.colorScheme.background,
         onDismissRequest = onDismiss,
         title = {
-            Text(text = stringResource(R.string.feature_meal_filter_dialog_title))
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.feature_meal_filter_dialog_title),
+                textAlign = TextAlign.Center
+            )
         },
         text = {
             Column {

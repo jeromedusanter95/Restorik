@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen titles -->
+    <string name="feature_profile_title">Profile</string>
+    <string name="feature_profile_month_selector_title">Select a month</string>
+
+    <!-- Months -->
+    <string name="feature_profile_month_january">January</string>
+    <string name="feature_profile_month_february">February</string>
+    <string name="feature_profile_month_march">March</string>
+    <string name="feature_profile_month_april">April</string>
+    <string name="feature_profile_month_may">May</string>
+    <string name="feature_profile_month_june">June</string>
+    <string name="feature_profile_month_july">July</string>
+    <string name="feature_profile_month_august">August</string>
+    <string name="feature_profile_month_september">September</string>
+    <string name="feature_profile_month_october">October</string>
+    <string name="feature_profile_month_november">November</string>
+    <string name="feature_profile_month_december">December</string>
+
+    <!-- Balance -->
+    <string name="feature_profile_monthly_balance">Total spent this month</string>
+    <string name="feature_profile_no_data">No data for this month</string>
+    <string name="feature_profile_vs_previous_month">vs previous month</string>
+
+    <!-- Statistics -->
+    <string name="feature_profile_number_of_meals">Number of meals</string>
+    <string name="feature_profile_average_rating">Average rating</string>
+    <string name="feature_profile_average_meal_spending">Average meal spending</string>
+    <string name="feature_profile_number_of_restaurants">Number of restaurants</string>
+    <string name="feature_profile_new_restaurants_tried">New restaurants tried</string>
+    <string name="feature_profile_top_restaurants">Top restaurants</string>
+</resources>
