@@ -1,4 +1,26 @@
 # Restorik
+<table>
+  <tr>
+    <td><img width="300" alt="image1" src="https://github.com/user-attachments/assets/f463af18-c27e-499b-a0d2-8e45d53d464c" /></td>
+    <td><img width="300" alt="image1bis" src="https://github.com/user-attachments/assets/be2b3e89-85ba-4a5c-9cd0-07593dcfaa15" /></td>
+    <td><img width="300" alt="image1 2-bis" src="https://github.com/user-attachments/assets/86c60318-d19b-496b-b250-4619df37696e" /></td>
+  </tr>
+  <tr>
+    <td><img width="300" alt="image2" src="https://github.com/user-attachments/assets/7f548d10-88e8-4240-8c3c-4bad10151d1d" /></td>
+    <td><img width="300" alt="image3" src="https://github.com/user-attachments/assets/43329699-4ccb-4283-b402-e889b0ae12d0" /></td>
+    <td><img width="300" alt="image4" src="https://github.com/user-attachments/assets/30a7a5d7-b7aa-479b-9da2-4568b5dc9fcf" /></td>
+  </tr>
+  <tr>
+    <td><img width="300" alt="image5" src="https://github.com/user-attachments/assets/46aa5148-f903-4964-b137-718680aa8405" /></td>
+    <td><img width="300" alt="image6" src="https://github.com/user-attachments/assets/a854b0cf-0397-4e9d-bfa2-6e763aa7d3fc" /></td>
+    <td><img width="300" alt="image7" src="https://github.com/user-attachments/assets/c8ac5121-3505-4279-8a62-0f5d0196d266" /></td>
+  </tr>
+  <tr>
+    <td><img width="300" alt="image8" src="https://github.com/user-attachments/assets/cde595e4-4bd0-418d-b41c-19bb93cc3b10" /></td>
+    <td><img width="300" alt="image9" src="https://github.com/user-attachments/assets/f7d8958b-f659-4277-a396-6b877f1eb78a" /></td>
+    <td></td>
+  </tr>
+</table>
 
 Restorik is an Android application designed to help you track and manage your restaurant dining experiences. Whether you're a food enthusiast, a restaurant explorer, or simply want to keep a record of your meals, Restorik provides an intuitive way to document every dining moment.
 
