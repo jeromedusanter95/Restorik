@@ -32,6 +32,8 @@ fun NavController.navigateToMealEditor(mealId: Int? = null, navOptions: NavOptio
 const val MEAL_SAVED_RESULT_KEY = "meal_saved_result"
 const val MEAL_EDITED_RESULT_KEY = "meal_edited_result"
 const val MEAL_DELETED_RESULT_KEY = "meal_deleted_result"
+const val SHOW_FILTER_DIALOG_KEY = "show_filter_dialog"
+const val FILTER_RESTAURANT_ID_KEY = "filter_restaurant_id"
 
 fun NavGraphBuilder.mealSection(
     navController: NavHostController,

@@ -8,7 +8,8 @@ data class MealListUiState(
     val isLoading: Boolean,
     val sortMode: SortMode,
     val sortOrder: SortOrder,
-    val showFilterDialog: Boolean
+    val showFilterDialog: Boolean,
+    val filterRestaurantName: String? = null,
 ) {
     companion object {
         val EMPTY = MealListUiState(
@@ -16,7 +17,8 @@ data class MealListUiState(
             isLoading = true,
             sortMode = SortMode.DATE,
             sortOrder = SortOrder.DESCENDING,
-            showFilterDialog = false
+            showFilterDialog = false,
+            filterRestaurantName = null,
         )
     }
 }

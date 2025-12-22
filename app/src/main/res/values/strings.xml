@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Restorik</string>
+    <string name="search_placeholder">Search for meals or restaurants</string>
+    <string name="clear_content_description">Clear</string>
+    <string name="back_content_description">Back</string>
+    <string name="search_content_description">Search</string>
 </resources>

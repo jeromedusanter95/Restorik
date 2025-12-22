@@ -32,4 +32,14 @@ interface RestaurantDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(meals: List<RestaurantEntity>)
+
+    @Query(
+        """
+        SELECT * FROM restaurants
+        WHERE name LIKE :query || '%'
+        OR name LIKE '% ' || :query || '%'
+        ORDER BY name ASC
+        """
+    )
+    suspend fun searchRestaurants(query: String): List<RestaurantEntity>
 }

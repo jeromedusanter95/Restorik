@@ -21,5 +21,7 @@ internal object DatabaseModule {
         context,
         RestorikDatabase::class.java,
         "restorik-database",
-    ).build()
+    )
+        .fallbackToDestructiveMigration()
+        .build()
 }

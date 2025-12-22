@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Restorik</string>
+    <string name="search_placeholder">Rechercher des plats ou restaurants</string>
+    <string name="clear_content_description">Effacer</string>
+    <string name="back_content_description">Retour</string>
+    <string name="search_content_description">Rechercher</string>
+</resources>

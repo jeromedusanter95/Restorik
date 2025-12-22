@@ -1,16 +1,57 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+
+# Files for the ART/Dalvik VM
+*.dex
+
+# Generated files
+bin/
+gen/
+out/
+release/
+
+# Gradle files
+.gradle/
+build/
+*/build/
+**/build/
 /captures
+
+# KSP Generated files
+.ksp/
+*/generated/
+**/generated/
+**/build/generated/
+**/build/kspCaches/
+
+# Room schema exports in build directories (but keep schema exports in src/)
+**/build/**/schemas/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# IntelliJ IDEA
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Keystore files
+*.jks
+*.keystore
+
+# External native build folder
 .externalNativeBuild
 .cxx
-local.properties
+
+# Android Profiling
+*.hprof
+
+# macOS
+.DS_Store
+
+# Claude settings
 /.claude/settings.local.json

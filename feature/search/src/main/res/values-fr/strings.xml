@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_search_placeholder">Rechercher des plats ou des restaurants</string>
+    <string name="feature_search_back">Retour</string>
+    <string name="feature_search_clear">Effacer la recherche</string>
+    <string name="feature_search_recent_searches">Recherches récentes</string>
+    <string name="feature_search_delete_recent_search">Supprimer la recherche récente</string>
+    <string name="feature_search_no_recent_searches">Aucune recherche récente</string>
+    <string name="feature_search_no_recent_searches_description">Vos recherches récentes apparaîtront ici</string>
+    <string name="feature_search_no_results">Aucun résultat trouvé</string>
+    <string name="feature_search_no_results_for">Aucun résultat trouvé pour « %1$s »</string>
+    <string name="feature_search_minimum_characters">Tapez au moins 2 caractères pour rechercher</string>
+</resources>
