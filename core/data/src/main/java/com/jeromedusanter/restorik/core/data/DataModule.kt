@@ -14,4 +14,7 @@ abstract class DataModule {
 
     @Binds
     internal abstract fun bindsRestaurantRepository(repository: RestaurantRepositoryImpl): RestaurantRepository
+
+    @Binds
+    internal abstract fun bindsSearchRepository(repository: SearchRepositoryImpl): SearchRepository
 }

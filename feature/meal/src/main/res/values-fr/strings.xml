@@ -79,4 +79,5 @@
     <string name="feature_meal_filter_apply_button">Appliquer</string>
     <string name="feature_meal_filter_cancel_button">Annuler</string>
     <string name="feature_meal_filter_icon_content_description">Filtrer et trier</string>
+    <string name="feature_meal_clear_filter">Effacer le filtre</string>
 </resources>

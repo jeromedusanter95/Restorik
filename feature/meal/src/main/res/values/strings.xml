@@ -79,4 +79,5 @@
     <string name="feature_meal_filter_apply_button">Apply</string>
     <string name="feature_meal_filter_cancel_button">Cancel</string>
     <string name="feature_meal_filter_icon_content_description">Filter and sort</string>
+    <string name="feature_meal_clear_filter">Clear filter</string>
 </resources>

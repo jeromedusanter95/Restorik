@@ -24,4 +24,22 @@ interface MealDao {
 
     @Query("DELETE FROM meals WHERE id = :id")
     suspend fun deleteById(id: Int)
+
+    @Query(
+        """
+        SELECT meals.* FROM meals
+        LEFT JOIN restaurants ON meals.restaurant_id = restaurants.id
+        WHERE meals.name LIKE :query || '%'
+        OR meals.name LIKE '% ' || :query || '%'
+        OR meals.comment LIKE :query || '%'
+        OR meals.comment LIKE '% ' || :query || '%'
+        OR restaurants.name LIKE :query || '%'
+        OR restaurants.name LIKE '% ' || :query || '%'
+        ORDER BY meals.date_time DESC
+        """
+    )
+    suspend fun searchMeals(query: String): List<MealEntity>
+
+    @Query("SELECT * FROM meals WHERE restaurant_id = :restaurantId ORDER BY date_time DESC")
+    fun observeByRestaurantId(restaurantId: Int): Flow<List<MealEntity>>
 }
