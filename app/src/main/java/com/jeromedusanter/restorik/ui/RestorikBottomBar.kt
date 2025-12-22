@@ -28,11 +28,11 @@ fun RestorikBottomBar(
             icon = {
                 Icon(
                     imageVector = Icons.Default.Restaurant,
-                    contentDescription = stringResource(id = MealR.string.feature_meal_list_title)
+                    contentDescription = stringResource(id = MealR.string.feature_meal_list_bottom_bar_title)
                 )
             },
             label = {
-                Text(text = stringResource(id = MealR.string.feature_meal_list_title))
+                Text(text = stringResource(id = MealR.string.feature_meal_list_bottom_bar_title))
             }
         )
         NavigationBarItem(

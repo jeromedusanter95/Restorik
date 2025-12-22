@@ -19,6 +19,15 @@
     <string name="feature_profile_month_december">December</string>
 
     <!-- Balance -->
-    <string name="feature_profile_monthly_balance">Monthly balance</string>
+    <string name="feature_profile_monthly_balance">Total spent this month</string>
     <string name="feature_profile_no_data">No data for this month</string>
+    <string name="feature_profile_vs_previous_month">vs previous month</string>
+
+    <!-- Statistics -->
+    <string name="feature_profile_number_of_meals">Number of meals</string>
+    <string name="feature_profile_average_rating">Average rating</string>
+    <string name="feature_profile_average_meal_spending">Average meal spending</string>
+    <string name="feature_profile_number_of_restaurants">Number of restaurants</string>
+    <string name="feature_profile_new_restaurants_tried">New restaurants tried</string>
+    <string name="feature_profile_top_restaurants">Top restaurants</string>
 </resources>

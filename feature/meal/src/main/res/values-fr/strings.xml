@@ -2,6 +2,7 @@
 <resources>
     <!-- Screen titles -->
     <string name="feature_meal_list_title">Restorik</string>
+    <string name="feature_meal_list_bottom_bar_title">Repas</string>
     <string name="feature_meal_editor_title">Ajouter un repas</string>
     <string name="feature_meal_editor_edit_title">Modifier le repas</string>
     <string name="feature_meal_detail_title">Détail du repas</string>
