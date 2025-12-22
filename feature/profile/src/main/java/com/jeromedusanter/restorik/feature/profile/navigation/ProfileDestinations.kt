@@ -7,7 +7,12 @@ sealed class ProfileDestinations {
     abstract val labelResId: Int
 
     data object Profile : ProfileDestinations() {
-        override val route = "profile"
+        override val route = "profile_screen"
         override val labelResId = R.string.feature_profile_title
+    }
+
+    data object MonthSelector : ProfileDestinations() {
+        override val route = "month_selector"
+        override val labelResId = R.string.feature_profile_month_selector_title
     }
 }

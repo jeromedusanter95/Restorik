@@ -69,6 +69,8 @@ fun RestorikApp(modifier: Modifier = Modifier) {
             com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_editor_edit_title
         currentRoute == ProfileDestinations.Profile.route ->
             com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_title
+        currentRoute == ProfileDestinations.MonthSelector.route ->
+            com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_month_selector_title
         else -> MealDestinations.getLabelByResId(currentRoute)
     }
 

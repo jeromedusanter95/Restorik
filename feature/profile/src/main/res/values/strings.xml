@@ -2,4 +2,23 @@
 <resources>
     <!-- Screen titles -->
     <string name="feature_profile_title">Profile</string>
+    <string name="feature_profile_month_selector_title">Select a month</string>
+
+    <!-- Months -->
+    <string name="feature_profile_month_january">January</string>
+    <string name="feature_profile_month_february">February</string>
+    <string name="feature_profile_month_march">March</string>
+    <string name="feature_profile_month_april">April</string>
+    <string name="feature_profile_month_may">May</string>
+    <string name="feature_profile_month_june">June</string>
+    <string name="feature_profile_month_july">July</string>
+    <string name="feature_profile_month_august">August</string>
+    <string name="feature_profile_month_september">September</string>
+    <string name="feature_profile_month_october">October</string>
+    <string name="feature_profile_month_november">November</string>
+    <string name="feature_profile_month_december">December</string>
+
+    <!-- Balance -->
+    <string name="feature_profile_monthly_balance">Monthly balance</string>
+    <string name="feature_profile_no_data">No data for this month</string>
 </resources>

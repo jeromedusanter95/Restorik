@@ -9,7 +9,7 @@ import com.jeromedusanter.restorik.feature.meal.navigation.FILTER_RESTAURANT_ID_
 import com.jeromedusanter.restorik.feature.meal.navigation.mealBaseRoute
 import com.jeromedusanter.restorik.feature.meal.navigation.mealSection
 import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealDetail
-import com.jeromedusanter.restorik.feature.profile.navigation.profileScreen
+import com.jeromedusanter.restorik.feature.profile.navigation.profileSection
 import com.jeromedusanter.restorik.feature.search.navigation.searchScreen
 
 @Composable
@@ -45,6 +45,6 @@ fun RestorikNavHost(
             onRequestSearchFocus = onRequestSearchFocus
         )
 
-        profileScreen()
+        profileSection(navController = navController)
     }
 }
