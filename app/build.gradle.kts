@@ -43,6 +43,7 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.feature.meal)
     implementation(projects.feature.search)
+    implementation(projects.feature.profile)
     implementation(projects.core.camera)
 
     implementation(libs.androidx.activity.compose)

@@ -22,8 +22,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.NavOptions
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
+import com.jeromedusanter.restorik.feature.meal.navigation.mealBaseRoute
+import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMeal
 import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealEditor
+import com.jeromedusanter.restorik.feature.profile.navigation.ProfileDestinations
+import com.jeromedusanter.restorik.feature.profile.navigation.navigateToProfile
 import com.jeromedusanter.restorik.feature.search.navigation.SEARCH_ROUTE
 import com.jeromedusanter.restorik.feature.search.navigation.navigateToSearch
 import com.jeromedusanter.restorik.navigation.RestorikNavHost
@@ -62,6 +67,8 @@ fun RestorikApp(modifier: Modifier = Modifier) {
     val titleResId = when {
         currentRoute?.startsWith(MealDestinations.MealEditor.route) == true && isEditMode ->
             com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_editor_edit_title
+        currentRoute == ProfileDestinations.Profile.route ->
+            com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_title
         else -> MealDestinations.getLabelByResId(currentRoute)
     }
 
@@ -71,7 +78,7 @@ fun RestorikApp(modifier: Modifier = Modifier) {
             RestorikTopBar(
                 modifier = modifier,
                 title = stringResource(titleResId),
-                shouldShowBackButton = currentRoute != MealDestinations.MealList.route && !isSearchMode,
+                shouldShowBackButton = currentRoute != MealDestinations.MealList.route && currentRoute != ProfileDestinations.Profile.route && !isSearchMode,
                 onBackButtonClick = { navController.popBackStack() },
                 onSearchButtonClick = { navController.navigateToSearch() },
                 isSearchMode = isSearchMode,
@@ -114,7 +121,29 @@ fun RestorikApp(modifier: Modifier = Modifier) {
                 }
             )
         },
-        bottomBar = {},
+        bottomBar = {
+            if (currentRoute == MealDestinations.MealList.route || currentRoute == ProfileDestinations.Profile.route) {
+                RestorikBottomBar(
+                    currentRoute = currentRoute,
+                    onMealClick = {
+                        navController.navigateToMeal(
+                            navOptions = NavOptions.Builder()
+                                .setPopUpTo(route = mealBaseRoute, inclusive = false)
+                                .setLaunchSingleTop(singleTop = true)
+                                .build()
+                        )
+                    },
+                    onProfileClick = {
+                        navController.navigateToProfile(
+                            navOptions = NavOptions.Builder()
+                                .setPopUpTo(route = mealBaseRoute, inclusive = false)
+                                .setLaunchSingleTop(singleTop = true)
+                                .build()
+                        )
+                    }
+                )
+            }
+        },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
         },

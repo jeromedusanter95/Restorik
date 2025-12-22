@@ -9,6 +9,7 @@ import com.jeromedusanter.restorik.feature.meal.navigation.FILTER_RESTAURANT_ID_
 import com.jeromedusanter.restorik.feature.meal.navigation.mealBaseRoute
 import com.jeromedusanter.restorik.feature.meal.navigation.mealSection
 import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealDetail
+import com.jeromedusanter.restorik.feature.profile.navigation.profileScreen
 import com.jeromedusanter.restorik.feature.search.navigation.searchScreen
 
 @Composable
@@ -37,12 +38,13 @@ fun RestorikNavHost(
             },
             onRestaurantClick = { restaurantId ->
                 navController.popBackStack()
-                // TODO: Navigate to meal list filtered by restaurant
                 navController.currentBackStackEntry?.savedStateHandle?.set(FILTER_RESTAURANT_ID_KEY, restaurantId)
             },
             onSearchQueryChanged = onSearchQueryChanged,
             onProvideSearchCallbacks = onProvideSearchCallbacks,
             onRequestSearchFocus = onRequestSearchFocus
         )
+
+        profileScreen()
     }
 }
