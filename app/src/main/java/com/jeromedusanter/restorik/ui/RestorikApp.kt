@@ -67,6 +67,8 @@ fun RestorikApp(modifier: Modifier = Modifier) {
     val titleResId = when {
         currentRoute?.startsWith(MealDestinations.MealEditor.route) == true && isEditMode ->
             com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_editor_edit_title
+        currentRoute?.startsWith(MealDestinations.MealEditor.route) == true && !isEditMode ->
+            com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_editor_title
         currentRoute == ProfileDestinations.Profile.route ->
             com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_title
         currentRoute == ProfileDestinations.MonthSelector.route ->
