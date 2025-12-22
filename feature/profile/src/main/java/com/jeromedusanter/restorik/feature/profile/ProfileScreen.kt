@@ -279,7 +279,7 @@ private fun TopRestaurantsCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = 16.dp),
+                .padding(all = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -290,7 +290,7 @@ private fun TopRestaurantsCard(
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
             )
-            Spacer(modifier = Modifier.height(height = 8.dp))
+            Spacer(modifier = Modifier.height(height = 6.dp))
             if (topRestaurantList.isEmpty()) {
                 Text(
                     text = "-",
@@ -302,7 +302,7 @@ private fun TopRestaurantsCard(
             } else {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(space = 4.dp)
+                    verticalArrangement = Arrangement.spacedBy(space = 2.dp)
                 ) {
                     topRestaurantList.forEachIndexed { index, restaurant ->
                         Column(
@@ -314,11 +314,12 @@ private fun TopRestaurantsCard(
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Medium,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                maxLines = 1
                             )
                             Text(
                                 text = String.format(Locale.getDefault(), "%.2f €", restaurant.totalSpending),
-                                style = MaterialTheme.typography.bodySmall,
+                                style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center
                             )
