@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.jeromedusanter.restorik.feature.meal.detail.MealDetailRoute
 import com.jeromedusanter.restorik.feature.meal.editor.MealEditorScreen
-import com.jeromedusanter.restorik.feature.meal.list.MealListScreen
+import com.jeromedusanter.restorik.feature.meal.list.MealListRoute
 
 const val mealBaseRoute = "meal"
 
@@ -44,7 +44,7 @@ fun NavGraphBuilder.mealSection(
         route = mealBaseRoute
     ) {
         composable(route = MealDestinations.MealList.route) {
-            MealListScreen(
+            MealListRoute(
                 snackbarHostState = snackbarHostState,
                 navController = navController
             )
