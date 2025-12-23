@@ -284,6 +284,14 @@ class MealEditorViewModel @Inject constructor(
         _uiState.update { it.copy(showPhotoSelectionBottomSheet = false) }
     }
 
+    fun selectPhotoForView(uri: Uri) {
+        _uiState.update { it.copy(selectedPhotoUri = uri) }
+    }
+
+    fun clearSelectedPhoto() {
+        _uiState.update { it.copy(selectedPhotoUri = null) }
+    }
+
     companion object {
         const val MAX_PHOTO_COUNT = 5
     }
