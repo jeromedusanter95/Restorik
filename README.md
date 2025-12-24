@@ -83,6 +83,38 @@ This modular approach provides:
 - Reusability of components across features
 - Easier testing and maintenance
 
+### Feature Module Architecture
+
+Each feature module follows a consistent Route/Screen pattern for clear separation between stateful and stateless components:
+
+#### Route Composable (Stateful)
+The Route is the **stateful** entry point for each feature:
+- Manages the ViewModel using `hiltViewModel()`
+- Collects and manages UI state with `collectAsState()`
+- Handles `LaunchedEffect` side effects (navigation, callbacks to parent, etc.)
+- Manages Android-specific dependencies (FocusManager, ActivityResultLaunchers, etc.)
+- Passes clean, simple callbacks to the Screen
+
+Example: `MealEditorRoute`, `SearchRoute`
+
+#### Screen Composable (Stateless)
+The Screen is a **pure, stateless** UI component:
+- Receives all state as a single `UiState` parameter
+- Receives all interactions as simple callback functions
+- No ViewModel or state management
+- No LaunchedEffect or side effects
+- No Android-specific dependencies
+- Easy to preview and test
+
+Example: `MealEditorScreen`, `SearchScreen`
+
+**Benefits of this pattern:**
+- **Testability**: Screens can be tested easily by passing different states
+- **Reusability**: Screens can be reused in different contexts (previews, tests, other features)
+- **Separation of concerns**: State management is separate from UI rendering
+- **Preview-friendly**: No complex dependencies needed for Compose previews
+- **Maintainability**: Clear boundaries between logic and presentation
+
 ### Design Patterns
 
 - **Repository Pattern**: Abstracting data sources and providing a clean API for data access
