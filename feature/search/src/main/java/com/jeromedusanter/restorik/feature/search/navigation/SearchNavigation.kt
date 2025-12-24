@@ -3,7 +3,7 @@ package com.jeromedusanter.restorik.feature.search.navigation
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.jeromedusanter.restorik.feature.search.SearchScreen
+import com.jeromedusanter.restorik.feature.search.SearchRoute
 
 const val SEARCH_ROUTE = "search"
 
@@ -19,7 +19,7 @@ fun NavGraphBuilder.searchScreen(
     onRequestSearchFocus: () -> Unit,
 ) {
     composable(route = SEARCH_ROUTE) {
-        SearchScreen(
+        SearchRoute(
             onMealClick = onMealClick,
             onRestaurantClick = onRestaurantClick,
             onSearchQueryChanged = onSearchQueryChanged,

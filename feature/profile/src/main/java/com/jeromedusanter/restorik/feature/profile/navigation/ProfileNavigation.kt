@@ -9,7 +9,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.jeromedusanter.restorik.feature.profile.MonthSelectorScreen
-import com.jeromedusanter.restorik.feature.profile.ProfileScreen
+import com.jeromedusanter.restorik.feature.profile.ProfileRoute
 import com.jeromedusanter.restorik.feature.profile.ProfileViewModel
 
 const val profileBaseRoute = "profile"
@@ -33,7 +33,7 @@ fun NavGraphBuilder.profileSection(navController: NavHostController) {
             }
             val viewModel: ProfileViewModel = hiltViewModel(parentEntry)
 
-            ProfileScreen(
+            ProfileRoute(
                 onNavigateToMonthSelector = { navController.navigateToMonthSelector() },
                 viewModel = viewModel
             )
@@ -60,7 +60,7 @@ fun NavGraphBuilder.profileSection(navController: NavHostController) {
 // For compatibility - keep the simple version for direct use
 fun NavGraphBuilder.profileScreen() {
     composable(route = ProfileDestinations.Profile.route) {
-        ProfileScreen(
+        ProfileRoute(
             onNavigateToMonthSelector = { }
         )
     }

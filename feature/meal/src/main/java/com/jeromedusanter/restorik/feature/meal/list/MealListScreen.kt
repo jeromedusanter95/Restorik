@@ -18,93 +18,30 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.feature.meal.R
-import com.jeromedusanter.restorik.feature.meal.navigation.FILTER_RESTAURANT_ID_KEY
-import com.jeromedusanter.restorik.feature.meal.navigation.MEAL_DELETED_RESULT_KEY
-import com.jeromedusanter.restorik.feature.meal.navigation.MEAL_SAVED_RESULT_KEY
-import com.jeromedusanter.restorik.feature.meal.navigation.SHOW_FILTER_DIALOG_KEY
-import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealDetail
 
 @Composable
 fun MealListScreen(
     modifier: Modifier = Modifier,
-    viewModel: MealListViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState,
-    navController: NavHostController
+    uiState: MealListUiState,
+    onCloseRestaurantFilter: () -> Unit = {},
+    onClickMealItem: (Int) -> Unit = {},
+    onDismissFilterDialog: () -> Unit = {},
+    onApplyFilter: (SortMode, SortOrder) -> Unit = { _, _ -> },
 ) {
-    val mealAddedSuccessMessage = stringResource(R.string.feature_meal_meal_added_successfully)
-    val mealDeletedSuccessMessage = stringResource(R.string.feature_meal_meal_deleted_successfully)
-
-    LaunchedEffect(Unit) {
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getStateFlow(MEAL_SAVED_RESULT_KEY, false)?.collect { mealSaved ->
-            if (mealSaved) {
-                snackbarHostState.showSnackbar(
-                    message = mealAddedSuccessMessage,
-                    duration = SnackbarDuration.Short
-                )
-                savedStateHandle[MEAL_SAVED_RESULT_KEY] = false
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getStateFlow(MEAL_DELETED_RESULT_KEY, false)?.collect { mealDeleted ->
-            if (mealDeleted) {
-                snackbarHostState.showSnackbar(
-                    message = mealDeletedSuccessMessage,
-                    duration = SnackbarDuration.Short
-                )
-                savedStateHandle[MEAL_DELETED_RESULT_KEY] = false
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getStateFlow(SHOW_FILTER_DIALOG_KEY, false)?.collect { showDialog ->
-            if (showDialog) {
-                viewModel.showFilterDialog()
-                savedStateHandle[SHOW_FILTER_DIALOG_KEY] = false
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getStateFlow(FILTER_RESTAURANT_ID_KEY, -1)?.collect { restaurantId ->
-            if (restaurantId != -1) {
-                viewModel.setRestaurantFilter(restaurantId = restaurantId)
-                savedStateHandle[FILTER_RESTAURANT_ID_KEY] = -1
-            }
-        }
-    }
-
-    val uiState = viewModel.uiState.collectAsState()
-
     Column(modifier = Modifier.fillMaxSize()) {
 
-        if (uiState.value.filterRestaurantName != null) {
+        if (!uiState.filterRestaurantName.isNullOrEmpty()) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -113,10 +50,8 @@ fun MealListScreen(
             ) {
                 FilterChip(
                     selected = true,
-                    onClick = { viewModel.clearRestaurantFilter() },
-                    label = {
-                        Text(text = uiState.value.filterRestaurantName ?: "")
-                    },
+                    onClick = onCloseRestaurantFilter,
+                    label = { Text(text = uiState.filterRestaurantName) },
                     trailingIcon = {
                         Icon(
                             imageVector = Icons.Default.Close,
@@ -129,11 +64,11 @@ fun MealListScreen(
         }
 
         when {
-            uiState.value.isLoading -> {
+            uiState.isLoading -> {
                 MealListLoadingState()
             }
 
-            uiState.value.groupedMealList.isEmpty() -> {
+            uiState.groupedMealList.isEmpty() -> {
                 MealListEmptyState()
             }
 
@@ -143,7 +78,7 @@ fun MealListScreen(
                     contentPadding = PaddingValues(all = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(space = 8.dp)
                 ) {
-                    uiState.value.groupedMealList.forEach { group ->
+                    uiState.groupedMealList.forEach { group ->
                         item(key = "header_${group.title}_${group.ratingValue}") {
                             if (group.ratingValue != null) {
                                 // Display rating with star icon
@@ -192,7 +127,7 @@ fun MealListScreen(
                             ) {
                                 MealListItem(
                                     mealUiModel = meal,
-                                    onClickItem = { navController.navigateToMealDetail(mealId = meal.id) }
+                                    onClickItem = { onClickMealItem(meal.id) }
                                 )
                             }
                         }
@@ -202,12 +137,12 @@ fun MealListScreen(
         }
     }
 
-    if (uiState.value.showFilterDialog) {
+    if (uiState.showFilterDialog) {
         FilterSortDialog(
-            currentSortMode = uiState.value.sortMode,
-            currentSortOrder = uiState.value.sortOrder,
-            onDismiss = viewModel::hideFilterDialog,
-            onApply = viewModel::applySortPreferences
+            currentSortMode = uiState.sortMode,
+            currentSortOrder = uiState.sortOrder,
+            onDismiss = onDismissFilterDialog,
+            onApply = onApplyFilter
         )
     }
 }
@@ -216,9 +151,6 @@ fun MealListScreen(
 @Composable
 private fun MealListScreenPreview() {
     RestorikTheme {
-        MealListScreen(
-            snackbarHostState = remember { SnackbarHostState() },
-            navController = rememberNavController()
-        )
+        MealListScreen(uiState = MealListUiState.EMPTY)
     }
 }

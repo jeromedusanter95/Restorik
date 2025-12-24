@@ -15,8 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val mealRepository: MealRepository,
-    private val restaurantRepository: RestaurantRepository
+    mealRepository: MealRepository,
+    restaurantRepository: RestaurantRepository
 ) : ViewModel() {
 
     private val _selectedMonth = MutableStateFlow(YearMonth.now())
