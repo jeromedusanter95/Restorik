@@ -99,6 +99,10 @@ class MealEditorViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(name = name)
     }
 
+    fun setIsSomeoneElsePaying(isSomeoneElsePaying: Boolean) {
+        _uiState.value = _uiState.value.copy(isSomeoneElsePaying = isSomeoneElsePaying)
+    }
+
     fun addDish(dish: com.jeromedusanter.restorik.core.model.Dish) {
         _uiState.update { state ->
             state.copy(dishList = state.dishList + dish)
