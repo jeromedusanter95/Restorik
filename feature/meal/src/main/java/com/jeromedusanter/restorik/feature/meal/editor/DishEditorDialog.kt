@@ -33,6 +33,8 @@ import com.jeromedusanter.restorik.feature.meal.R
 fun DishEditorDialog(
     state: DishEditorState,
     isEditMode: Boolean,
+    modifier: Modifier = Modifier,
+    isSomeoneElsePaying: Boolean = false,
     onDismiss: () -> Unit = {},
     onNameChanged: (String) -> Unit = {},
     onDescriptionChanged: (String) -> Unit = {},
@@ -41,7 +43,6 @@ fun DishEditorDialog(
     onDishTypeChanged: (DishType) -> Unit = {},
     onExpandedChanged: (Boolean) -> Unit = {},
     onSave: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
@@ -113,22 +114,24 @@ fun DishEditorDialog(
                     }
                 }
 
-                RestorikOutlineTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = state.priceString,
-                    onValueChange = onPriceChanged,
-                    label = stringResource(R.string.feature_meal_price_label),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Euro,
-                            contentDescription = stringResource(R.string.feature_meal_euro_content_description)
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    isRequired = true,
-                    isError = state.priceError != null,
-                    supportingText = state.priceError
-                )
+                if (!isSomeoneElsePaying){
+                    RestorikOutlineTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.priceString,
+                        onValueChange = onPriceChanged,
+                        label = stringResource(R.string.feature_meal_price_label),
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Euro,
+                                contentDescription = stringResource(R.string.feature_meal_euro_content_description)
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = state.priceError != null,
+                        supportingText = state.priceError
+                    )
+                }
+
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),

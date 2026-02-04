@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -102,11 +104,15 @@ fun MealEditorScreen(
                 )
             )
 
-            Switch(
-                checked = uiState.isSomeoneElsePaying,
-                onCheckedChange = onIsSomeoneElsePayingChanged,
-                modifier = Modifier.padding(top = 8.dp)
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.feature_meal_someone_else_is_paying_label))
+                Spacer(modifier = Modifier.weight(1f))
+                Switch(
+                    checked = uiState.isSomeoneElsePaying,
+                    onCheckedChange = onIsSomeoneElsePayingChanged
+                )
+            }
+
         }
 
         // Restaurant section
@@ -206,6 +212,7 @@ fun MealEditorScreen(
                 uiState.dishList.forEach { dish ->
                     DishListItem(
                         dish = dish,
+                        isSomeoneElsePaying = uiState.isSomeoneElsePaying,
                         onEdit = { onShowDishDialog(dish) },
                         onDelete = { onDeleteDish(dish.id) }
                     )
@@ -225,6 +232,7 @@ fun MealEditorScreen(
             DishEditorDialog(
                 state = uiState.dishEditorState,
                 isEditMode = uiState.dishEditorState.dishId != 0,
+                isSomeoneElsePaying = uiState.isSomeoneElsePaying,
                 onDismiss = onDismissDishDialog,
                 onNameChanged = onDishNameChanged,
                 onDescriptionChanged = onDishDescriptionChanged,
@@ -301,7 +309,7 @@ private fun MealEditorPreview() {
                         rating = 5f,
                         description = "Grilled steak",
                         price = 18.50,
-                        dishType = com.jeromedusanter.restorik.core.model.DishType.MAIN_COURSE
+                        dishType = DishType.MAIN_COURSE
                     ),
                     Dish(
                         id = 2,
@@ -309,7 +317,7 @@ private fun MealEditorPreview() {
                         rating = 4.5f,
                         description = "Crispy fries",
                         price = 6.00,
-                        dishType = com.jeromedusanter.restorik.core.model.DishType.SIDE_DISH
+                        dishType = DishType.SIDE_DISH
                     )
                 ),
                 photoUriList = emptyList(),

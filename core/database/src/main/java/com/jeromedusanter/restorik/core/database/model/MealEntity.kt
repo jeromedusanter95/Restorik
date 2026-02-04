@@ -10,5 +10,6 @@ data class MealEntity(
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "restaurant_id") var restaurantId: Int,
     @ColumnInfo(name = "date_time") val dateTime: String,
-    @ColumnInfo(name = "picture_path_list") val photoList: List<String>
+    @ColumnInfo(name = "picture_path_list") val photoList: List<String>,
+    @ColumnInfo(name = "is_someone_else_paying") val isSomeoneElsePaying: Boolean
 )

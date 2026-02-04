@@ -77,5 +77,5 @@ data class DishEditorState(
     val isExpanded: Boolean = false,
     val nameError: String? = null,
     val priceError: String? = null,
-    val ratingError: String? = null
+    val ratingError: String? = null,
 )

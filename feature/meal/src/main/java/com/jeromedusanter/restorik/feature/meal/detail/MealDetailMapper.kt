@@ -14,7 +14,8 @@ class MealDetailMapper @Inject constructor() {
             dishList = meal.dishList,
             priceAsString = String.format(Locale.getDefault(), "%.2f", meal.price),
             ratingOnFive = meal.ratingOnFive,
-            photoUriList = meal.photoList.map(String::toUri)
+            photoUriList = meal.photoList.map(String::toUri),
+            isSomeoneElsePaying = meal.isSomeoneElsePaying
         )
     }
 }

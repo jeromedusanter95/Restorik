@@ -10,6 +10,7 @@
     <!-- Form labels -->
     <string name="feature_meal_meal_info_label">Meal</string>
     <string name="feature_meal_meal_name_label">Meal name</string>
+    <string name="feature_meal_someone_else_is_paying_label">Someone else is paying for you ?</string>
     <string name="feature_meal_restaurant_info_label">Restaurant</string>
     <string name="feature_meal_restaurant_name_label">Restaurant name</string>
     <string name="feature_meal_comment_label">Comment</string>
@@ -23,6 +24,7 @@
     <string name="feature_meal_edit_dish_title">Edit dish</string>
     <string name="feature_meal_add_dish_button">Add dish</string>
     <string name="feature_meal_add_photo_button">Add photo</string>
+    <string name="feature_meal_details_someone_else_is_paying_label">Free meal</string>
 
     <!-- Dish types -->
     <string name="feature_meal_dish_type_aperitif">Aperitif</string>
