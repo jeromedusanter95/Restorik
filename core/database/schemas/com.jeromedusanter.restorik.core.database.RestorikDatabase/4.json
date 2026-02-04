@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "c110dd18a1aec4ec118e11c160425a58",
+    "version": 4,
+    "identityHash": "84ce2e2f67a230b5c0d18c5ac46be457",
     "entities": [
       {
         "tableName": "meals",
@@ -48,7 +48,7 @@
       },
       {
         "tableName": "dishes",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `meal_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `rating` INTEGER NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, FOREIGN KEY(`meal_id`) REFERENCES `meals`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `meal_id` INTEGER NOT NULL, `name` TEXT NOT NULL, `rating` REAL NOT NULL, `description` TEXT NOT NULL, `price` REAL NOT NULL, `dish_type` TEXT NOT NULL, FOREIGN KEY(`meal_id`) REFERENCES `meals`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -71,7 +71,7 @@
           {
             "fieldPath": "rating",
             "columnName": "rating",
-            "affinity": "INTEGER",
+            "affinity": "REAL",
             "notNull": true
           },
           {
@@ -85,6 +85,12 @@
             "columnName": "price",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "dishType",
+            "columnName": "dish_type",
+            "affinity": "TEXT",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -93,6 +99,17 @@
             "id"
           ]
         },
+        "indices": [
+          {
+            "name": "index_dishes_meal_id",
+            "unique": false,
+            "columnNames": [
+              "meal_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_dishes_meal_id` ON `${TABLE_NAME}` (`meal_id`)"
+          }
+        ],
         "foreignKeys": [
           {
             "table": "meals",
@@ -175,7 +192,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c110dd18a1aec4ec118e11c160425a58')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '84ce2e2f67a230b5c0d18c5ac46be457')"
     ]
   }
 }

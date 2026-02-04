@@ -6,5 +6,5 @@ import androidx.compose.runtime.Immutable
 data class MealGroupUiModel(
     val title: String,
     val mealList: List<MealUiModel>,
-    val ratingValue: Int? = null
+    val ratingValue: Float? = null
 )

@@ -1,6 +1,7 @@
 package com.jeromedusanter.restorik.core.database.di
 
 import com.jeromedusanter.restorik.core.database.RestorikDatabase
+import com.jeromedusanter.restorik.core.database.dao.DishDao
 import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.dao.RecentSearchDao
 import com.jeromedusanter.restorik.core.database.dao.RestaurantDao
@@ -21,4 +22,7 @@ internal object DaosModule {
 
     @Provides
     fun providesRecentSearchDao(database: RestorikDatabase): RecentSearchDao = database.recentSearchDao()
+
+    @Provides
+    fun providesDishDao(database: RestorikDatabase): DishDao = database.dishDao()
 }

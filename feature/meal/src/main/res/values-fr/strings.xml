@@ -8,11 +8,30 @@
     <string name="feature_meal_detail_title">Détail du repas</string>
 
     <!-- Form labels -->
+    <string name="feature_meal_meal_info_label">Repas</string>
     <string name="feature_meal_meal_name_label">Nom du repas</string>
+    <string name="feature_meal_restaurant_info_label">Restaurant</string>
     <string name="feature_meal_restaurant_name_label">Nom du restaurant</string>
     <string name="feature_meal_comment_label">Commentaire</string>
     <string name="feature_meal_price_label">Prix</string>
     <string name="feature_meal_rating_label">Note</string>
+    <string name="feature_meal_dishes_label">Plats</string>
+    <string name="feature_meal_dish_name_label">Nom du plat</string>
+    <string name="feature_meal_dish_description_label">Description</string>
+    <string name="feature_meal_dish_type_label">Type</string>
+    <string name="feature_meal_add_dish_title">Ajouter un plat</string>
+    <string name="feature_meal_edit_dish_title">Modifier le plat</string>
+    <string name="feature_meal_add_dish_button">Ajouter un plat</string>
+    <string name="feature_meal_add_photo_button">Ajouter une photo</string>
+
+    <!-- Dish types -->
+    <string name="feature_meal_dish_type_aperitif">Apéro</string>
+    <string name="feature_meal_dish_type_starter">Entrée</string>
+    <string name="feature_meal_dish_type_main_course">Plat principal</string>
+    <string name="feature_meal_dish_type_side_dish">Accompagnement</string>
+    <string name="feature_meal_dish_type_cheese">Fromage</string>
+    <string name="feature_meal_dish_type_dessert">Dessert</string>
+    <string name="feature_meal_dish_type_drink">Boisson</string>
 
     <!-- Buttons -->
     <string name="feature_meal_save_button">Enregistrer</string>
@@ -33,10 +52,12 @@
     <string name="feature_meal_error_save_meal_failed">Échec de l\'enregistrement du repas : %s</string>
     <string name="feature_meal_error_restaurant_name_required">Le nom du restaurant est requis</string>
     <string name="feature_meal_error_meal_name_required">Le nom du repas est requis</string>
+    <string name="feature_meal_error_dish_name_required">Le nom du plat est requis</string>
     <string name="feature_meal_error_price_required">Le prix est requis</string>
     <string name="feature_meal_error_invalid_price_format">Format de prix invalide</string>
     <string name="feature_meal_error_price_negative">Le prix ne peut pas être négatif</string>
     <string name="feature_meal_error_rating_required">La note est requise</string>
+    <string name="feature_meal_error_dish_required">Au moins un plat est requis</string>
 
     <!-- Database errors -->
     <string name="feature_meal_error_db_no_space">Espace de stockage insuffisant</string>

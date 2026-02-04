@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.designsystem.theme.gold
+import java.util.Locale
 
 @Composable
 fun MealListItem(
@@ -152,7 +153,7 @@ private fun MealImage(
 
 @Composable
 private fun RatingBadge(
-    rating: Int,
+    rating: Float,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -170,7 +171,7 @@ private fun RatingBadge(
             tint = gold
         )
         Text(
-            text = rating.toString(),
+            text = String.format(Locale.getDefault(), "%.1f", rating),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -192,7 +193,7 @@ private fun MealListItemPreview() {
                     name = "Diner avec la famille",
                     restaurantName = "Sapore",
                     date = "19/03/2025",
-                    rating = 4,
+                    rating = 4.2f,
                     photoUri = Uri.EMPTY
                 ),
             )
@@ -203,7 +204,7 @@ private fun MealListItemPreview() {
                     name = "Pizza Margherita",
                     restaurantName = "Pizzeria Napoli",
                     date = "18/03/2025",
-                    rating = 5,
+                    rating = 5f,
                     photoUri = Uri.EMPTY
                 ),
             )
@@ -215,7 +216,7 @@ private fun MealListItemPreview() {
                     name = "Burger classique",
                     restaurantName = "Burger House",
                     date = "17/03/2025",
-                    rating = 4,
+                    rating = 4.5f,
                     photoUri = Uri.EMPTY
                 ),
             )

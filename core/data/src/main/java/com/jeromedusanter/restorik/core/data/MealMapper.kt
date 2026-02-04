@@ -1,22 +1,22 @@
 package com.jeromedusanter.restorik.core.data
 
-import com.jeromedusanter.restorik.core.database.model.MealEntity
+import com.jeromedusanter.restorik.core.database.model.MealWithDishes
 import com.jeromedusanter.restorik.core.model.Meal
 import java.time.LocalDateTime
 import javax.inject.Inject
 
-class MealMapper @Inject constructor() {
+class MealMapper @Inject constructor(
+    private val dishMapper: DishMapper
+) {
 
-    fun mapEntityModelToDomainModel(mealEntity: MealEntity): Meal {
+    fun mapEntityModelToDomainModel(mealWithDishes: MealWithDishes): Meal {
         return Meal(
-            id = mealEntity.id,
-            restaurantId = mealEntity.restaurantId,
-            name = mealEntity.name,
-            comment = mealEntity.comment,
-            price = mealEntity.price,
-            dateTime = mealEntity.dateTime.toLocalDateTime(),
-            ratingOnFive = mealEntity.ratingOnFive,
-            photoList = mealEntity.photoList
+            id = mealWithDishes.meal.id,
+            restaurantId = mealWithDishes.meal.restaurantId,
+            name = mealWithDishes.meal.name,
+            dateTime = mealWithDishes.meal.dateTime.toLocalDateTime(),
+            photoList = mealWithDishes.meal.photoList,
+            dishList = mealWithDishes.dishList.map { dishMapper.mapEntityToDomain(dishEntity = it) }
         )
     }
 }

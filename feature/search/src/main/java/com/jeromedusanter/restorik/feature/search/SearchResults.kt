@@ -114,7 +114,7 @@ private fun MealResultItem(
                 horizontalArrangement = Arrangement.spacedBy(space = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                repeat(times = mealItem.rating) {
+                repeat(times = mealItem.rating.toInt()) {
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = null,

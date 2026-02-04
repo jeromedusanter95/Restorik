@@ -37,7 +37,7 @@ class SearchRepositoryImpl @Inject constructor(
         )
 
         // Search meals
-        val mealEntityList = mealDao.searchMeals(query = query)
+        val mealWithDishesList = mealDao.searchMealsWithDishes(query = query)
 
         // Get all restaurant entities at once for efficiency
         val allRestaurantList = restaurantDao.observeAll()
@@ -50,12 +50,12 @@ class SearchRepositoryImpl @Inject constructor(
             }
 
             // Add meal results
-            mealEntityList.forEach { mealEntity ->
-                val meal = mealMapper.mapEntityModelToDomainModel(mealEntity)
+            mealWithDishesList.forEach { mealWithDishes ->
+                val meal = mealMapper.mapEntityModelToDomainModel(mealWithDishes = mealWithDishes)
                 resultList.add(
                     SearchResult.MealResult(
                         meal = meal,
-                        restaurantName = restaurantMap[mealEntity.restaurantId] ?: ""
+                        restaurantName = restaurantMap[mealWithDishes.meal.restaurantId] ?: ""
                     )
                 )
             }

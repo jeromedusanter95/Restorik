@@ -8,11 +8,30 @@
     <string name="feature_meal_detail_title">Meal details</string>
 
     <!-- Form labels -->
+    <string name="feature_meal_meal_info_label">Meal</string>
     <string name="feature_meal_meal_name_label">Meal name</string>
+    <string name="feature_meal_restaurant_info_label">Restaurant</string>
     <string name="feature_meal_restaurant_name_label">Restaurant name</string>
     <string name="feature_meal_comment_label">Comment</string>
     <string name="feature_meal_price_label">Price</string>
     <string name="feature_meal_rating_label">Rating</string>
+    <string name="feature_meal_dishes_label">Dishes</string>
+    <string name="feature_meal_dish_name_label">Dish name</string>
+    <string name="feature_meal_dish_description_label">Description</string>
+    <string name="feature_meal_dish_type_label">Type</string>
+    <string name="feature_meal_add_dish_title">Add dish</string>
+    <string name="feature_meal_edit_dish_title">Edit dish</string>
+    <string name="feature_meal_add_dish_button">Add dish</string>
+    <string name="feature_meal_add_photo_button">Add photo</string>
+
+    <!-- Dish types -->
+    <string name="feature_meal_dish_type_aperitif">Aperitif</string>
+    <string name="feature_meal_dish_type_starter">Starter</string>
+    <string name="feature_meal_dish_type_main_course">Main course</string>
+    <string name="feature_meal_dish_type_side_dish">Side dish</string>
+    <string name="feature_meal_dish_type_cheese">Cheese</string>
+    <string name="feature_meal_dish_type_dessert">Dessert</string>
+    <string name="feature_meal_dish_type_drink">Drink</string>
 
     <!-- Buttons -->
     <string name="feature_meal_save_button">Save</string>
@@ -33,10 +52,12 @@
     <string name="feature_meal_error_save_meal_failed">Failed to save meal: %s</string>
     <string name="feature_meal_error_restaurant_name_required">Restaurant name is required</string>
     <string name="feature_meal_error_meal_name_required">Meal name is required</string>
+    <string name="feature_meal_error_dish_name_required">Dish name is required</string>
     <string name="feature_meal_error_price_required">Price is required</string>
     <string name="feature_meal_error_invalid_price_format">Invalid price format</string>
     <string name="feature_meal_error_price_negative">Price cannot be negative</string>
     <string name="feature_meal_error_rating_required">Rating is required</string>
+    <string name="feature_meal_error_dish_required">At least one dish is required</string>
 
     <!-- Database errors -->
     <string name="feature_meal_error_db_no_space">Not enough storage space</string>
