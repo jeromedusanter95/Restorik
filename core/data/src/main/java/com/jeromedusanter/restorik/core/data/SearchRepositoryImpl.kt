@@ -9,6 +9,7 @@ import com.jeromedusanter.restorik.core.model.RecentSearch
 import com.jeromedusanter.restorik.core.model.Restaurant
 import com.jeromedusanter.restorik.core.model.SearchResult
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -40,28 +41,26 @@ class SearchRepositoryImpl @Inject constructor(
         val mealWithDishesList = mealDao.searchMealsWithDishes(query = query)
 
         // Get all restaurant entities at once for efficiency
-        val allRestaurantList = restaurantDao.observeAll()
+        val allRestaurantList = restaurantDao.observeAll().first()
         val restaurantMap = mutableMapOf<Int, String>()
 
-        // Wait for the first emission to build restaurant map
-        allRestaurantList.collect { restaurantEntityList ->
-            restaurantEntityList.forEach { restaurantEntity ->
-                restaurantMap[restaurantEntity.id] = restaurantEntity.name
-            }
-
-            // Add meal results
-            mealWithDishesList.forEach { mealWithDishes ->
-                val meal = mealMapper.mapEntityModelToDomainModel(mealWithDishes = mealWithDishes)
-                resultList.add(
-                    SearchResult.MealResult(
-                        meal = meal,
-                        restaurantName = restaurantMap[mealWithDishes.meal.restaurantId] ?: ""
-                    )
-                )
-            }
-
-            emit(resultList)
+        // Build restaurant map
+        allRestaurantList.forEach { restaurantEntity ->
+            restaurantMap[restaurantEntity.id] = restaurantEntity.name
         }
+
+        // Add meal results
+        mealWithDishesList.forEach { mealWithDishes ->
+            val meal = mealMapper.mapEntityModelToDomainModel(mealWithDishes = mealWithDishes)
+            resultList.add(
+                SearchResult.MealResult(
+                    meal = meal,
+                    restaurantName = restaurantMap[mealWithDishes.meal.restaurantId] ?: ""
+                )
+            )
+        }
+
+        emit(resultList)
     }
 
     override fun observeRecentSearches(limit: Int): Flow<List<RecentSearch>> {
