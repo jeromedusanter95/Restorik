@@ -19,7 +19,7 @@ import com.jeromedusanter.restorik.core.database.model.RestaurantEntity
         RestaurantEntity::class,
         RecentSearchEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(

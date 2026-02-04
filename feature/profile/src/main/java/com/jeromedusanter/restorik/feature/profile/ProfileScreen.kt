@@ -94,7 +94,11 @@ fun ProfileScreen(
 
                     if (uiState.monthlySpending > 0.0) {
                         Text(
-                            text = String.format(Locale.getDefault(), "%.2f €", uiState.monthlySpending),
+                            text = String.format(
+                                Locale.getDefault(),
+                                "%.2f €",
+                                uiState.monthlySpending
+                            ),
                             style = MaterialTheme.typography.displayMedium,
                             color = MaterialTheme.colorScheme.primary,
                             textAlign = TextAlign.Center
@@ -103,7 +107,8 @@ fun ProfileScreen(
                         // Comparison with previous month
                         if (uiState.previousMonthSpending > 0.0) {
                             val difference = uiState.monthlySpending - uiState.previousMonthSpending
-                            val percentageChange = (difference / uiState.previousMonthSpending) * 100
+                            val percentageChange =
+                                (difference / uiState.previousMonthSpending) * 100
                             val isIncrease = difference > 0
 
                             Text(
@@ -123,6 +128,13 @@ fun ProfileScreen(
                                 textAlign = TextAlign.Center
                             )
                         }
+                    } else if (uiState.numberOfMeals >= 1) {
+                        Text(
+                            text = "0 €",
+                            style = MaterialTheme.typography.displayMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Center
+                        )
                     } else {
                         Text(
                             text = stringResource(id = R.string.feature_profile_no_data),
@@ -299,7 +311,11 @@ private fun TopRestaurantsCard(
                                 maxLines = 1
                             )
                             Text(
-                                text = String.format(Locale.getDefault(), "%.2f €", restaurant.totalSpending),
+                                text = String.format(
+                                    Locale.getDefault(),
+                                    "%.2f €",
+                                    restaurant.totalSpending
+                                ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 textAlign = TextAlign.Center

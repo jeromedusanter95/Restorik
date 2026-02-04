@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,6 +25,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.model.Dish
+import com.jeromedusanter.restorik.core.model.DishType
 import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
 import com.jeromedusanter.restorik.feature.meal.R
@@ -40,34 +44,34 @@ import com.jeromedusanter.restorik.feature.meal.R
 @Composable
 fun MealEditorScreen(
     uiState: MealEditorUiState,
-    onNameChange: (String) -> Unit,
-    onRestaurantNameChange: (String) -> Unit,
-    onSelectRestaurantSuggestion: (RestaurantSuggestion) -> Unit,
-    onClearFieldError: (MealEditorField) -> Unit,
-    onDeletePhoto: (Uri) -> Unit,
-    onShowPhotoSelectionBottomSheet: () -> Unit,
-    onSelectPhotoForView: (Uri) -> Unit,
-    onClearSelectedPhoto: () -> Unit,
-    onSaveMeal: () -> Unit,
-    onMoveFocusDown: () -> Unit,
-    onDeleteDish: (Int) -> Unit,
-    onShowDishDialog: (Dish?) -> Unit,
-    onDismissDishDialog: () -> Unit,
-    onDishNameChange: (String) -> Unit,
-    onDishDescriptionChange: (String) -> Unit,
-    onDishPriceChange: (String) -> Unit,
-    onDishRatingChange: (Float) -> Unit,
-    onDishTypeChange: (com.jeromedusanter.restorik.core.model.DishType) -> Unit,
-    onDishTypeExpandedChange: (Boolean) -> Unit,
-    onSaveDish: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNameChanged: (String) -> Unit = {},
+    onRestaurantNameChanged: (String) -> Unit = {},
+    onSelectRestaurantSuggestion: (RestaurantSuggestion) -> Unit = {},
+    onClearFieldError: (MealEditorField) -> Unit = {},
+    onDeletePhoto: (Uri) -> Unit = {},
+    onShowPhotoSelectionBottomSheet: () -> Unit = {},
+    onSelectPhotoForView: (Uri) -> Unit = {},
+    onClearSelectedPhoto: () -> Unit = {},
+    onSaveMeal: () -> Unit = {},
+    onMoveFocusDown: () -> Unit = {},
+    onDeleteDish: (Int) -> Unit = {},
+    onShowDishDialog: (Dish?) -> Unit = {},
+    onDismissDishDialog: () -> Unit = {},
+    onDishNameChanged: (String) -> Unit = {},
+    onDishDescriptionChanged: (String) -> Unit = {},
+    onDishPriceChanged: (String) -> Unit = {},
+    onDishRatingChanged: (Float) -> Unit = {},
+    onDishTypeChanged: (DishType) -> Unit = {},
+    onDishTypeExpandedChanged: (Boolean) -> Unit = {},
+    onSaveDish: () -> Unit = {},
+    onIsSomeoneElsePayingChanged: (Boolean) -> Unit = {},
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-        ,
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(space = 16.dp)
     ) {
         // Meal section
@@ -84,7 +88,7 @@ fun MealEditorScreen(
                     .padding(top = 8.dp),
                 value = uiState.name,
                 onValueChange = { newValue ->
-                    onNameChange(newValue)
+                    onNameChanged(newValue)
                     onClearFieldError(MealEditorField.MEAL_NAME)
                 },
                 label = stringResource(R.string.feature_meal_meal_name_label),
@@ -99,6 +103,16 @@ fun MealEditorScreen(
                     onNext = { onMoveFocusDown() }
                 )
             )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.feature_meal_someone_else_is_paying_label))
+                Spacer(modifier = Modifier.weight(1f))
+                Switch(
+                    checked = uiState.isSomeoneElsePaying,
+                    onCheckedChange = onIsSomeoneElsePayingChanged
+                )
+            }
+
         }
 
         // Restaurant section
@@ -109,14 +123,16 @@ fun MealEditorScreen(
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            Column(modifier = modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
                 RestorikOutlineTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = uiState.restaurantName,
                     onValueChange = { newValue ->
-                        onRestaurantNameChange(newValue)
+                        onRestaurantNameChanged(newValue)
                         onClearFieldError(MealEditorField.RESTAURANT_NAME)
                     },
                     label = stringResource(R.string.feature_meal_restaurant_name_label),
@@ -196,6 +212,7 @@ fun MealEditorScreen(
                 uiState.dishList.forEach { dish ->
                     DishListItem(
                         dish = dish,
+                        isSomeoneElsePaying = uiState.isSomeoneElsePaying,
                         onEdit = { onShowDishDialog(dish) },
                         onDelete = { onDeleteDish(dish.id) }
                     )
@@ -215,13 +232,14 @@ fun MealEditorScreen(
             DishEditorDialog(
                 state = uiState.dishEditorState,
                 isEditMode = uiState.dishEditorState.dishId != 0,
+                isSomeoneElsePaying = uiState.isSomeoneElsePaying,
                 onDismiss = onDismissDishDialog,
-                onNameChange = onDishNameChange,
-                onDescriptionChange = onDishDescriptionChange,
-                onPriceChange = onDishPriceChange,
-                onRatingChange = onDishRatingChange,
-                onDishTypeChange = onDishTypeChange,
-                onExpandedChange = onDishTypeExpandedChange,
+                onNameChanged = onDishNameChanged,
+                onDescriptionChanged = onDishDescriptionChanged,
+                onPriceChanged = onDishPriceChanged,
+                onRatingChanged = onDishRatingChanged,
+                onDishTypeChanged = onDishTypeChanged,
+                onExpandedChanged = onDishTypeExpandedChanged,
                 onSave = onSaveDish
             )
         }
@@ -291,7 +309,7 @@ private fun MealEditorPreview() {
                         rating = 5f,
                         description = "Grilled steak",
                         price = 18.50,
-                        dishType = com.jeromedusanter.restorik.core.model.DishType.MAIN_COURSE
+                        dishType = DishType.MAIN_COURSE
                     ),
                     Dish(
                         id = 2,
@@ -299,7 +317,7 @@ private fun MealEditorPreview() {
                         rating = 4.5f,
                         description = "Crispy fries",
                         price = 6.00,
-                        dishType = com.jeromedusanter.restorik.core.model.DishType.SIDE_DISH
+                        dishType = DishType.SIDE_DISH
                     )
                 ),
                 photoUriList = emptyList(),
@@ -316,26 +334,6 @@ private fun MealEditorPreview() {
                     RestaurantSuggestion(id = 2, name = "Le Bistrot de la Gare")
                 )
             ),
-            onNameChange = {},
-            onRestaurantNameChange = {},
-            onSelectRestaurantSuggestion = {},
-            onClearFieldError = {},
-            onDeletePhoto = {},
-            onShowPhotoSelectionBottomSheet = {},
-            onSelectPhotoForView = {},
-            onClearSelectedPhoto = {},
-            onSaveMeal = {},
-            onMoveFocusDown = {},
-            onDeleteDish = {},
-            onShowDishDialog = {},
-            onDismissDishDialog = {},
-            onDishNameChange = {},
-            onDishDescriptionChange = {},
-            onDishPriceChange = {},
-            onDishRatingChange = {},
-            onDishTypeChange = {},
-            onDishTypeExpandedChange = {},
-            onSaveDish = {}
         )
     }
 }

@@ -48,6 +48,7 @@ import coil.compose.AsyncImage
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.designsystem.theme.gold
 import com.jeromedusanter.restorik.core.model.Dish
+import com.jeromedusanter.restorik.core.model.DishType
 import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.feature.meal.R
 import java.util.Locale
@@ -191,7 +192,11 @@ fun MealDetailScreen(
                                 tint = gold
                             )
                             Text(
-                                text = String.format(Locale.getDefault(), "%.1f/5", uiState.ratingOnFive),
+                                text = String.format(
+                                    Locale.getDefault(),
+                                    "%.1f/5",
+                                    uiState.ratingOnFive
+                                ),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -199,29 +204,36 @@ fun MealDetailScreen(
                         }
                     }
 
-                    // Price
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.primaryContainer
+                    if (uiState.isSomeoneElsePaying) {
+                        Text(
+                            stringResource(R.string.feature_meal_details_someone_else_is_paying_label),
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.Bold
                         )
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(space = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                    } else {
+                        Card(
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
+                            )
                         ) {
-                            Text(
-                                text = uiState.priceAsString,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Icon(
-                                imageVector = Icons.Default.Euro,
-                                contentDescription = null,
-                                modifier = Modifier.size(20.dp),
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
+                            Row(
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(space = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = uiState.priceAsString,
+                                    style = MaterialTheme.typography.titleLarge,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.Euro,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp),
+                                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                            }
                         }
                     }
                 }
@@ -265,19 +277,27 @@ fun MealDetailScreen(
                                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                                             modifier = Modifier.weight(weight = 1f)
                                         )
-                                        Text(
-                                            text = String.format(Locale.getDefault(), "%.2f€", dish.price),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.Bold,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
+                                        if (!uiState.isSomeoneElsePaying) {
+                                            Text(
+                                                text = String.format(
+                                                    Locale.getDefault(),
+                                                    "%.2f€",
+                                                    dish.price
+                                                ),
+                                                style = MaterialTheme.typography.titleMedium,
+                                                fontWeight = FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
                                     }
 
                                     if (dish.description.isNotBlank()) {
                                         Text(
                                             text = dish.description,
                                             style = MaterialTheme.typography.bodyMedium,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                alpha = 0.7f
+                                            )
                                         )
                                     }
 
@@ -290,7 +310,9 @@ fun MealDetailScreen(
                                                 imageVector = Icons.Default.Star,
                                                 contentDescription = null,
                                                 modifier = Modifier.size(16.dp),
-                                                tint = if (index < dish.rating.toInt()) gold else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                                tint = if (index < dish.rating.toInt()) gold else MaterialTheme.colorScheme.onSurfaceVariant.copy(
+                                                    alpha = 0.3f
+                                                )
                                             )
                                         }
                                     }
@@ -354,7 +376,7 @@ private fun MealDetailScreenPreview() {
                         rating = 5f,
                         description = "Perfect crispy crust with fresh basil",
                         price = 12.50,
-                        dishType = com.jeromedusanter.restorik.core.model.DishType.MAIN_COURSE
+                        dishType = DishType.MAIN_COURSE
                     ),
                     Dish(
                         id = 2,
@@ -362,12 +384,47 @@ private fun MealDetailScreenPreview() {
                         rating = 4.5f,
                         description = "Classic Italian dessert",
                         price = 6.50,
-                        dishType = com.jeromedusanter.restorik.core.model.DishType.DESSERT
+                        dishType = DishType.DESSERT
                     )
                 ),
                 priceAsString = "19.00",
                 ratingOnFive = 4.7f,
                 photoUriList = emptyList()
+            )
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MealDetailScreenSomeoneElsePayingPreview() {
+    RestorikTheme {
+        MealDetailScreen(
+            uiState = MealDetailUiState(
+                restaurantName = "Sapore",
+                name = "Italian Dinner",
+                dishList = listOf(
+                    Dish(
+                        id = 1,
+                        name = "Pizza Margherita",
+                        rating = 5f,
+                        description = "Perfect crispy crust with fresh basil",
+                        price = 12.50,
+                        dishType = DishType.MAIN_COURSE
+                    ),
+                    Dish(
+                        id = 2,
+                        name = "Tiramisu",
+                        rating = 4.5f,
+                        description = "Classic Italian dessert",
+                        price = 6.50,
+                        dishType = DishType.DESSERT
+                    )
+                ),
+                priceAsString = "19.00",
+                ratingOnFive = 4.7f,
+                photoUriList = emptyList(),
+                isSomeoneElsePaying = true
             )
         )
     }

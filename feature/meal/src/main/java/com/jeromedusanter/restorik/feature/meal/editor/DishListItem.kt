@@ -31,6 +31,7 @@ import java.util.Locale
 fun DishListItem(
     dish: Dish,
     modifier: Modifier = Modifier,
+    isSomeoneElsePaying: Boolean = false,
     onEdit: () -> Unit = {},
     onDelete: () -> Unit = {},
 ) {
@@ -66,11 +67,13 @@ fun DishListItem(
                     )
                 }
 
-                Text(
-                    text = String.format(Locale.getDefault(), "%.2f€", dish.price),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.primary
-                )
+                if (!isSomeoneElsePaying) {
+                    Text(
+                        text = String.format(Locale.getDefault(), "%.2f€", dish.price),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
 
                 RestorikRatingBar(
                     value = dish.rating,

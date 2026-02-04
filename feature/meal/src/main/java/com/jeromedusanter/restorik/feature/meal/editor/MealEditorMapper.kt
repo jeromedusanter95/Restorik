@@ -1,6 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
-import android.net.Uri
+import androidx.core.net.toUri
 import com.jeromedusanter.restorik.core.model.Meal
 import com.jeromedusanter.restorik.core.model.Restaurant
 import java.time.LocalDateTime
@@ -18,7 +18,8 @@ class MealEditorMapper @Inject constructor() {
             name = mealEditorUiState.name,
             dateTime = LocalDateTime.now(),
             photoList = mealEditorUiState.photoUriList.map { it.toString() },
-            dishList = mealEditorUiState.dishList
+            dishList = mealEditorUiState.dishList,
+            isSomeoneElsePaying = mealEditorUiState.isSomeoneElsePaying
         )
     }
 
@@ -27,7 +28,7 @@ class MealEditorMapper @Inject constructor() {
         restaurantName: String,
         maxPhotoCount: Int
     ): MealEditorUiState {
-        val photoUriList = meal.photoList.map { Uri.parse(it) }
+        val photoUriList = meal.photoList.map { it.toUri() }
         val photoCount = photoUriList.size
 
         return MealEditorUiState(
@@ -40,7 +41,8 @@ class MealEditorMapper @Inject constructor() {
             showAddButtonPhoto = photoUriList.isEmpty(),
             showAddButtonPhotoItem = photoCount < maxPhotoCount,
             photoTitleSuffix = "($photoCount/$maxPhotoCount)",
-            showPhotoSelectionBottomSheet = false
+            showPhotoSelectionBottomSheet = false,
+            isSomeoneElsePaying = meal.isSomeoneElsePaying
         )
     }
 

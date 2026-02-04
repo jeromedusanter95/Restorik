@@ -99,13 +99,17 @@ class MealEditorViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(name = name)
     }
 
-    fun addDish(dish: com.jeromedusanter.restorik.core.model.Dish) {
+    fun setIsSomeoneElsePaying(isSomeoneElsePaying: Boolean) {
+        _uiState.value = _uiState.value.copy(isSomeoneElsePaying = isSomeoneElsePaying)
+    }
+
+    fun addDish(dish: Dish) {
         _uiState.update { state ->
             state.copy(dishList = state.dishList + dish)
         }
     }
 
-    fun updateDish(dishId: Int, updatedDish: com.jeromedusanter.restorik.core.model.Dish) {
+    fun updateDish(dishId: Int, updatedDish: Dish) {
         _uiState.update { state ->
             val newList = state.dishList.map { dish ->
                 if (dish.id == dishId) updatedDish else dish
@@ -151,7 +155,13 @@ class MealEditorViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // Clear any previous errors and set loading state
-                _uiState.update { it.copy(isLoading = true, errorMessage = null, fieldErrors = FieldErrors()) }
+                _uiState.update {
+                    it.copy(
+                        isLoading = true,
+                        errorMessage = null,
+                        fieldErrors = FieldErrors()
+                    )
+                }
 
                 // Validate inputs and show field errors if any
                 val validationErrors = validateInputs()
@@ -169,9 +179,11 @@ class MealEditorViewModel @Inject constructor(
                 // Perform database operations on IO dispatcher
                 withContext(Dispatchers.IO) {
                     // Get or create restaurant
-                    var restaurant = restaurantRepository.getRestaurantByName(uiState.value.restaurantName)
+                    var restaurant =
+                        restaurantRepository.getRestaurantByName(uiState.value.restaurantName)
                     if (restaurant == null) {
-                        restaurant = restaurantRepository.saveByNameAndGetLocal(uiState.value.restaurantName)
+                        restaurant =
+                            restaurantRepository.saveByNameAndGetLocal(uiState.value.restaurantName)
                     }
 
                     // Save meal (with existing ID if editing)
@@ -195,7 +207,8 @@ class MealEditorViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.message ?: context.getString(R.string.feature_meal_error_invalid_input)
+                        errorMessage = e.message
+                            ?: context.getString(R.string.feature_meal_error_invalid_input)
                     )
                 }
             } catch (e: SQLiteException) {
@@ -203,7 +216,10 @@ class MealEditorViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = context.getString(R.string.feature_meal_error_db_generic, getDatabaseErrorMessage(e))
+                        errorMessage = context.getString(
+                            R.string.feature_meal_error_db_generic,
+                            getDatabaseErrorMessage(e)
+                        )
                     )
                 }
             } catch (e: IllegalStateException) {
@@ -211,7 +227,8 @@ class MealEditorViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.message ?: context.getString(R.string.feature_meal_error_invalid_state)
+                        errorMessage = e.message
+                            ?: context.getString(R.string.feature_meal_error_invalid_state)
                     )
                 }
             } catch (e: Exception) {
@@ -219,7 +236,10 @@ class MealEditorViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = context.getString(R.string.feature_meal_error_save_meal_failed, e.message ?: context.getString(R.string.feature_meal_error_unknown))
+                        errorMessage = context.getString(
+                            R.string.feature_meal_error_save_meal_failed,
+                            e.message ?: context.getString(R.string.feature_meal_error_unknown)
+                        )
                     )
                 }
             }
@@ -266,10 +286,13 @@ class MealEditorViewModel @Inject constructor(
         return when {
             e.message?.contains("disk", ignoreCase = true) == true ->
                 context.getString(R.string.feature_meal_error_db_no_space)
+
             e.message?.contains("corrupt", ignoreCase = true) == true ->
                 context.getString(R.string.feature_meal_error_db_corrupted)
+
             e.message?.contains("lock", ignoreCase = true) == true ->
                 context.getString(R.string.feature_meal_error_db_locked)
+
             else -> context.getString(R.string.feature_meal_error_db_unable_to_save)
         }
     }
@@ -339,7 +362,12 @@ class MealEditorViewModel @Inject constructor(
 
     fun updateDishPrice(priceString: String) {
         _uiState.update {
-            it.copy(dishEditorState = it.dishEditorState.copy(priceString = priceString, priceError = null))
+            it.copy(
+                dishEditorState = it.dishEditorState.copy(
+                    priceString = priceString,
+                    priceError = null
+                )
+            )
         }
     }
 
@@ -375,8 +403,12 @@ class MealEditorViewModel @Inject constructor(
             hasError = true
         }
 
-        val price = state.priceString.toDoubleOrNull()
-        if (state.priceString.isBlank()) {
+
+        val price =
+            if (uiState.value.isSomeoneElsePaying) 0.0 else state.priceString.toDoubleOrNull()
+        if (uiState.value.isSomeoneElsePaying) {
+            priceError = null
+        } else if (state.priceString.isBlank()) {
             priceError = context.getString(R.string.feature_meal_error_price_required)
             hasError = true
         } else if (price == null) {

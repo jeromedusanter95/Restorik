@@ -12,6 +12,7 @@ data class MealDetailUiState(
     val priceAsString: String,
     val ratingOnFive: Float,
     val photoUriList: List<Uri>,
+    val isSomeoneElsePaying: Boolean = false
 ) {
     companion object {
         val EMPTY = MealDetailUiState(

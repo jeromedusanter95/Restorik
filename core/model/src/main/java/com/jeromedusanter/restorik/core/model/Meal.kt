@@ -8,7 +8,8 @@ data class Meal(
     val name: String,
     val dateTime: LocalDateTime,
     val photoList: List<String>,
-    val dishList: List<Dish>
+    val dishList: List<Dish>,
+    val isSomeoneElsePaying: Boolean
 ) {
     val ratingOnFive: Float
         get() = if (dishList.isEmpty()) 0f else dishList.map { it.rating }.average().toFloat()

@@ -22,7 +22,8 @@ data class MealEditorUiState(
     val fieldErrors: FieldErrors = FieldErrors(),
     val restaurantSuggestionList: List<RestaurantSuggestion> = emptyList(),
     val showDishDialog: Boolean = false,
-    val dishEditorState: DishEditorState = DishEditorState()
+    val dishEditorState: DishEditorState = DishEditorState(),
+    val isSomeoneElsePaying: Boolean = false
 ) {
     companion object {
         val EMPTY = MealEditorUiState(
@@ -49,7 +50,8 @@ data class FieldErrors(
     val mealNameError: String? = null,
     val dishListError: String? = null
 ) {
-    fun hasErrors(): Boolean = restaurantNameError != null || mealNameError != null || dishListError != null
+    fun hasErrors(): Boolean =
+        restaurantNameError != null || mealNameError != null || dishListError != null
 }
 
 enum class MealEditorField {
@@ -75,11 +77,5 @@ data class DishEditorState(
     val isExpanded: Boolean = false,
     val nameError: String? = null,
     val priceError: String? = null,
-    val ratingError: String? = null
+    val ratingError: String? = null,
 )
-
-enum class DishEditorField {
-    NAME,
-    PRICE,
-    RATING
-}

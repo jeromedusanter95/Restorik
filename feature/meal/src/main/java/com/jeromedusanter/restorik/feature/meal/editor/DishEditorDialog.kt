@@ -33,15 +33,16 @@ import com.jeromedusanter.restorik.feature.meal.R
 fun DishEditorDialog(
     state: DishEditorState,
     isEditMode: Boolean,
-    onDismiss: () -> Unit,
-    onNameChange: (String) -> Unit,
-    onDescriptionChange: (String) -> Unit,
-    onPriceChange: (String) -> Unit,
-    onRatingChange: (Float) -> Unit,
-    onDishTypeChange: (DishType) -> Unit,
-    onExpandedChange: (Boolean) -> Unit,
-    onSave: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isSomeoneElsePaying: Boolean = false,
+    onDismiss: () -> Unit = {},
+    onNameChanged: (String) -> Unit = {},
+    onDescriptionChanged: (String) -> Unit = {},
+    onPriceChanged: (String) -> Unit = {},
+    onRatingChanged: (Float) -> Unit = {},
+    onDishTypeChanged: (DishType) -> Unit = {},
+    onExpandedChanged: (Boolean) -> Unit = {},
+    onSave: () -> Unit = {},
 ) {
     AlertDialog(
         containerColor = MaterialTheme.colorScheme.background,
@@ -63,7 +64,7 @@ fun DishEditorDialog(
                 RestorikOutlineTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.name,
-                    onValueChange = onNameChange,
+                    onValueChange = onNameChanged,
                     label = stringResource(R.string.feature_meal_dish_name_label),
                     isRequired = true,
                     isError = state.nameError != null,
@@ -73,14 +74,14 @@ fun DishEditorDialog(
                 RestorikOutlineTextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = state.description,
-                    onValueChange = onDescriptionChange,
+                    onValueChange = onDescriptionChanged,
                     label = stringResource(R.string.feature_meal_dish_description_label),
                     singleLine = false
                 )
 
                 ExposedDropdownMenuBox(
                     expanded = state.isExpanded,
-                    onExpandedChange = onExpandedChange,
+                    onExpandedChange = onExpandedChanged,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     RestorikOutlineTextField(
@@ -99,36 +100,38 @@ fun DishEditorDialog(
                     ExposedDropdownMenu(
                         containerColor = MaterialTheme.colorScheme.background,
                         expanded = state.isExpanded,
-                        onDismissRequest = { onExpandedChange(false) }
+                        onDismissRequest = { onExpandedChanged(false) }
                     ) {
                         DishType.entries.forEach { type ->
                             DropdownMenuItem(
                                 text = { Text(text = stringResource(getDishTypeString(dishType = type))) },
                                 onClick = {
-                                    onDishTypeChange(type)
-                                    onExpandedChange(false)
+                                    onDishTypeChanged(type)
+                                    onExpandedChanged(false)
                                 }
                             )
                         }
                     }
                 }
 
-                RestorikOutlineTextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    value = state.priceString,
-                    onValueChange = onPriceChange,
-                    label = stringResource(R.string.feature_meal_price_label),
-                    trailingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Euro,
-                            contentDescription = stringResource(R.string.feature_meal_euro_content_description)
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    isRequired = true,
-                    isError = state.priceError != null,
-                    supportingText = state.priceError
-                )
+                if (!isSomeoneElsePaying){
+                    RestorikOutlineTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.priceString,
+                        onValueChange = onPriceChanged,
+                        label = stringResource(R.string.feature_meal_price_label),
+                        trailingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Euro,
+                                contentDescription = stringResource(R.string.feature_meal_euro_content_description)
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        isError = state.priceError != null,
+                        supportingText = state.priceError
+                    )
+                }
+
 
                 Column(
                     modifier = Modifier.fillMaxWidth(),
@@ -146,7 +149,7 @@ fun DishEditorDialog(
                     RestorikRatingBar(
                         modifier = Modifier.padding(top = 8.dp),
                         value = state.rating,
-                        onValueChanged = onRatingChange
+                        onValueChanged = onRatingChanged
                     )
                     state.ratingError?.let { error ->
                         Text(

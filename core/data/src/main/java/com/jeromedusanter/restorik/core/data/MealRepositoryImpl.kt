@@ -34,7 +34,8 @@ class MealRepositoryImpl @Inject constructor(
             name = meal.name,
             restaurantId = meal.restaurantId,
             dateTime = meal.dateTime.toString(),
-            photoList = meal.photoList
+            photoList = meal.photoList,
+            isSomeoneElsePaying = meal.isSomeoneElsePaying
         )
         val insertedMealId = mealDao.upsert(meal = mealEntity)
 

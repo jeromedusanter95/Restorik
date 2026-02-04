@@ -53,8 +53,8 @@ fun MealEditorRoute(
 
     MealEditorScreen(
         uiState = uiState.value,
-        onNameChange = viewModel::updateMealName,
-        onRestaurantNameChange = viewModel::updateRestaurantName,
+        onNameChanged = viewModel::updateMealName,
+        onRestaurantNameChanged = viewModel::updateRestaurantName,
         onSelectRestaurantSuggestion = viewModel::selectRestaurantSuggestion,
         onClearFieldError = viewModel::clearFieldError,
         onDeletePhoto = viewModel::deletePhoto,
@@ -66,13 +66,14 @@ fun MealEditorRoute(
         onDeleteDish = viewModel::deleteDish,
         onShowDishDialog = viewModel::showDishDialog,
         onDismissDishDialog = viewModel::dismissDishDialog,
-        onDishNameChange = viewModel::updateDishName,
-        onDishDescriptionChange = viewModel::updateDishDescription,
-        onDishPriceChange = viewModel::updateDishPrice,
-        onDishRatingChange = viewModel::updateDishRating,
-        onDishTypeChange = viewModel::updateDishType,
-        onDishTypeExpandedChange = viewModel::setDishTypeExpanded,
+        onDishNameChanged = viewModel::updateDishName,
+        onDishDescriptionChanged = viewModel::updateDishDescription,
+        onDishPriceChanged = viewModel::updateDishPrice,
+        onDishRatingChanged = viewModel::updateDishRating,
+        onDishTypeChanged = viewModel::updateDishType,
+        onDishTypeExpandedChanged = viewModel::setDishTypeExpanded,
         onSaveDish = viewModel::saveDishFromEditor,
+        onIsSomeoneElsePayingChanged = viewModel::setIsSomeoneElsePaying,
         modifier = modifier
     )
 

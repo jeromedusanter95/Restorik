@@ -16,7 +16,8 @@ class MealMapper @Inject constructor(
             name = mealWithDishes.meal.name,
             dateTime = mealWithDishes.meal.dateTime.toLocalDateTime(),
             photoList = mealWithDishes.meal.photoList,
-            dishList = mealWithDishes.dishList.map { dishMapper.mapEntityToDomain(dishEntity = it) }
+            dishList = mealWithDishes.dishList.map { dishMapper.mapEntityToDomain(dishEntity = it) },
+            isSomeoneElsePaying = mealWithDishes.meal.isSomeoneElsePaying
         )
     }
 }
