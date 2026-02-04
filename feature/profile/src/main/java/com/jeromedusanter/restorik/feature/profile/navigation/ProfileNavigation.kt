@@ -11,6 +11,7 @@ import androidx.navigation.navigation
 import com.jeromedusanter.restorik.feature.profile.MonthSelectorScreen
 import com.jeromedusanter.restorik.feature.profile.ProfileRoute
 import com.jeromedusanter.restorik.feature.profile.ProfileViewModel
+import androidx.compose.runtime.collectAsState
 
 const val profileBaseRoute = "profile"
 
@@ -45,23 +46,16 @@ fun NavGraphBuilder.profileSection(navController: NavHostController) {
                 navController.getBackStackEntry(profileBaseRoute)
             }
             val viewModel: ProfileViewModel = hiltViewModel(parentEntry)
+            val uiState = viewModel.uiState.collectAsState()
 
             MonthSelectorScreen(
-                currentMonth = viewModel.uiState.value.selectedMonth,
+                currentMonth = uiState.value.selectedMonth,
+                minMonth = uiState.value.minMonth,
                 onMonthSelected = { yearMonth ->
                     viewModel.selectMonth(yearMonth = yearMonth)
                     navController.popBackStack()
                 }
             )
         }
-    }
-}
-
-// For compatibility - keep the simple version for direct use
-fun NavGraphBuilder.profileScreen() {
-    composable(route = ProfileDestinations.Profile.route) {
-        ProfileRoute(
-            onNavigateToMonthSelector = { }
-        )
     }
 }

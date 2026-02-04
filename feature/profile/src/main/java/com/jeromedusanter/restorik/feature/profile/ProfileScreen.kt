@@ -65,7 +65,7 @@ fun ProfileScreen(
             // Previous month arrow
             IconButton(
                 onClick = { onMonthChange(uiState.selectedMonth.minusMonths(1)) },
-                enabled = uiState.selectedMonth > YearMonth.of(2025, 1)
+                enabled = uiState.selectedMonth > uiState.minMonth
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,

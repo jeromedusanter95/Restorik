@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -36,13 +37,14 @@ import java.util.Locale
 @Composable
 fun MonthSelectorScreen(
     currentMonth: YearMonth,
+    minMonth: YearMonth,
     onMonthSelected: (YearMonth) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedYear by remember { mutableStateOf(currentMonth.year) }
-    val monthList = generateMonthListForYear(year = selectedYear)
+    var selectedYear by remember { mutableIntStateOf(currentMonth.year) }
+    val monthList = generateMonthListForYear(year = selectedYear, minMonth = minMonth)
     val currentYear = Year.now().value
-    val minYear = 2025
+
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -57,7 +59,7 @@ fun MonthSelectorScreen(
         ) {
             IconButton(
                 onClick = { selectedYear -= 1 },
-                enabled = selectedYear > minYear
+                enabled = selectedYear > minMonth.year
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
@@ -129,7 +131,7 @@ private fun MonthItem(
 }
 
 @Composable
-private fun generateMonthListForYear(year: Int): List<MonthItem> {
+private fun generateMonthListForYear(year: Int, minMonth: YearMonth): List<MonthItem> {
     val currentYearMonth = YearMonth.now()
     val isCurrentYear = year == currentYearMonth.year
 
@@ -142,6 +144,12 @@ private fun generateMonthListForYear(year: Int): List<MonthItem> {
     }.filter { monthItem ->
         // If it's the current year, only show months up to current month
         !isCurrentYear || monthItem.yearMonth <= currentYearMonth
+    }.filter {
+        if (year == minMonth.year) {
+            it.yearMonth >= minMonth
+        } else {
+            true
+        }
     }
 }
 

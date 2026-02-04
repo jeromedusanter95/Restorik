@@ -12,7 +12,8 @@ data class ProfileUiState(
     val newRestaurantsTried: Int,
     val topRestaurantsBySpending: List<RestaurantSpending>,
     val averageMealSpending: Double,
-    val isLoading: Boolean
+    val isLoading: Boolean,
+    val minMonth: YearMonth,
 ) {
     companion object {
         val EMPTY = ProfileUiState(
@@ -25,7 +26,8 @@ data class ProfileUiState(
             newRestaurantsTried = 0,
             topRestaurantsBySpending = emptyList(),
             averageMealSpending = 0.0,
-            isLoading = true
+            isLoading = true,
+            minMonth = YearMonth.now(),
         )
     }
 }
