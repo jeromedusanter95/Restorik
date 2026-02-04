@@ -82,6 +82,11 @@ class ProfileViewModel @Inject constructor(
             0.0
         }
 
+        // Get MinMonth
+        val firstMeal = mealList.minByOrNull { it.dateTime }
+        val minMonth = firstMeal?.let { YearMonth.from(it.dateTime) } ?: YearMonth.now()
+
+
         ProfileUiState(
             selectedMonth = selectedMonth,
             monthlySpending = totalSpending,
@@ -92,7 +97,8 @@ class ProfileViewModel @Inject constructor(
             newRestaurantsTried = newRestaurantsTried,
             topRestaurantsBySpending = topRestaurantsBySpending,
             averageMealSpending = averageMealSpending,
-            isLoading = false
+            isLoading = false,
+            minMonth = minMonth,
         )
     }.stateIn(
         scope = viewModelScope,
