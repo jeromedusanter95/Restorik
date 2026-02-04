@@ -1,12 +1,10 @@
 package com.jeromedusanter.restorik.feature.meal.list
 
 import android.content.Context
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.core.domain.GetMealListUseCase
-import com.jeromedusanter.restorik.core.model.Meal
 import com.jeromedusanter.restorik.feature.meal.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -17,7 +15,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 
 @HiltViewModel
@@ -33,7 +30,7 @@ class MealListViewModel @Inject constructor(
     private val _filterRestaurantId = MutableStateFlow<Int?>(value = null)
 
     val uiState: StateFlow<MealListUiState> =
-        _filterRestaurantId.flatMapLatest { filterRestaurantId ->
+        _filterRestaurantId.flatMapLatest { filterRestaurantId -> // use flatMapLatest for performance, only the last emission is counter the others are cancelled
             combine(
                 getMealListUseCase(),
                 restaurantRepository.observeAll(),
@@ -44,26 +41,14 @@ class MealListViewModel @Inject constructor(
                 val restaurantMap = restaurantList.associateBy { it.id }
                 val unknownRestaurant = context.getString(R.string.feature_meal_unknown_restaurant)
 
-                // Flatten all meals from all groups
-                val allMeals = groupedMealList.flatMap { it.mealList }
-
-                // Apply restaurant filter if set
-                val filteredMeals = if (filterRestaurantId != null) {
-                    allMeals.filter { it.restaurantId == filterRestaurantId }
-                } else {
-                    allMeals
-                }
-
                 val filterRestaurantName = if (filterRestaurantId != null) {
                     restaurantMap[filterRestaurantId]?.name
                 } else {
                     null
                 }
 
-                // Apply sorting and grouping based on sort mode
                 val groupedMealUiModelList = when (sortMode) {
                     SortMode.DATE -> {
-                        // Use existing date-based grouping and filter within each group
                         groupedMealList.mapNotNull { mealGroup ->
                             // Filter meals within this group if restaurant filter is active
                             val mealsInGroup = if (filterRestaurantId != null) {
@@ -95,6 +80,13 @@ class MealListViewModel @Inject constructor(
                     }
 
                     SortMode.RESTAURANT -> {
+                        val allMeals = groupedMealList.flatMap { it.mealList }
+                        val filteredMeals = if (filterRestaurantId != null) {
+                            allMeals.filter { it.restaurantId == filterRestaurantId }
+                        } else {
+                            allMeals
+                        }
+
                         // Group by restaurant name
                         val grouped = filteredMeals.groupBy { meal ->
                             restaurantMap[meal.restaurantId]?.name ?: unknownRestaurant
@@ -119,6 +111,13 @@ class MealListViewModel @Inject constructor(
                     }
 
                     SortMode.RATING -> {
+                        val allMeals = groupedMealList.flatMap { it.mealList }
+                        val filteredMeals = if (filterRestaurantId != null) {
+                            allMeals.filter { it.restaurantId == filterRestaurantId }
+                        } else {
+                            allMeals
+                        }
+
                         // Group by rating
                         val grouped = filteredMeals.groupBy { it.ratingOnFive }
 
