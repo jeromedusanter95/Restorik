@@ -6,9 +6,13 @@ data class Meal(
     val id: Int,
     val restaurantId: Int,
     val name: String,
-    val comment: String,
-    val price: Double,
     val dateTime: LocalDateTime,
-    val ratingOnFive: Int,
-    val photoList: List<String>
-)
+    val photoList: List<String>,
+    val dishList: List<Dish>
+) {
+    val ratingOnFive: Float
+        get() = if (dishList.isEmpty()) 0f else dishList.map { it.rating }.average().toFloat()
+
+    val price: Double
+        get() = dishList.sumOf { it.price }
+}

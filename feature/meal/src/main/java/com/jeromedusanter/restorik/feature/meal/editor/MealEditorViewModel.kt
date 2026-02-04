@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
+import com.jeromedusanter.restorik.core.model.Dish
+import com.jeromedusanter.restorik.core.model.DishType
 import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -97,16 +99,25 @@ class MealEditorViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(name = name)
     }
 
-    fun updateMealComment(comment: String) {
-        _uiState.value = _uiState.value.copy(comment = comment)
+    fun addDish(dish: com.jeromedusanter.restorik.core.model.Dish) {
+        _uiState.update { state ->
+            state.copy(dishList = state.dishList + dish)
+        }
     }
 
-    fun updatePrice(price: String) {
-        _uiState.value = _uiState.value.copy(priceAsString = price)
+    fun updateDish(dishId: Int, updatedDish: com.jeromedusanter.restorik.core.model.Dish) {
+        _uiState.update { state ->
+            val newList = state.dishList.map { dish ->
+                if (dish.id == dishId) updatedDish else dish
+            }
+            state.copy(dishList = newList)
+        }
     }
 
-    fun updateRating(ratingOnFive: Int) {
-        _uiState.value = _uiState.value.copy(ratingOnFive = ratingOnFive)
+    fun deleteDish(dishId: Int) {
+        _uiState.update { state ->
+            state.copy(dishList = state.dishList.filter { it.id != dishId })
+        }
     }
 
     fun addPhoto(uri: Uri) {
@@ -188,7 +199,7 @@ class MealEditorViewModel @Inject constructor(
                     )
                 }
             } catch (e: SQLiteException) {
-                // Handle database-specific errors
+                e.printStackTrace()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -196,7 +207,7 @@ class MealEditorViewModel @Inject constructor(
                     )
                 }
             } catch (e: IllegalStateException) {
-                // Handle state-related errors (e.g., from RestaurantRepository)
+                e.printStackTrace()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -204,7 +215,7 @@ class MealEditorViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                // Handle all other unexpected errors
+                e.printStackTrace()
                 _uiState.update {
                     it.copy(
                         isLoading = false,
@@ -228,23 +239,15 @@ class MealEditorViewModel @Inject constructor(
             else -> null
         }
 
-        val priceError = when {
-            state.priceAsString.isBlank() -> context.getString(R.string.feature_meal_error_price_required)
-            state.priceAsString.toDoubleOrNull() == null -> context.getString(R.string.feature_meal_error_invalid_price_format)
-            state.priceAsString.toDouble() < 0 -> context.getString(R.string.feature_meal_error_price_negative)
-            else -> null
-        }
-
-        val ratingError = when {
-            state.ratingOnFive == 0 -> context.getString(R.string.feature_meal_error_rating_required)
+        val dishListError = when {
+            state.dishList.isEmpty() -> context.getString(R.string.feature_meal_error_dish_required)
             else -> null
         }
 
         return FieldErrors(
             restaurantNameError = restaurantNameError,
             mealNameError = mealNameError,
-            priceError = priceError,
-            ratingError = ratingError
+            dishListError = dishListError
         )
     }
 
@@ -253,8 +256,7 @@ class MealEditorViewModel @Inject constructor(
             val newFieldErrors = when (field) {
                 MealEditorField.RESTAURANT_NAME -> it.fieldErrors.copy(restaurantNameError = null)
                 MealEditorField.MEAL_NAME -> it.fieldErrors.copy(mealNameError = null)
-                MealEditorField.PRICE -> it.fieldErrors.copy(priceError = null)
-                MealEditorField.RATING -> it.fieldErrors.copy(ratingError = null)
+                MealEditorField.DISH_LIST -> it.fieldErrors.copy(dishListError = null)
             }
             it.copy(fieldErrors = newFieldErrors)
         }
@@ -290,6 +292,150 @@ class MealEditorViewModel @Inject constructor(
 
     fun clearSelectedPhoto() {
         _uiState.update { it.copy(selectedPhotoUri = null) }
+    }
+
+    fun showDishDialog(dish: Dish?) {
+        val dishEditorState = if (dish != null) {
+            DishEditorState(
+                dishId = dish.id,
+                name = dish.name,
+                description = dish.description,
+                priceString = dish.price.toString(),
+                rating = dish.rating,
+                dishType = dish.dishType
+            )
+        } else {
+            DishEditorState()
+        }
+
+        _uiState.update {
+            it.copy(
+                showDishDialog = true,
+                dishEditorState = dishEditorState
+            )
+        }
+    }
+
+    fun dismissDishDialog() {
+        _uiState.update {
+            it.copy(
+                showDishDialog = false,
+                dishEditorState = DishEditorState()
+            )
+        }
+    }
+
+    fun updateDishName(name: String) {
+        _uiState.update {
+            it.copy(dishEditorState = it.dishEditorState.copy(name = name, nameError = null))
+        }
+    }
+
+    fun updateDishDescription(description: String) {
+        _uiState.update {
+            it.copy(dishEditorState = it.dishEditorState.copy(description = description))
+        }
+    }
+
+    fun updateDishPrice(priceString: String) {
+        _uiState.update {
+            it.copy(dishEditorState = it.dishEditorState.copy(priceString = priceString, priceError = null))
+        }
+    }
+
+    fun updateDishRating(rating: Float) {
+        _uiState.update {
+            it.copy(dishEditorState = it.dishEditorState.copy(rating = rating, ratingError = null))
+        }
+    }
+
+    fun updateDishType(dishType: DishType) {
+        _uiState.update {
+            it.copy(dishEditorState = it.dishEditorState.copy(dishType = dishType))
+        }
+    }
+
+    fun setDishTypeExpanded(isExpanded: Boolean) {
+        _uiState.update {
+            it.copy(dishEditorState = it.dishEditorState.copy(isExpanded = isExpanded))
+        }
+    }
+
+    fun saveDishFromEditor() {
+        val state = uiState.value.dishEditorState
+
+        // Validate
+        var hasError = false
+        var nameError: String? = null
+        var priceError: String? = null
+        var ratingError: String? = null
+
+        if (state.name.isBlank()) {
+            nameError = context.getString(R.string.feature_meal_error_dish_name_required)
+            hasError = true
+        }
+
+        val price = state.priceString.toDoubleOrNull()
+        if (state.priceString.isBlank()) {
+            priceError = context.getString(R.string.feature_meal_error_price_required)
+            hasError = true
+        } else if (price == null) {
+            priceError = context.getString(R.string.feature_meal_error_invalid_price_format)
+            hasError = true
+        } else if (price < 0) {
+            priceError = context.getString(R.string.feature_meal_error_price_negative)
+            hasError = true
+        }
+
+        if (state.rating == 0f) {
+            ratingError = context.getString(R.string.feature_meal_error_rating_required)
+            hasError = true
+        }
+
+        if (hasError) {
+            _uiState.update {
+                it.copy(
+                    dishEditorState = it.dishEditorState.copy(
+                        nameError = nameError,
+                        priceError = priceError,
+                        ratingError = ratingError
+                    )
+                )
+            }
+            return
+        }
+
+        // Create and save dish
+        if (price != null) {
+            // Check if we're editing an existing dish or adding a new one
+            val isEditing = uiState.value.dishList.any { it.id == state.dishId }
+
+            // For new dishes, generate a unique temporary ID (negative to avoid conflicts)
+            val dishId = if (isEditing) {
+                state.dishId
+            } else {
+                // Find the minimum ID and decrement to ensure uniqueness
+                val minId = uiState.value.dishList.minOfOrNull { it.id } ?: 0
+                if (minId <= 0) minId - 1 else -1
+            }
+
+            val dish = Dish(
+                id = dishId,
+                name = state.name,
+                rating = state.rating,
+                description = state.description,
+                price = price,
+                dishType = state.dishType
+            )
+
+            if (isEditing) {
+                updateDish(dishId = state.dishId, updatedDish = dish)
+            } else {
+                addDish(dish = dish)
+            }
+
+            dismissDishDialog()
+        }
     }
 
     companion object {

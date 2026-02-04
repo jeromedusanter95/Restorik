@@ -12,18 +12,13 @@ class MealEditorMapper @Inject constructor() {
         mealEditorUiState: MealEditorUiState,
         restaurantId: Int
     ): Meal {
-        val price = mealEditorUiState.priceAsString.toDoubleOrNull()
-            ?: throw IllegalArgumentException("Invalid price format")
-
         return Meal(
             id = mealEditorUiState.id,
             restaurantId = restaurantId,
             name = mealEditorUiState.name,
-            comment = mealEditorUiState.comment,
-            price = price,
             dateTime = LocalDateTime.now(),
-            ratingOnFive = mealEditorUiState.ratingOnFive,
-            photoList = mealEditorUiState.photoUriList.map { it.toString() }
+            photoList = mealEditorUiState.photoUriList.map { it.toString() },
+            dishList = mealEditorUiState.dishList
         )
     }
 
@@ -39,9 +34,7 @@ class MealEditorMapper @Inject constructor() {
             id = meal.id,
             restaurantName = restaurantName,
             name = meal.name,
-            comment = meal.comment,
-            priceAsString = meal.price.toString(),
-            ratingOnFive = meal.ratingOnFive,
+            dishList = meal.dishList,
             photoUriList = photoUriList,
             isLoading = false,
             showAddButtonPhoto = photoUriList.isEmpty(),

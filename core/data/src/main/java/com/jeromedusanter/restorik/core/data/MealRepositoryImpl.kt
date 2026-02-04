@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.core.data
 
+import com.jeromedusanter.restorik.core.database.dao.DishDao
 import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.model.MealEntity
 import com.jeromedusanter.restorik.core.model.Meal
@@ -10,34 +11,46 @@ import javax.inject.Inject
 
 class MealRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
-    private val mealMapper: MealMapper
+    private val dishDao: DishDao,
+    private val mealMapper: MealMapper,
+    private val dishMapper: DishMapper
 ) : MealRepository {
 
     override fun observeMealById(id: Int): Flow<Meal> {
-        return mealDao.observerById(id = id).mapNotNull { mealEntity ->
-            mealEntity?.let { mealMapper.mapEntityModelToDomainModel(it) }
+        return mealDao.observeByIdWithDishes(id = id).mapNotNull { mealWithDishes ->
+            mealWithDishes?.let { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
         }
     }
 
     override fun observeAll(): Flow<List<Meal>> {
-        return mealDao.observeAll().map { list ->
-            list.map { mealMapper.mapEntityModelToDomainModel(it) }
+        return mealDao.observeAllWithDishes().map { list ->
+            list.map { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
         }
     }
 
     override suspend fun saveMealInLocalDb(meal: Meal) {
-        mealDao.upsert(
-            MealEntity(
-                id = meal.id,
-                name = meal.name,
-                comment = meal.comment,
-                price = meal.price,
-                restaurantId = meal.restaurantId,
-                dateTime = meal.dateTime.toString(),
-                ratingOnFive = meal.ratingOnFive,
-                photoList = meal.photoList,
-            )
+        val mealEntity = MealEntity(
+            id = meal.id,
+            name = meal.name,
+            restaurantId = meal.restaurantId,
+            dateTime = meal.dateTime.toString(),
+            photoList = meal.photoList
         )
+        val insertedMealId = mealDao.upsert(meal = mealEntity)
+
+        // Use the actual meal ID (either the inserted ID for new meals, or existing ID for updates)
+        val actualMealId = if (meal.id == 0) insertedMealId.toInt() else meal.id
+
+        // Delete existing dishes for this meal if updating
+        if (meal.id != 0) {
+            dishDao.deleteByMealId(mealId = actualMealId)
+        }
+
+        // Save all dishes for this meal using the actual meal ID
+        val dishEntityList = meal.dishList.map { dish ->
+            dishMapper.mapDomainToEntity(dish = dish, mealId = actualMealId)
+        }
+        dishDao.upsertAll(dishList = dishEntityList)
     }
 
     override suspend fun deleteMeal(id: Int) {

@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.feature.meal.R
+import java.util.Locale
 
 @Composable
 fun MealListScreen(
@@ -89,7 +90,7 @@ fun MealListScreen(
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Text(
-                                        text = "${group.ratingValue}",
+                                        text = String.format(Locale.getDefault(), "%.1f", group.ratingValue),
                                         style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.primary

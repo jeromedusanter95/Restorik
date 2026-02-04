@@ -47,8 +47,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.designsystem.theme.gold
+import com.jeromedusanter.restorik.core.model.Dish
 import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.feature.meal.R
+import java.util.Locale
 
 @Composable
 fun MealDetailScreen(
@@ -189,7 +191,7 @@ fun MealDetailScreen(
                                 tint = gold
                             )
                             Text(
-                                text = "${uiState.ratingOnFive}/5",
+                                text = String.format(Locale.getDefault(), "%.1f/5", uiState.ratingOnFive),
                                 style = MaterialTheme.typography.titleLarge,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -224,30 +226,76 @@ fun MealDetailScreen(
                     }
                 }
 
-                // Comment Section
-                if (uiState.comment.isNotBlank()) {
+                // Dishes Section
+                if (uiState.dishList.isNotEmpty()) {
                     HorizontalDivider()
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(space = 8.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.feature_meal_comment_label),
+                            text = stringResource(R.string.feature_meal_dishes_label),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        Card(
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        ) {
-                            Text(
-                                text = uiState.comment,
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(all = 16.dp)
-                            )
+
+                        uiState.dishList.forEach { dish ->
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(all = 16.dp),
+                                    verticalArrangement = Arrangement.spacedBy(space = 8.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.Top
+                                    ) {
+                                        Text(
+                                            text = dish.name,
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.SemiBold,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.weight(weight = 1f)
+                                        )
+                                        Text(
+                                            text = String.format(Locale.getDefault(), "%.2f€", dish.price),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+
+                                    if (dish.description.isNotBlank()) {
+                                        Text(
+                                            text = dish.description,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                        )
+                                    }
+
+                                    Row(
+                                        horizontalArrangement = Arrangement.spacedBy(space = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        repeat(5) { index ->
+                                            Icon(
+                                                imageVector = Icons.Default.Star,
+                                                contentDescription = null,
+                                                modifier = Modifier.size(16.dp),
+                                                tint = if (index < dish.rating.toInt()) gold else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -298,10 +346,27 @@ private fun MealDetailScreenPreview() {
         MealDetailScreen(
             uiState = MealDetailUiState(
                 restaurantName = "Sapore",
-                name = "Pizza Margherita",
-                comment = "Absolutely delicious! The crust was perfectly crispy and the tomato sauce had just the right amount of basil. Will definitely come back here.",
-                priceAsString = "12.50",
-                ratingOnFive = 5,
+                name = "Italian Dinner",
+                dishList = listOf(
+                    Dish(
+                        id = 1,
+                        name = "Pizza Margherita",
+                        rating = 5f,
+                        description = "Perfect crispy crust with fresh basil",
+                        price = 12.50,
+                        dishType = com.jeromedusanter.restorik.core.model.DishType.MAIN_COURSE
+                    ),
+                    Dish(
+                        id = 2,
+                        name = "Tiramisu",
+                        rating = 4.5f,
+                        description = "Classic Italian dessert",
+                        price = 6.50,
+                        dishType = com.jeromedusanter.restorik.core.model.DishType.DESSERT
+                    )
+                ),
+                priceAsString = "19.00",
+                ratingOnFive = 4.7f,
                 photoUriList = emptyList()
             )
         )

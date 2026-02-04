@@ -2,6 +2,7 @@ package com.jeromedusanter.restorik.feature.meal.detail
 
 import androidx.core.net.toUri
 import com.jeromedusanter.restorik.core.model.Meal
+import java.util.Locale
 import javax.inject.Inject
 
 class MealDetailMapper @Inject constructor() {
@@ -10,8 +11,8 @@ class MealDetailMapper @Inject constructor() {
         return MealDetailUiState(
             restaurantName = restaurantName,
             name = meal.name,
-            comment = meal.comment,
-            priceAsString = meal.price.toString(),
+            dishList = meal.dishList,
+            priceAsString = String.format(Locale.getDefault(), "%.2f", meal.price),
             ratingOnFive = meal.ratingOnFive,
             photoUriList = meal.photoList.map(String::toUri)
         )

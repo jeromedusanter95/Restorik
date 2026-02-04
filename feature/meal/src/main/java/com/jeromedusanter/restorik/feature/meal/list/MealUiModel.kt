@@ -9,6 +9,6 @@ data class MealUiModel(
     val name: String,
     val restaurantName: String,
     val date: String,
-    val rating: Int,
+    val rating: Float,
     val photoUri: Uri?,
 )
