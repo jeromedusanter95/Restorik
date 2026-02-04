@@ -5,9 +5,5 @@ import androidx.room.Relation
 
 data class MealWithDishes(
     @Embedded val meal: MealEntity,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "meal_id"
-    )
-    val dishList: List<DishEntity>
+    @Relation(parentColumn = "id", entityColumn = "meal_id") val dishList: List<DishEntity>
 )

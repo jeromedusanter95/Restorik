@@ -22,6 +22,8 @@ class MealRepositoryImpl @Inject constructor(
         }
     }
 
+    // Note: Underlying DB queries are optimized with indexes on date_time and restaurant_id
+    // This enables fast sorting and filtering in the UI layer (see MealListViewModel)
     override fun observeAll(): Flow<List<Meal>> {
         return mealDao.observeAllWithDishes().map { list ->
             list.map { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }

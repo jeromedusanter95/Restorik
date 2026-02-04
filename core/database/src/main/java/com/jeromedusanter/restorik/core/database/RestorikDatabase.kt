@@ -19,7 +19,7 @@ import com.jeromedusanter.restorik.core.database.model.RestaurantEntity
         RestaurantEntity::class,
         RecentSearchEntity::class,
     ],
-    version = 5,
+    version = 6, // Added indexes to MealEntity for performance optimization
     exportSchema = true,
 )
 @TypeConverters(
