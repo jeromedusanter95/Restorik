@@ -7,6 +7,7 @@ import com.jeromedusanter.restorik.core.model.Dish
 @Immutable
 data class MealDetailUiState(
     val restaurantName: String,
+    val cityName: String,
     val name: String,
     val dishList: List<Dish>,
     val priceAsString: String,
@@ -18,6 +19,7 @@ data class MealDetailUiState(
         val EMPTY = MealDetailUiState(
             name = "",
             restaurantName = "",
+            cityName = "",
             dishList = emptyList(),
             priceAsString = "0.0",
             ratingOnFive = 0f,

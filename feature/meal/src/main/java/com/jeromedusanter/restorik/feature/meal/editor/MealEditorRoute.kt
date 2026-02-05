@@ -56,6 +56,8 @@ fun MealEditorRoute(
         onNameChanged = viewModel::updateMealName,
         onRestaurantNameChanged = viewModel::updateRestaurantName,
         onSelectRestaurantSuggestion = viewModel::selectRestaurantSuggestion,
+        onCityNameChanged = viewModel::updateCityName,
+        onSelectCitySuggestion = viewModel::selectCitySuggestion,
         onClearFieldError = viewModel::clearFieldError,
         onDeletePhoto = viewModel::deletePhoto,
         onShowPhotoSelectionBottomSheet = viewModel::showPhotoSelectionBottomSheet,

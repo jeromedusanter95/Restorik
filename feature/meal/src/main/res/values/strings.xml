@@ -13,6 +13,7 @@
     <string name="feature_meal_someone_else_is_paying_label">Someone else is paying for you ?</string>
     <string name="feature_meal_restaurant_info_label">Restaurant</string>
     <string name="feature_meal_restaurant_name_label">Restaurant name</string>
+    <string name="feature_meal_city_name_label">City</string>
     <string name="feature_meal_comment_label">Comment</string>
     <string name="feature_meal_price_label">Price</string>
     <string name="feature_meal_rating_label">Rating</string>
@@ -53,6 +54,7 @@
     <string name="feature_meal_error_unknown">Unknown error</string>
     <string name="feature_meal_error_save_meal_failed">Failed to save meal: %s</string>
     <string name="feature_meal_error_restaurant_name_required">Restaurant name is required</string>
+    <string name="feature_meal_error_city_name_required">City name is required</string>
     <string name="feature_meal_error_meal_name_required">Meal name is required</string>
     <string name="feature_meal_error_dish_name_required">Dish name is required</string>
     <string name="feature_meal_error_price_required">Price is required</string>
@@ -80,6 +82,7 @@
     <string name="feature_meal_photos_label">Photos</string>
     <string name="feature_meal_detail_screen_title">Meal Detail Screen !</string>
     <string name="feature_meal_unknown_restaurant">Unknown</string>
+    <string name="feature_meal_unknown_city">Unknown</string>
     <string name="feature_meal_photo_selection_title">Add a photo</string>
     <string name="feature_meal_photo_selection_take_photo">Take a photo</string>
     <string name="feature_meal_photo_selection_choose_gallery">Choose from gallery</string>

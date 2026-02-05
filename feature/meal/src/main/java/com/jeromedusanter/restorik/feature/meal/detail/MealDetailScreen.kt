@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Euro
 import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -163,6 +164,24 @@ fun MealDetailScreen(
                         text = uiState.restaurantName,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                // City Info
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(space = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationCity,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = uiState.cityName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
@@ -368,6 +387,7 @@ private fun MealDetailScreenPreview() {
         MealDetailScreen(
             uiState = MealDetailUiState(
                 restaurantName = "Sapore",
+                cityName = "Paris",
                 name = "Italian Dinner",
                 dishList = listOf(
                     Dish(
@@ -402,6 +422,7 @@ private fun MealDetailScreenSomeoneElsePayingPreview() {
         MealDetailScreen(
             uiState = MealDetailUiState(
                 restaurantName = "Sapore",
+                cityName = "Paris",
                 name = "Italian Dinner",
                 dishList = listOf(
                     Dish(

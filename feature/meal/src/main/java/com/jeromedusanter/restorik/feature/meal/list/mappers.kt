@@ -17,11 +17,12 @@ fun GroupDate.toLocalizedString(context: Context): String {
     }
 }
 
-fun Meal.toUiModel(restaurantName: String): MealUiModel {
+fun Meal.toUiModel(restaurantName: String, cityName: String): MealUiModel {
     return MealUiModel(
         id = id,
         name = name,
         restaurantName = restaurantName,
+        cityName = cityName,
         date = dateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
         rating = ratingOnFive,
         photoUri = photoList.firstOrNull()?.toUri()

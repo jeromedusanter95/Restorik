@@ -2,9 +2,8 @@ package com.jeromedusanter.restorik.core.database.di
 
 import android.content.Context
 import androidx.room.Room
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.jeromedusanter.restorik.core.database.RestorikDatabase
+import com.jeromedusanter.restorik.core.database.util.PrepopulateCitiesCallback
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +17,7 @@ internal object DatabaseModule {
 
     @Provides
     @Singleton
-    fun providesNiaDatabase(
+    fun providesRestorikDatabase(
         @ApplicationContext context: Context,
     ): RestorikDatabase {
         return Room.databaseBuilder(
@@ -27,6 +26,7 @@ internal object DatabaseModule {
             "restorik-database",
         )
             .fallbackToDestructiveMigration()
+            .addCallback(PrepopulateCitiesCallback())
             .build()
     }
 }

@@ -7,9 +7,10 @@ import javax.inject.Inject
 
 class MealDetailMapper @Inject constructor() {
 
-    fun mapToUiModel(meal: Meal, restaurantName: String): MealDetailUiState {
+    fun mapToUiModel(meal: Meal, restaurantName: String, cityName: String): MealDetailUiState {
         return MealDetailUiState(
             restaurantName = restaurantName,
+            cityName = cityName,
             name = meal.name,
             dishList = meal.dishList,
             priceAsString = String.format(Locale.getDefault(), "%.2f", meal.price),

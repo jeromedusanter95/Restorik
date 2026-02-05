@@ -19,23 +19,29 @@ class RestaurantRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun saveByNameAndGetLocal(restaurantName: String): Restaurant {
+    override suspend fun saveByNameAndGetLocal(restaurantName: String, cityId: Int): Restaurant {
         // Validate input
         require(restaurantName.isNotBlank()) {
             "Restaurant name cannot be empty"
         }
+        require(cityId > 0) {
+            "City ID must be valid"
+        }
 
-        // Check if restaurant already exists
-        restaurantDao.getByName(restaurantName)?.let { return it.toModel() }
+        // Check if restaurant already exists in this city
+        restaurantDao.getByNameAndCityId(name = restaurantName, cityId = cityId)?.let { return it.toModel() }
 
         // Insert new restaurant and get the generated ID
-        val insertedId = restaurantDao.insert(RestaurantEntity(id = 0, name = restaurantName))
+        // Using id = 0 to let Room auto-generate the ID
+        val insertedId = restaurantDao.insert(
+            RestaurantEntity(id = 0, name = restaurantName, cityId = cityId)
+        )
 
         // If insert returns -1, the restaurant already exists (IGNORE conflict strategy)
         // This can happen due to race conditions in concurrent operations
         if (insertedId == -1L) {
-            return restaurantDao.getByName(restaurantName)?.toModel()
-                ?: throw IllegalStateException("Restaurant '$restaurantName' should exist but was not found")
+            return restaurantDao.getByNameAndCityId(name = restaurantName, cityId = cityId)?.toModel()
+                ?: throw IllegalStateException("Restaurant '$restaurantName' in city $cityId should exist but was not found")
         }
 
         // Validate the inserted ID is valid
@@ -44,11 +50,15 @@ class RestaurantRepositoryImpl @Inject constructor(
         }
 
         // Return newly created restaurant with the inserted ID
-        return Restaurant(id = insertedId.toInt(), name = restaurantName)
+        return Restaurant(id = insertedId.toInt(), name = restaurantName, cityId = cityId)
     }
 
     override suspend fun getRestaurantByName(name: String): Restaurant? {
         return restaurantDao.getByName(name)?.toModel()
+    }
+
+    override suspend fun getRestaurantByNameAndCityId(name: String, cityId: Int): Restaurant? {
+        return restaurantDao.getByNameAndCityId(name = name, cityId = cityId)?.toModel()
     }
 
     override suspend fun searchByNamePrefix(query: String): List<Restaurant> {
@@ -58,5 +68,9 @@ class RestaurantRepositoryImpl @Inject constructor(
 }
 
 private fun RestaurantEntity?.toModel(): Restaurant {
-    return Restaurant(id = this?.id ?: -1, name = this?.name ?: "")
+    return Restaurant(
+        id = this?.id ?: -1,
+        name = this?.name ?: "",
+        cityId = this?.cityId ?: -1
+    )
 }

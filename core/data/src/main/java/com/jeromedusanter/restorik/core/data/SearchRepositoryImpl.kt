@@ -109,6 +109,10 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     private fun RestaurantEntity?.toModel(): Restaurant {
-        return Restaurant(id = this?.id ?: -1, name = this?.name ?: "")
+        return Restaurant(
+            id = this?.id ?: -1,
+            name = this?.name ?: "",
+            cityId = this?.cityId ?: -1
+        )
     }
 }

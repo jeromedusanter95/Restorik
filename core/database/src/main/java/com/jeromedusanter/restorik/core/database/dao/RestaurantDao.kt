@@ -21,6 +21,9 @@ interface RestaurantDao {
     @Query("SELECT * FROM restaurants WHERE name = :name")
     suspend fun getByName(name: String): RestaurantEntity?
 
+    @Query("SELECT * FROM restaurants WHERE name = :name AND city_id = :cityId")
+    suspend fun getByNameAndCityId(name: String, cityId: Int): RestaurantEntity?
+
     @Query(
         """
         SELECT restaurants.* FROM restaurants
