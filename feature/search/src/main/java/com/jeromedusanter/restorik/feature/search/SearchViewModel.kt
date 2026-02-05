@@ -60,12 +60,14 @@ class SearchViewModel @Inject constructor(
                         id = searchResult.meal.id,
                         name = searchResult.meal.name,
                         restaurantName = searchResult.restaurantName,
+                        cityName = searchResult.cityName,
                         rating = searchResult.meal.ratingOnFive,
                         photoUri = searchResult.meal.photoList.firstOrNull(),
                     )
                     is SearchResult.RestaurantResult -> SearchResultUiModel.RestaurantItem(
                         id = searchResult.restaurant.id,
                         name = searchResult.restaurant.name,
+                        cityName = searchResult.cityName,
                     )
                 }
             },

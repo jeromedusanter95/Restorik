@@ -11,6 +11,10 @@ class RestaurantRepositoryImpl @Inject constructor(
     private val restaurantDao: RestaurantDao
 ) : RestaurantRepository {
 
+    override suspend fun getById(id: Int): Restaurant? {
+        return restaurantDao.getById(id = id)?.toModel()
+    }
+
     override fun observeById(id: Int) = restaurantDao.observeById(id).map { it.toModel() }
 
     override fun observeAll(): Flow<List<Restaurant>> {

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import java.time.YearMonth
 
 interface MealRepository {
+    suspend fun getById(id: Int): Meal?
     fun observeMealById(id: Int): Flow<Meal>
     fun observeAll(): Flow<List<Meal>>
     suspend fun saveMealInLocalDb(meal: Meal)

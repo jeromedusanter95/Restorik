@@ -4,6 +4,7 @@ import com.jeromedusanter.restorik.core.model.Restaurant
 import kotlinx.coroutines.flow.Flow
 
 interface RestaurantRepository {
+    suspend fun getById(id: Int): Restaurant?
     fun observeById(id: Int): Flow<Restaurant>
     fun observeAll(): Flow<List<Restaurant>>
     suspend fun saveByNameAndGetLocal(restaurantName: String, cityId: Int): Restaurant
