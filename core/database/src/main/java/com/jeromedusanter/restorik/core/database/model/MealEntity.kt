@@ -9,9 +9,9 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "meals",
     indices = [
-        Index(value = ["date_time"]), // Optimizes: searchMeals(), searchMealsWithDishes() (ORDER BY)
-        Index(value = ["restaurant_id"]), // Optimizes: observeByRestaurantId(), observeByRestaurantIdWithDishes() (WHERE)
-        Index(value = ["restaurant_id", "date_time"]) // Optimizes: observeByRestaurantId(), observeByRestaurantIdWithDishes() (WHERE + ORDER BY)
+        Index(value = ["date_time"]),
+        Index(value = ["restaurant_id"]),
+        Index(value = ["restaurant_id", "date_time"])
     ]
 )
 data class MealEntity(

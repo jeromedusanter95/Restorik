@@ -43,16 +43,17 @@ interface MealDao {
     @Query(
         """
         SELECT DISTINCT meals.* FROM meals
-        LEFT JOIN restaurants ON meals.restaurant_id = restaurants.id
-        LEFT JOIN dishes ON meals.id = dishes.meal_id
-        WHERE meals.name LIKE :query || '%'
-        OR meals.name LIKE '% ' || :query || '%'
-        OR restaurants.name LIKE :query || '%'
-        OR restaurants.name LIKE '% ' || :query || '%'
-        OR dishes.name LIKE :query || '%'
-        OR dishes.name LIKE '% ' || :query || '%'
-        OR dishes.description LIKE :query || '%'
-        OR dishes.description LIKE '% ' || :query || '%'
+        WHERE meals.id IN (
+            SELECT meals_fts.rowid FROM meals_fts WHERE meals_fts MATCH :query || '*'
+        )
+        OR meals.restaurant_id IN (
+            SELECT restaurants_fts.rowid FROM restaurants_fts WHERE restaurants_fts MATCH :query || '*'
+        )
+        OR meals.id IN (
+            SELECT dishes.meal_id FROM dishes
+            INNER JOIN dishes_fts ON dishes.id = dishes_fts.rowid
+            WHERE dishes_fts MATCH :query || '*'
+        )
         ORDER BY meals.date_time DESC
         """
     )
@@ -62,16 +63,17 @@ interface MealDao {
     @Query(
         """
         SELECT DISTINCT meals.* FROM meals
-        LEFT JOIN restaurants ON meals.restaurant_id = restaurants.id
-        LEFT JOIN dishes ON meals.id = dishes.meal_id
-        WHERE meals.name LIKE :query || '%'
-        OR meals.name LIKE '% ' || :query || '%'
-        OR restaurants.name LIKE :query || '%'
-        OR restaurants.name LIKE '% ' || :query || '%'
-        OR dishes.name LIKE :query || '%'
-        OR dishes.name LIKE '% ' || :query || '%'
-        OR dishes.description LIKE :query || '%'
-        OR dishes.description LIKE '% ' || :query || '%'
+        WHERE meals.id IN (
+            SELECT meals_fts.rowid FROM meals_fts WHERE meals_fts MATCH :query || '*'
+        )
+        OR meals.restaurant_id IN (
+            SELECT restaurants_fts.rowid FROM restaurants_fts WHERE restaurants_fts MATCH :query || '*'
+        )
+        OR meals.id IN (
+            SELECT dishes.meal_id FROM dishes
+            INNER JOIN dishes_fts ON dishes.id = dishes_fts.rowid
+            WHERE dishes_fts MATCH :query || '*'
+        )
         ORDER BY meals.date_time DESC
         """
     )
