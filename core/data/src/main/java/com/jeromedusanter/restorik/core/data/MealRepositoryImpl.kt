@@ -44,12 +44,21 @@ class MealRepositoryImpl @Inject constructor(
 
         val actualMealId = if (meal.id == 0) insertedMealId.toInt() else meal.id
 
+        // When updating an existing meal, delete old dishes first
         if (meal.id != 0) {
             dishDao.deleteByMealId(mealId = actualMealId)
         }
 
+        // IMPORTANT !!
+        // I used negative ID for the dishes when saving in the UI
+        // we need to reset all the negatives ID to 0 and let Room autogenerate an ID
         val dishEntityList = meal.dishList.map { dish ->
-            dishMapper.mapDomainToEntity(dish = dish, mealId = actualMealId)
+            val dishToSave = if (dish.id <= 0) {
+                dish.copy(id = 0)
+            } else {
+                dish
+            }
+            dishMapper.mapDomainToEntity(dish = dishToSave, mealId = actualMealId)
         }
         dishDao.upsertAll(dishList = dishEntityList)
     }

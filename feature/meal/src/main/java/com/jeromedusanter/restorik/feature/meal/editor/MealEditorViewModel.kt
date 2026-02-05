@@ -440,13 +440,15 @@ class MealEditorViewModel @Inject constructor(
         // Create and save dish
         if (price != null) {
             // Check if we're editing an existing dish or adding a new one
-            val isEditing = uiState.value.dishList.any { it.id == state.dishId }
+            val isEditing = state.dishId != 0
 
-            // For new dishes, generate a unique temporary ID (negative to avoid conflicts)
+            // For new dishes in the UI, use a unique temporary ID
+            // We'll generate new IDs sequentially starting from -1, -2, -3...
+            // These will be reset to 0 when saving to database
             val dishId = if (isEditing) {
                 state.dishId
             } else {
-                // Find the minimum ID and decrement to ensure uniqueness
+                // Generate next negative ID for UI tracking
                 val minId = uiState.value.dishList.minOfOrNull { it.id } ?: 0
                 if (minId <= 0) minId - 1 else -1
             }
