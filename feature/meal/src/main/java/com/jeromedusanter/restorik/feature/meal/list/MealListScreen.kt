@@ -3,6 +3,8 @@ package com.jeromedusanter.restorik.feature.meal.list
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import com.jeromedusanter.restorik.core.model.SortMode
+import com.jeromedusanter.restorik.core.model.SortOrder
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
