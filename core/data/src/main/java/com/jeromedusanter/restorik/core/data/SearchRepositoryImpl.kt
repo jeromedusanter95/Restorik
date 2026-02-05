@@ -5,6 +5,7 @@ import com.jeromedusanter.restorik.core.database.dao.RecentSearchDao
 import com.jeromedusanter.restorik.core.database.dao.RestaurantDao
 import com.jeromedusanter.restorik.core.database.model.RecentSearchEntity
 import com.jeromedusanter.restorik.core.database.model.RestaurantEntity
+import com.jeromedusanter.restorik.core.database.util.removeStopWords
 import com.jeromedusanter.restorik.core.model.RecentSearch
 import com.jeromedusanter.restorik.core.model.Restaurant
 import com.jeromedusanter.restorik.core.model.SearchResult
@@ -27,10 +28,16 @@ class SearchRepositoryImpl @Inject constructor(
             return@flow
         }
 
+        // Remove stop words from query for more relevant results
+        val filteredQuery = removeStopWords(query = query)
+
+        // If all words were stop words, use original query
+        val searchQuery = filteredQuery.ifBlank { query }
+
         val resultList = mutableListOf<SearchResult>()
 
         // Search restaurants
-        val restaurantEntityList = restaurantDao.searchRestaurants(query = query)
+        val restaurantEntityList = restaurantDao.searchRestaurants(query = searchQuery)
         resultList.addAll(
             restaurantEntityList.map { restaurantEntity ->
                 SearchResult.RestaurantResult(restaurant = restaurantEntity.toModel())
@@ -38,7 +45,7 @@ class SearchRepositoryImpl @Inject constructor(
         )
 
         // Search meals
-        val mealWithDishesList = mealDao.searchMealsWithDishes(query = query)
+        val mealWithDishesList = mealDao.searchMealsWithDishes(query = searchQuery)
 
         // Get all restaurant entities at once for efficiency
         val allRestaurantList = restaurantDao.observeAll().first()

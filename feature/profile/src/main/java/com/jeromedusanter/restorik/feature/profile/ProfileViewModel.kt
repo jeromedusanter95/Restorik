@@ -9,97 +9,68 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.YearMonth
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    mealRepository: MealRepository,
+    private val mealRepository: MealRepository,
     restaurantRepository: RestaurantRepository
 ) : ViewModel() {
 
     private val _selectedMonth = MutableStateFlow(YearMonth.now())
 
-    val uiState: StateFlow<ProfileUiState> = combine(
-        _selectedMonth,
-        mealRepository.observeAll(),
-        restaurantRepository.observeAll()
-    ) { selectedMonth, mealList, restaurantList ->
-        val monthlyMeals = mealList.filter { meal ->
-            YearMonth.from(meal.dateTime) == selectedMonth
-        }
-        val totalSpending = monthlyMeals.sumOf { it.price }
-        val numberOfMeals = monthlyMeals.size
-        val uniqueRestaurantIds = monthlyMeals.map { it.restaurantId }.distinct()
-        val numberOfRestaurants = uniqueRestaurantIds.size
+    val uiState: StateFlow<ProfileUiState> = _selectedMonth.flatMapLatest { selectedMonth ->
+        val selectedMonthStr = selectedMonth.toString()
+        val previousMonthStr = selectedMonth.minusMonths(1).toString()
 
-        // Calculate previous month spending
-        val previousMonth = selectedMonth.minusMonths(1)
-        val previousMonthMeals = mealList.filter { meal ->
-            YearMonth.from(meal.dateTime) == previousMonth
-        }
-        val previousMonthSpending = previousMonthMeals.sumOf { it.price }
+        combine(
+            mealRepository.getTotalSpendingForMonth(yearMonth = selectedMonthStr),
+            mealRepository.getTotalSpendingForMonth(yearMonth = previousMonthStr),
+            mealRepository.getMealCountForMonth(yearMonth = selectedMonthStr),
+            mealRepository.getAverageRatingForMonth(yearMonth = selectedMonthStr),
+            mealRepository.getUniqueRestaurantCountForMonth(yearMonth = selectedMonthStr),
+            mealRepository.getTopRestaurantIdsBySpendingForMonth(yearMonth = selectedMonthStr, limit = 3),
+            mealRepository.getFirstMealYearMonth(),
+            mealRepository.getNewRestaurantsTriedCount(selectedYearMonth = selectedMonthStr),
+            restaurantRepository.observeAll()
+        ) { monthlySpending, previousMonthSpending, numberOfMeals, averageRating, numberOfRestaurants,
+            topRestaurantIds, minMonth, newRestaurantsTried, restaurantList ->
 
-        // Calculate average rating
-        val averageRating = if (numberOfMeals > 0) {
-            monthlyMeals.map { it.ratingOnFive }.average()
-        } else {
-            0.0
-        }
+            // Calculate average meal spending
+            val averageMealSpending = if (numberOfMeals > 0) {
+                monthlySpending / numberOfMeals
+            } else {
+                0.0
+            }
 
-        // Calculate new restaurants tried this month
-        val restaurantsVisitedBeforeSelectedMonth = mealList
-            .filter { meal -> YearMonth.from(meal.dateTime) < selectedMonth }
-            .map { it.restaurantId }
-            .distinct()
-        val newRestaurantsTried = uniqueRestaurantIds.count { restaurantId ->
-            restaurantId !in restaurantsVisitedBeforeSelectedMonth
-        }
-
-        // Calculate spending per restaurant
-        val restaurantSpendingMap = monthlyMeals.groupBy { it.restaurantId }
-            .mapValues { (_, meals) -> meals.sumOf { it.price } }
-
-        // Get top 3 restaurants by spending
-        val topRestaurantsBySpending = restaurantSpendingMap.entries
-            .sortedByDescending { it.value }
-            .take(3)
-            .mapNotNull { (restaurantId, spending) ->
-                val restaurant = restaurantList.find { it.id == restaurantId }
-                restaurant?.let {
+            // Map restaurant IDs to names for top restaurants
+            val restaurantMap = restaurantList.associateBy { it.id }
+            val topRestaurantsBySpending = topRestaurantIds.mapNotNull { (restaurantId, spending) ->
+                restaurantMap[restaurantId]?.let { restaurant ->
                     RestaurantSpending(
-                        restaurantName = it.name,
+                        restaurantName = restaurant.name,
                         totalSpending = spending
                     )
                 }
             }
 
-        // Calculate average meal spending
-        val averageMealSpending = if (numberOfMeals > 0) {
-            totalSpending / numberOfMeals
-        } else {
-            0.0
+            ProfileUiState(
+                selectedMonth = selectedMonth,
+                monthlySpending = monthlySpending,
+                previousMonthSpending = previousMonthSpending,
+                numberOfMeals = numberOfMeals,
+                averageRating = averageRating,
+                numberOfRestaurants = numberOfRestaurants,
+                newRestaurantsTried = newRestaurantsTried,
+                topRestaurantsBySpending = topRestaurantsBySpending,
+                averageMealSpending = averageMealSpending,
+                isLoading = false,
+                minMonth = minMonth ?: YearMonth.now()
+            )
         }
-
-        // Get MinMonth
-        val firstMeal = mealList.minByOrNull { it.dateTime }
-        val minMonth = firstMeal?.let { YearMonth.from(it.dateTime) } ?: YearMonth.now()
-
-
-        ProfileUiState(
-            selectedMonth = selectedMonth,
-            monthlySpending = totalSpending,
-            previousMonthSpending = previousMonthSpending,
-            numberOfMeals = numberOfMeals,
-            averageRating = averageRating,
-            numberOfRestaurants = numberOfRestaurants,
-            newRestaurantsTried = newRestaurantsTried,
-            topRestaurantsBySpending = topRestaurantsBySpending,
-            averageMealSpending = averageMealSpending,
-            isLoading = false,
-            minMonth = minMonth,
-        )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5000),

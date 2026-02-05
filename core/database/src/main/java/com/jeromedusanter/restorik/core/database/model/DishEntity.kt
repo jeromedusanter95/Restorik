@@ -3,6 +3,7 @@ package com.jeromedusanter.restorik.core.database.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -16,7 +17,7 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [
-        androidx.room.Index(value = ["meal_id"])
+        Index(value = ["meal_id"])
     ]
 )
 data class DishEntity(

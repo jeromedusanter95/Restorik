@@ -2,9 +2,18 @@ package com.jeromedusanter.restorik.core.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "meals")
+
+@Entity(
+    tableName = "meals",
+    indices = [
+        Index(value = ["date_time"]),
+        Index(value = ["restaurant_id"]),
+        Index(value = ["restaurant_id", "date_time"])
+    ]
+)
 data class MealEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "name") val name: String,

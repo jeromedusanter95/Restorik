@@ -11,10 +11,7 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
-class GetMealListUseCase @Inject constructor(
-    private val mealRepository: MealRepository,
-    private val restaurantRepository: RestaurantRepository,
-) {
+class GetMealListUseCase @Inject constructor(private val mealRepository: MealRepository) {
 
     operator fun invoke(): Flow<List<MealGroupedByDate>> {
         return mealRepository.observeAll().map { mealList ->
@@ -36,7 +33,13 @@ class GetMealListUseCase @Inject constructor(
             }
         }
 
-        val order = listOf(GroupDate.TODAY, GroupDate.YESTERDAY, GroupDate.WEEK, GroupDate.MONTH, GroupDate.OLDER)
+        val order = listOf(
+            GroupDate.TODAY,
+            GroupDate.YESTERDAY,
+            GroupDate.WEEK,
+            GroupDate.MONTH,
+            GroupDate.OLDER
+        )
 
         return order.mapNotNull { groupDate ->
             grouped[groupDate]?.let { mealList ->

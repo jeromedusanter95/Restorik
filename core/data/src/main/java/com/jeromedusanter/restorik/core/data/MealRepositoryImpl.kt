@@ -5,8 +5,11 @@ import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.model.MealEntity
 import com.jeromedusanter.restorik.core.model.Meal
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import java.time.LocalDateTime
+import java.time.YearMonth
 import javax.inject.Inject
 
 class MealRepositoryImpl @Inject constructor(
@@ -39,15 +42,12 @@ class MealRepositoryImpl @Inject constructor(
         )
         val insertedMealId = mealDao.upsert(meal = mealEntity)
 
-        // Use the actual meal ID (either the inserted ID for new meals, or existing ID for updates)
         val actualMealId = if (meal.id == 0) insertedMealId.toInt() else meal.id
 
-        // Delete existing dishes for this meal if updating
         if (meal.id != 0) {
             dishDao.deleteByMealId(mealId = actualMealId)
         }
 
-        // Save all dishes for this meal using the actual meal ID
         val dishEntityList = meal.dishList.map { dish ->
             dishMapper.mapDomainToEntity(dish = dish, mealId = actualMealId)
         }
@@ -56,5 +56,43 @@ class MealRepositoryImpl @Inject constructor(
 
     override suspend fun deleteMeal(id: Int) {
         mealDao.deleteById(id = id)
+    }
+
+    override fun getTotalSpendingForMonth(yearMonth: String): Flow<Double> {
+        return mealDao.getTotalSpendingForMonth(yearMonth = yearMonth)
+    }
+
+    override fun getMealCountForMonth(yearMonth: String): Flow<Int> {
+        return mealDao.getMealCountForMonth(yearMonth = yearMonth)
+    }
+
+    override fun getUniqueRestaurantCountForMonth(yearMonth: String): Flow<Int> {
+        return mealDao.getUniqueRestaurantCountForMonth(yearMonth = yearMonth)
+    }
+
+    override fun getAverageRatingForMonth(yearMonth: String): Flow<Double> {
+        return mealDao.getAverageRatingForMonth(yearMonth = yearMonth)
+    }
+
+    override fun getFirstMealYearMonth(): Flow<YearMonth?> {
+        return mealDao.getFirstMealDate().map { dateStr ->
+            dateStr?.let {
+                val localDateTime = LocalDateTime.parse(it)
+                YearMonth.from(localDateTime)
+            }
+        }
+    }
+
+    override fun getTopRestaurantIdsBySpendingForMonth(yearMonth: String, limit: Int): Flow<List<Pair<Int, Double>>> {
+        return mealDao.getTopRestaurantsBySpendingForMonth(yearMonth = yearMonth, limit = limit).map { resultList ->
+            resultList.map { result -> Pair(result.restaurantId, result.totalSpending) }
+        }
+    }
+
+    override fun getNewRestaurantsTriedCount(selectedYearMonth: String): Flow<Int> = flow {
+        val restaurantsThisMonth = mealDao.getUniqueRestaurantIdsForMonth(yearMonth = selectedYearMonth)
+        val restaurantsBeforeThisMonth = mealDao.getUniqueRestaurantIdsBeforeMonth(yearMonth = selectedYearMonth)
+        val count = restaurantsThisMonth.count { it !in restaurantsBeforeThisMonth }
+        emit(count)
     }
 }

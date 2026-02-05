@@ -21,7 +21,15 @@ interface RestaurantDao {
     @Query("SELECT * FROM restaurants WHERE name = :name")
     suspend fun getByName(name: String): RestaurantEntity?
 
-    @Query("SELECT * FROM restaurants WHERE name LIKE :query || '%' ORDER BY name ASC LIMIT 5")
+    @Query(
+        """
+        SELECT restaurants.* FROM restaurants
+        INNER JOIN restaurants_fts ON restaurants.id = restaurants_fts.rowid
+        WHERE restaurants_fts MATCH :query || '*'
+        ORDER BY name ASC
+        LIMIT 5
+        """
+    )
     suspend fun searchByNamePrefix(query: String): List<RestaurantEntity>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -35,9 +43,9 @@ interface RestaurantDao {
 
     @Query(
         """
-        SELECT * FROM restaurants
-        WHERE name LIKE :query || '%'
-        OR name LIKE '% ' || :query || '%'
+        SELECT restaurants.* FROM restaurants
+        INNER JOIN restaurants_fts ON restaurants.id = restaurants_fts.rowid
+        WHERE restaurants_fts MATCH :query || '*'
         ORDER BY name ASC
         """
     )
