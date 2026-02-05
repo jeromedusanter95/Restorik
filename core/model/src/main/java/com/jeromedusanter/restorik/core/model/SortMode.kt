@@ -1,4 +1,4 @@
-package com.jeromedusanter.restorik.feature.meal.list
+package com.jeromedusanter.restorik.core.model
 
 enum class SortMode {
     DATE,

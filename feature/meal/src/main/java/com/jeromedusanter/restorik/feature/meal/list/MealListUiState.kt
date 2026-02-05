@@ -1,6 +1,8 @@
 package com.jeromedusanter.restorik.feature.meal.list
 
 import androidx.compose.runtime.Immutable
+import com.jeromedusanter.restorik.core.model.SortMode
+import com.jeromedusanter.restorik.core.model.SortOrder
 
 @Immutable
 data class MealListUiState(

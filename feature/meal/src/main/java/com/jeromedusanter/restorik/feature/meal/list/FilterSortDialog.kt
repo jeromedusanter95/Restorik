@@ -1,6 +1,5 @@
 package com.jeromedusanter.restorik.feature.meal.list
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +24,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.jeromedusanter.restorik.core.model.SortMode
+import com.jeromedusanter.restorik.core.model.SortOrder
 import com.jeromedusanter.restorik.feature.meal.R
 
 @Composable

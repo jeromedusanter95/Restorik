@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
+import com.jeromedusanter.restorik.core.data.UserPreferencesRepository
 import com.jeromedusanter.restorik.core.domain.GetMealListUseCase
+import com.jeromedusanter.restorik.core.model.SortMode
+import com.jeromedusanter.restorik.core.model.SortOrder
 import com.jeromedusanter.restorik.feature.meal.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -15,17 +18,17 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MealListViewModel @Inject constructor(
     getMealListUseCase: GetMealListUseCase,
     restaurantRepository: RestaurantRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
     @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
 
-    private val _sortMode = MutableStateFlow(SortMode.DATE)
-    private val _sortOrder = MutableStateFlow(SortOrder.DESCENDING)
     private val _showFilterDialog = MutableStateFlow(false)
     private val _filterRestaurantId = MutableStateFlow<Int?>(value = null)
 
@@ -34,8 +37,8 @@ class MealListViewModel @Inject constructor(
             combine(
                 getMealListUseCase(),
                 restaurantRepository.observeAll(),
-                _sortMode,
-                _sortOrder,
+                userPreferencesRepository.sortMode,
+                userPreferencesRepository.sortOrder,
                 _showFilterDialog
             ) { groupedMealList, restaurantList, sortMode, sortOrder, showFilterDialog ->
                 val restaurantMap = restaurantList.associateBy { it.id }
@@ -169,8 +172,10 @@ class MealListViewModel @Inject constructor(
     }
 
     fun applySortPreferences(sortMode: SortMode, sortOrder: SortOrder) {
-        _sortMode.update { sortMode }
-        _sortOrder.update { sortOrder }
+        viewModelScope.launch {
+            userPreferencesRepository.setSortMode(sortMode = sortMode)
+            userPreferencesRepository.setSortOrder(sortOrder = sortOrder)
+        }
     }
 
     fun setRestaurantFilter(restaurantId: Int?) {
