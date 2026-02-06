@@ -25,7 +25,6 @@ internal object DatabaseModule {
             RestorikDatabase::class.java,
             "restorik-database",
         )
-            .fallbackToDestructiveMigration()
             .addCallback(PrepopulateCitiesCallback())
             .build()
     }
