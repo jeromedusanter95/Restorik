@@ -28,6 +28,10 @@ interface MealDao {
     fun observeByIdWithDishes(id: Int): Flow<MealWithDishes?>
 
     @Transaction
+    @Query("SELECT * FROM meals WHERE id = :id")
+    suspend fun getByIdWithDishes(id: Int): MealWithDishes?
+
+    @Transaction
     @Query("SELECT * FROM meals WHERE restaurant_id = :restaurantId ORDER BY date_time DESC")
     fun observeByRestaurantIdWithDishes(restaurantId: Int): Flow<List<MealWithDishes>>
 
@@ -43,11 +47,15 @@ interface MealDao {
     @Query(
         """
         SELECT DISTINCT meals.* FROM meals
+        INNER JOIN restaurants ON meals.restaurant_id = restaurants.id
         WHERE meals.id IN (
             SELECT meals_fts.rowid FROM meals_fts WHERE meals_fts MATCH :query || '*'
         )
         OR meals.restaurant_id IN (
             SELECT restaurants_fts.rowid FROM restaurants_fts WHERE restaurants_fts MATCH :query || '*'
+        )
+        OR restaurants.city_id IN (
+            SELECT cities_fts.rowid FROM cities_fts WHERE cities_fts MATCH :query || '*'
         )
         OR meals.id IN (
             SELECT dishes.meal_id FROM dishes
@@ -63,11 +71,15 @@ interface MealDao {
     @Query(
         """
         SELECT DISTINCT meals.* FROM meals
+        INNER JOIN restaurants ON meals.restaurant_id = restaurants.id
         WHERE meals.id IN (
             SELECT meals_fts.rowid FROM meals_fts WHERE meals_fts MATCH :query || '*'
         )
         OR meals.restaurant_id IN (
             SELECT restaurants_fts.rowid FROM restaurants_fts WHERE restaurants_fts MATCH :query || '*'
+        )
+        OR restaurants.city_id IN (
+            SELECT cities_fts.rowid FROM cities_fts WHERE cities_fts MATCH :query || '*'
         )
         OR meals.id IN (
             SELECT dishes.meal_id FROM dishes

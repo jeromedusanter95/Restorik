@@ -2,8 +2,6 @@ package com.jeromedusanter.restorik.feature.meal.editor
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -47,7 +46,9 @@ fun MealEditorScreen(
     modifier: Modifier = Modifier,
     onNameChanged: (String) -> Unit = {},
     onRestaurantNameChanged: (String) -> Unit = {},
-    onSelectRestaurantSuggestion: (RestaurantSuggestion) -> Unit = {},
+    onSelectRestaurantSuggestion: (RestaurantSuggestionUiModel) -> Unit = {},
+    onCityNameChanged: (String) -> Unit = {},
+    onSelectCitySuggestion: (CitySuggestionUiModel) -> Unit = {},
     onClearFieldError: (MealEditorField) -> Unit = {},
     onDeletePhoto: (Uri) -> Unit = {},
     onShowPhotoSelectionBottomSheet: () -> Unit = {},
@@ -179,6 +180,61 @@ fun MealEditorScreen(
                         }
                     }
                 }
+
+                // City field
+                RestorikOutlineTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    value = uiState.cityName,
+                    onValueChange = { newValue ->
+                        onCityNameChanged(newValue)
+                        onClearFieldError(MealEditorField.CITY_NAME)
+                    },
+                    label = stringResource(R.string.feature_meal_city_name_label),
+                    enabled = !uiState.isLoading,
+                    isRequired = true,
+                    isError = uiState.fieldErrors.cityNameError != null,
+                    supportingText = uiState.fieldErrors.cityNameError,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = { onMoveFocusDown() }
+                    )
+                )
+
+                // City suggestions dropdown
+                if (uiState.citySuggestionList.isNotEmpty()) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant
+                        )
+                    ) {
+                        Column {
+                            uiState.citySuggestionList.forEachIndexed { index, city ->
+                                ListItem(
+                                    headlineContent = { Text(text = city.name) },
+                                    leadingContent = {
+                                        Icon(
+                                            imageVector = Icons.Default.LocationCity,
+                                            contentDescription = null
+                                        )
+                                    },
+                                    modifier = Modifier.clickable {
+                                        onSelectCitySuggestion(city)
+                                    }
+                                )
+                                if (index < uiState.citySuggestionList.size - 1) {
+                                    HorizontalDivider()
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -301,6 +357,7 @@ private fun MealEditorPreview() {
             uiState = MealEditorUiState(
                 id = 0,
                 restaurantName = "Le Bistrot Parisien",
+                cityName = "Paris",
                 name = "Steak Frites",
                 dishList = listOf(
                     Dish(
@@ -330,8 +387,8 @@ private fun MealEditorPreview() {
                 errorMessage = null,
                 fieldErrors = FieldErrors(),
                 restaurantSuggestionList = listOf(
-                    RestaurantSuggestion(id = 1, name = "Le Bistrot Parisien"),
-                    RestaurantSuggestion(id = 2, name = "Le Bistrot de la Gare")
+                    RestaurantSuggestionUiModel(id = 1, name = "Le Bistrot Parisien"),
+                    RestaurantSuggestionUiModel(id = 2, name = "Le Bistrot de la Gare")
                 )
             ),
         )

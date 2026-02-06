@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
@@ -96,6 +97,23 @@ fun MealListItem(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
+                        imageVector = Icons.Default.LocationCity,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Text(
+                        text = mealUiModel.cityName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
                         imageVector = Icons.Default.DateRange,
                         contentDescription = null,
                         modifier = Modifier.size(14.dp),
@@ -103,7 +121,7 @@ fun MealListItem(
                     )
                     Text(
                         text = mealUiModel.date,
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
@@ -192,6 +210,7 @@ private fun MealListItemPreview() {
                     id = 1,
                     name = "Diner avec la famille",
                     restaurantName = "Sapore",
+                    cityName = "Paris",
                     date = "19/03/2025",
                     rating = 4.2f,
                     photoUri = Uri.EMPTY
@@ -203,6 +222,7 @@ private fun MealListItemPreview() {
                     id = 2,
                     name = "Pizza Margherita",
                     restaurantName = "Pizzeria Napoli",
+                    cityName = "Lyon",
                     date = "18/03/2025",
                     rating = 5f,
                     photoUri = Uri.EMPTY
@@ -215,6 +235,7 @@ private fun MealListItemPreview() {
                     id = 3,
                     name = "Burger classique",
                     restaurantName = "Burger House",
+                    cityName = "Marseille",
                     date = "17/03/2025",
                     rating = 4.5f,
                     photoUri = Uri.EMPTY

@@ -19,6 +19,11 @@ class MealRepositoryImpl @Inject constructor(
     private val dishMapper: DishMapper
 ) : MealRepository {
 
+    override suspend fun getById(id: Int): Meal? {
+        val mealWithDishes = mealDao.getByIdWithDishes(id = id)
+        return mealWithDishes?.let { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
+    }
+
     override fun observeMealById(id: Int): Flow<Meal> {
         return mealDao.observeByIdWithDishes(id = id).mapNotNull { mealWithDishes ->
             mealWithDishes?.let { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }

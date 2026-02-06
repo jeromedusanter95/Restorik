@@ -1,6 +1,7 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
 import androidx.core.net.toUri
+import com.jeromedusanter.restorik.core.model.City
 import com.jeromedusanter.restorik.core.model.Meal
 import com.jeromedusanter.restorik.core.model.Restaurant
 import java.time.LocalDateTime
@@ -26,6 +27,7 @@ class MealEditorMapper @Inject constructor() {
     fun toUiState(
         meal: Meal,
         restaurantName: String,
+        cityName: String,
         maxPhotoCount: Int
     ): MealEditorUiState {
         val photoUriList = meal.photoList.map { it.toUri() }
@@ -34,6 +36,7 @@ class MealEditorMapper @Inject constructor() {
         return MealEditorUiState(
             id = meal.id,
             restaurantName = restaurantName,
+            cityName = cityName,
             name = meal.name,
             dishList = meal.dishList,
             photoUriList = photoUriList,
@@ -46,10 +49,17 @@ class MealEditorMapper @Inject constructor() {
         )
     }
 
-    fun toRestaurantSuggestion(restaurant: Restaurant): RestaurantSuggestion {
-        return RestaurantSuggestion(
+    fun toRestaurantSuggestion(restaurant: Restaurant): RestaurantSuggestionUiModel {
+        return RestaurantSuggestionUiModel(
             id = restaurant.id,
             name = restaurant.name
+        )
+    }
+
+    fun toCitySuggestion(city: City): CitySuggestionUiModel {
+        return CitySuggestionUiModel(
+            id = city.id,
+            name = city.name
         )
     }
 }

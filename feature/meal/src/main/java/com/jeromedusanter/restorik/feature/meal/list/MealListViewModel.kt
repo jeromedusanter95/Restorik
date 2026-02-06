@@ -3,6 +3,7 @@ package com.jeromedusanter.restorik.feature.meal.list
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.core.data.UserPreferencesRepository
 import com.jeromedusanter.restorik.core.domain.GetMealListUseCase
@@ -25,6 +26,7 @@ import javax.inject.Inject
 class MealListViewModel @Inject constructor(
     getMealListUseCase: GetMealListUseCase,
     restaurantRepository: RestaurantRepository,
+    cityRepository: CityRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
     @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
@@ -35,14 +37,22 @@ class MealListViewModel @Inject constructor(
     val uiState: StateFlow<MealListUiState> =
         _filterRestaurantId.flatMapLatest { filterRestaurantId -> // use flatMapLatest for performance, only the last emission is counter the others are cancelled
             combine(
-                getMealListUseCase(),
-                restaurantRepository.observeAll(),
+                combine(
+                    getMealListUseCase(),
+                    restaurantRepository.observeAll(),
+                    cityRepository.observeAll()
+                ) { groupedMealList, restaurantList, cityList ->
+                    Triple(groupedMealList, restaurantList, cityList)
+                },
                 userPreferencesRepository.sortMode,
                 userPreferencesRepository.sortOrder,
                 _showFilterDialog
-            ) { groupedMealList, restaurantList, sortMode, sortOrder, showFilterDialog ->
+            ) { data, sortMode, sortOrder, showFilterDialog ->
+                val (groupedMealList, restaurantList, cityList) = data
                 val restaurantMap = restaurantList.associateBy { it.id }
+                val cityMap = cityList.associateBy { it.id }
                 val unknownRestaurant = context.getString(R.string.feature_meal_unknown_restaurant)
+                val unknownCity = context.getString(R.string.feature_meal_unknown_city)
 
                 val filterRestaurantName = if (filterRestaurantId != null) {
                     restaurantMap[filterRestaurantId]?.name
@@ -73,9 +83,10 @@ class MealListViewModel @Inject constructor(
                                 MealGroupUiModel(
                                     title = mealGroup.groupDate.toLocalizedString(context = context),
                                     mealList = sortedMeals.map { meal ->
-                                        val restaurantName = restaurantMap[meal.restaurantId]?.name
-                                            ?: unknownRestaurant
-                                        meal.toUiModel(restaurantName = restaurantName)
+                                        val restaurant = restaurantMap[meal.restaurantId]
+                                        val restaurantName = restaurant?.name ?: unknownRestaurant
+                                        val cityName = restaurant?.let { cityMap[it.cityId]?.name } ?: unknownCity
+                                        meal.toUiModel(restaurantName = restaurantName, cityName = cityName)
                                     }
                                 )
                             }
@@ -107,7 +118,9 @@ class MealListViewModel @Inject constructor(
                                 mealList = meals
                                     .sortedByDescending { it.dateTime }
                                     .map { meal ->
-                                        meal.toUiModel(restaurantName = restaurantName)
+                                        val restaurant = restaurantMap[meal.restaurantId]
+                                        val cityName = restaurant?.let { cityMap[it.cityId]?.name } ?: unknownCity
+                                        meal.toUiModel(restaurantName = restaurantName, cityName = cityName)
                                     }
                             )
                         }
@@ -124,22 +137,23 @@ class MealListViewModel @Inject constructor(
                         // Group by rating
                         val grouped = filteredMeals.groupBy { it.ratingOnFive }
 
-                        val sortedGroups = if (sortOrder == SortOrder.ASCENDING) {
-                            grouped.toSortedMap()
+                        val sortedEntries = if (sortOrder == SortOrder.ASCENDING) {
+                            grouped.entries.sortedBy { it.key }
                         } else {
-                            grouped.toSortedMap(compareByDescending { it })
+                            grouped.entries.sortedByDescending { it.key }
                         }
 
-                        sortedGroups.map { (rating, meals) ->
+                        sortedEntries.map { entry ->
                             MealGroupUiModel(
                                 title = "",
-                                ratingValue = rating,
-                                mealList = meals
+                                ratingValue = entry.key,
+                                mealList = entry.value
                                     .sortedByDescending { it.dateTime }
                                     .map { meal ->
-                                        val restaurantName = restaurantMap[meal.restaurantId]?.name
-                                            ?: unknownRestaurant
-                                        meal.toUiModel(restaurantName = restaurantName)
+                                        val restaurant = restaurantMap[meal.restaurantId]
+                                        val restaurantName = restaurant?.name ?: unknownRestaurant
+                                        val cityName = restaurant?.let { cityMap[it.cityId]?.name } ?: unknownCity
+                                        meal.toUiModel(restaurantName = restaurantName, cityName = cityName)
                                     }
                             )
                         }

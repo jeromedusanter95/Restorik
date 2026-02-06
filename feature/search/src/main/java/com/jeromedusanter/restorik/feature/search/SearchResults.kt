@@ -22,8 +22,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 
 @Composable
 fun SearchResults(
@@ -71,7 +73,8 @@ private fun MealResultItem(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(vertical = 8.dp, horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(space = 12.dp)
+        horizontalArrangement = Arrangement.spacedBy(space = 12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (mealItem.photoUri != null) {
             AsyncImage(
@@ -104,6 +107,14 @@ private fun MealResultItem(
 
             Text(
                 text = mealItem.restaurantName,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = mealItem.cityName,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -148,12 +159,50 @@ private fun RestaurantResultItem(
             tint = MaterialTheme.colorScheme.primary
         )
 
-        Text(
-            text = restaurantItem.name,
-            style = MaterialTheme.typography.bodyLarge,
+        Column(
             modifier = Modifier.weight(weight = 1f),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            verticalArrangement = Arrangement.spacedBy(space = 4.dp)
+        ) {
+            Text(
+                text = restaurantItem.name,
+                style = MaterialTheme.typography.bodyLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            Text(
+                text = restaurantItem.cityName,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SearchResultsPreview() {
+    RestorikTheme {
+        SearchResults(
+            searchResultList = listOf(
+                SearchResultUiModel.MealItem(
+                    id = 1,
+                    name = "Meal name",
+                    photoUri = null,
+                    restaurantName = "Restaurant name",
+                    cityName = "City name",
+                    rating = 4.0f
+                ),
+                SearchResultUiModel.RestaurantItem(
+                    id = 1,
+                    name = "Restaurant name",
+                    cityName = "City name"
+                )
+            ),
+            onMealClick = {},
+            onRestaurantClick = {}
         )
     }
 }

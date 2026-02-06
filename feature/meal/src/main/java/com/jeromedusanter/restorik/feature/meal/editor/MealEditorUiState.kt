@@ -9,6 +9,7 @@ import com.jeromedusanter.restorik.core.model.DishType
 data class MealEditorUiState(
     val id: Int,
     val restaurantName: String,
+    val cityName: String,
     val name: String,
     val dishList: List<Dish>,
     val photoUriList: List<Uri>,
@@ -20,7 +21,8 @@ data class MealEditorUiState(
     val selectedPhotoUri: Uri? = null,
     val errorMessage: String? = null,
     val fieldErrors: FieldErrors = FieldErrors(),
-    val restaurantSuggestionList: List<RestaurantSuggestion> = emptyList(),
+    val restaurantSuggestionList: List<RestaurantSuggestionUiModel> = emptyList(),
+    val citySuggestionList: List<CitySuggestionUiModel> = emptyList(),
     val showDishDialog: Boolean = false,
     val dishEditorState: DishEditorState = DishEditorState(),
     val isSomeoneElsePaying: Boolean = false
@@ -29,6 +31,7 @@ data class MealEditorUiState(
         val EMPTY = MealEditorUiState(
             id = 0,
             restaurantName = "",
+            cityName = "",
             name = "",
             dishList = emptyList(),
             photoUriList = emptyList(),
@@ -47,21 +50,29 @@ data class MealEditorUiState(
 @Immutable
 data class FieldErrors(
     val restaurantNameError: String? = null,
+    val cityNameError: String? = null,
     val mealNameError: String? = null,
     val dishListError: String? = null
 ) {
     fun hasErrors(): Boolean =
-        restaurantNameError != null || mealNameError != null || dishListError != null
+        restaurantNameError != null || cityNameError != null || mealNameError != null || dishListError != null
 }
 
 enum class MealEditorField {
     RESTAURANT_NAME,
+    CITY_NAME,
     MEAL_NAME,
     DISH_LIST
 }
 
 @Immutable
-data class RestaurantSuggestion(
+data class RestaurantSuggestionUiModel(
+    val id: Int,
+    val name: String
+)
+
+@Immutable
+data class CitySuggestionUiModel(
     val id: Int,
     val name: String
 )

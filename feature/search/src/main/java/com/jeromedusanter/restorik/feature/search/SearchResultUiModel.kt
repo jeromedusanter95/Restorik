@@ -5,6 +5,7 @@ sealed class SearchResultUiModel {
         val id: Int,
         val name: String,
         val restaurantName: String,
+        val cityName: String,
         val rating: Float,
         val photoUri: String?,
     ) : SearchResultUiModel()
@@ -12,5 +13,6 @@ sealed class SearchResultUiModel {
     data class RestaurantItem(
         val id: Int,
         val name: String,
+        val cityName: String,
     ) : SearchResultUiModel()
 }

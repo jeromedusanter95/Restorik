@@ -15,11 +15,17 @@ interface RestaurantDao {
     @Query("SELECT * FROM restaurants WHERE id = :id")
     fun observeById(id: Int): Flow<RestaurantEntity?>
 
+    @Query("SELECT * FROM restaurants WHERE id = :id")
+    suspend fun getById(id: Int): RestaurantEntity?
+
     @Query("SELECT * FROM restaurants WHERE name = :name")
     fun observeByName(name: String): Flow<RestaurantEntity?>
 
     @Query("SELECT * FROM restaurants WHERE name = :name")
     suspend fun getByName(name: String): RestaurantEntity?
+
+    @Query("SELECT * FROM restaurants WHERE name = :name AND city_id = :cityId")
+    suspend fun getByNameAndCityId(name: String, cityId: Int): RestaurantEntity?
 
     @Query(
         """

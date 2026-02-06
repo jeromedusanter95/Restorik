@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.core.model.Dish
@@ -28,6 +29,7 @@ class MealEditorViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mealRepository: MealRepository,
     private val restaurantRepository: RestaurantRepository,
+    private val cityRepository: CityRepository,
     private val mealEditorMapper: MealEditorMapper,
     @param:ApplicationContext private val context: Context,
 ) : ViewModel() {
@@ -47,12 +49,35 @@ class MealEditorViewModel @Inject constructor(
     private fun loadMeal() {
         viewModelScope.launch {
             try {
-                val meal = mealRepository.observeMealById(id = mealId).first()
-                val restaurant = restaurantRepository.observeById(id = meal.restaurantId).first()
+                val meal = mealRepository.getById(id = mealId)
+                if (meal == null) {
+                    _uiState.update {
+                        it.copy(errorMessage = "Meal not found")
+                    }
+                    return@launch
+                }
 
+                val restaurant = restaurantRepository.getById(id = meal.restaurantId)
+                if (restaurant == null) {
+                    _uiState.update {
+                        it.copy(errorMessage = "Restaurant not found")
+                    }
+                    return@launch
+                }
+
+                val city = cityRepository.getById(id = restaurant.cityId)
+                if (city == null) {
+                    _uiState.update {
+                        it.copy(errorMessage = "City not found")
+                    }
+                    return@launch
+                }
+
+                // Update UI state with loaded data
                 _uiState.value = mealEditorMapper.toUiState(
                     meal = meal,
                     restaurantName = restaurant.name,
+                    cityName = city.name,
                     maxPhotoCount = MAX_PHOTO_COUNT
                 )
             } catch (e: Exception) {
@@ -86,11 +111,41 @@ class MealEditorViewModel @Inject constructor(
         }
     }
 
-    fun selectRestaurantSuggestion(suggestion: RestaurantSuggestion) {
+    fun selectRestaurantSuggestion(suggestion: RestaurantSuggestionUiModel) {
         _uiState.update {
             it.copy(
                 restaurantName = suggestion.name,
                 restaurantSuggestionList = emptyList()
+            )
+        }
+    }
+
+    fun updateCityName(cityName: String) {
+        _uiState.value = _uiState.value.copy(cityName = cityName)
+        searchCities(query = cityName)
+    }
+
+    private fun searchCities(query: String) {
+        viewModelScope.launch {
+            try {
+                val suggestionList = if (query.length >= 2) {
+                    cityRepository.searchByNamePrefix(query = query)
+                        .map { mealEditorMapper.toCitySuggestion(city = it) }
+                } else {
+                    emptyList()
+                }
+                _uiState.update { it.copy(citySuggestionList = suggestionList) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(citySuggestionList = emptyList()) }
+            }
+        }
+    }
+
+    fun selectCitySuggestion(suggestion: CitySuggestionUiModel) {
+        _uiState.update {
+            it.copy(
+                cityName = suggestion.name,
+                citySuggestionList = emptyList()
             )
         }
     }
@@ -176,17 +231,23 @@ class MealEditorViewModel @Inject constructor(
                     return@launch
                 }
 
-                // Perform database operations on IO dispatcher
                 withContext(Dispatchers.IO) {
-                    // Get or create restaurant
-                    var restaurant =
-                        restaurantRepository.getRestaurantByName(uiState.value.restaurantName)
-                    if (restaurant == null) {
-                        restaurant =
-                            restaurantRepository.saveByNameAndGetLocal(uiState.value.restaurantName)
+                    var city = cityRepository.getByName(name = uiState.value.cityName)
+                    if (city == null) {
+                        city = cityRepository.saveByNameAndGetLocal(name = uiState.value.cityName)
                     }
 
-                    // Save meal (with existing ID if editing)
+                    var restaurant = restaurantRepository.getRestaurantByNameAndCityId(
+                        name = uiState.value.restaurantName,
+                        cityId = city.id
+                    )
+                    if (restaurant == null) {
+                        restaurant = restaurantRepository.saveByNameAndGetLocal(
+                            restaurantName = uiState.value.restaurantName,
+                            cityId = city.id
+                        )
+                    }
+
                     val meal = mealEditorMapper.toModel(
                         mealEditorUiState = uiState.value,
                         restaurantId = restaurant.id,
@@ -199,7 +260,6 @@ class MealEditorViewModel @Inject constructor(
                     mealRepository.saveMealInLocalDb(meal = finalMeal)
                 }
 
-                // Success - reset loading state
                 _uiState.update { it.copy(isLoading = false) }
                 onSaveMealSuccess()
             } catch (e: IllegalArgumentException) {
@@ -254,6 +314,11 @@ class MealEditorViewModel @Inject constructor(
             else -> null
         }
 
+        val cityNameError = when {
+            state.cityName.isBlank() -> context.getString(R.string.feature_meal_error_city_name_required)
+            else -> null
+        }
+
         val mealNameError = when {
             state.name.isBlank() -> context.getString(R.string.feature_meal_error_meal_name_required)
             else -> null
@@ -266,6 +331,7 @@ class MealEditorViewModel @Inject constructor(
 
         return FieldErrors(
             restaurantNameError = restaurantNameError,
+            cityNameError = cityNameError,
             mealNameError = mealNameError,
             dishListError = dishListError
         )
@@ -275,6 +341,7 @@ class MealEditorViewModel @Inject constructor(
         _uiState.update {
             val newFieldErrors = when (field) {
                 MealEditorField.RESTAURANT_NAME -> it.fieldErrors.copy(restaurantNameError = null)
+                MealEditorField.CITY_NAME -> it.fieldErrors.copy(cityNameError = null)
                 MealEditorField.MEAL_NAME -> it.fieldErrors.copy(mealNameError = null)
                 MealEditorField.DISH_LIST -> it.fieldErrors.copy(dishListError = null)
             }

@@ -1,5 +1,6 @@
 package com.jeromedusanter.restorik.core.data
 
+import com.jeromedusanter.restorik.core.database.dao.CityDao
 import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.dao.RecentSearchDao
 import com.jeromedusanter.restorik.core.database.dao.RestaurantDao
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class SearchRepositoryImpl @Inject constructor(
     private val mealDao: MealDao,
     private val restaurantDao: RestaurantDao,
+    private val cityDao: CityDao,
     private val recentSearchDao: RecentSearchDao,
     private val mealMapper: MealMapper,
 ) : SearchRepository {
@@ -36,33 +38,37 @@ class SearchRepositoryImpl @Inject constructor(
 
         val resultList = mutableListOf<SearchResult>()
 
+        // Get all restaurants and cities at once for efficiency
+        val allRestaurantList = restaurantDao.observeAll().first()
+        val allCityList = cityDao.observeAll().first()
+
+        // Build maps for lookup
+        val restaurantMap = allRestaurantList.associateBy({ it.id }, { it })
+        val cityMap = allCityList.associateBy({ it.id }, { it.name })
+
         // Search restaurants
         val restaurantEntityList = restaurantDao.searchRestaurants(query = searchQuery)
         resultList.addAll(
             restaurantEntityList.map { restaurantEntity ->
-                SearchResult.RestaurantResult(restaurant = restaurantEntity.toModel())
+                SearchResult.RestaurantResult(
+                    restaurant = restaurantEntity.toModel(),
+                    cityName = cityMap[restaurantEntity.cityId] ?: ""
+                )
             }
         )
 
         // Search meals
         val mealWithDishesList = mealDao.searchMealsWithDishes(query = searchQuery)
 
-        // Get all restaurant entities at once for efficiency
-        val allRestaurantList = restaurantDao.observeAll().first()
-        val restaurantMap = mutableMapOf<Int, String>()
-
-        // Build restaurant map
-        allRestaurantList.forEach { restaurantEntity ->
-            restaurantMap[restaurantEntity.id] = restaurantEntity.name
-        }
-
         // Add meal results
         mealWithDishesList.forEach { mealWithDishes ->
             val meal = mealMapper.mapEntityModelToDomainModel(mealWithDishes = mealWithDishes)
+            val restaurant = restaurantMap[mealWithDishes.meal.restaurantId]
             resultList.add(
                 SearchResult.MealResult(
                     meal = meal,
-                    restaurantName = restaurantMap[mealWithDishes.meal.restaurantId] ?: ""
+                    restaurantName = restaurant?.name ?: "",
+                    cityName = restaurant?.let { cityMap[it.cityId] } ?: ""
                 )
             )
         }
@@ -109,6 +115,10 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     private fun RestaurantEntity?.toModel(): Restaurant {
-        return Restaurant(id = this?.id ?: -1, name = this?.name ?: "")
+        return Restaurant(
+            id = this?.id ?: -1,
+            name = this?.name ?: "",
+            cityId = this?.cityId ?: -1
+        )
     }
 }
