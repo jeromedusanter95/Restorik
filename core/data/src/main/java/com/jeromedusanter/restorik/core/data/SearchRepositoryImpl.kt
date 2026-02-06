@@ -10,10 +10,13 @@ import com.jeromedusanter.restorik.core.database.util.removeStopWords
 import com.jeromedusanter.restorik.core.model.RecentSearch
 import com.jeromedusanter.restorik.core.model.Restaurant
 import com.jeromedusanter.restorik.core.model.SearchResult
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SearchRepositoryImpl @Inject constructor(
@@ -74,7 +77,7 @@ class SearchRepositoryImpl @Inject constructor(
         }
 
         emit(resultList)
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun observeRecentSearches(limit: Int): Flow<List<RecentSearch>> {
         return recentSearchDao.observeRecentSearches(limit = limit).map { entityList ->
@@ -85,11 +88,11 @@ class SearchRepositoryImpl @Inject constructor(
                     timestamp = entity.timestamp,
                 )
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun saveRecentSearch(query: String) {
-        if (query.isBlank()) return
+    override suspend fun saveRecentSearch(query: String) = withContext(Dispatchers.IO) {
+        if (query.isBlank()) return@withContext
 
         // Delete existing entry with the same query to avoid duplicates
         recentSearchDao.deleteByQuery(query = query)
@@ -106,11 +109,11 @@ class SearchRepositoryImpl @Inject constructor(
         recentSearchDao.deleteOldSearches(limit = 20)
     }
 
-    override suspend fun deleteRecentSearch(query: String) {
+    override suspend fun deleteRecentSearch(query: String) = withContext(Dispatchers.IO) {
         recentSearchDao.deleteByQuery(query = query)
     }
 
-    override suspend fun clearRecentSearches() {
+    override suspend fun clearRecentSearches() = withContext(Dispatchers.IO) {
         recentSearchDao.deleteAll()
     }
 
