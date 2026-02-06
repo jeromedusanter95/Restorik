@@ -4,10 +4,13 @@ import com.jeromedusanter.restorik.core.database.dao.DishDao
 import com.jeromedusanter.restorik.core.database.dao.MealDao
 import com.jeromedusanter.restorik.core.database.model.MealEntity
 import com.jeromedusanter.restorik.core.model.Meal
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.YearMonth
 import javax.inject.Inject
@@ -19,24 +22,24 @@ class MealRepositoryImpl @Inject constructor(
     private val dishMapper: DishMapper
 ) : MealRepository {
 
-    override suspend fun getById(id: Int): Meal? {
+    override suspend fun getById(id: Int): Meal? = withContext(Dispatchers.IO) {
         val mealWithDishes = mealDao.getByIdWithDishes(id = id)
-        return mealWithDishes?.let { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
+        return@withContext mealWithDishes?.let { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
     }
 
     override fun observeMealById(id: Int): Flow<Meal> {
         return mealDao.observeByIdWithDishes(id = id).mapNotNull { mealWithDishes ->
             mealWithDishes?.let { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun observeAll(): Flow<List<Meal>> {
         return mealDao.observeAllWithDishes().map { list ->
             list.map { mealMapper.mapEntityModelToDomainModel(mealWithDishes = it) }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
-    override suspend fun saveMealInLocalDb(meal: Meal) {
+    override suspend fun saveMealInLocalDb(meal: Meal) = withContext(Dispatchers.IO) {
         val mealEntity = MealEntity(
             id = meal.id,
             name = meal.name,
@@ -68,24 +71,24 @@ class MealRepositoryImpl @Inject constructor(
         dishDao.upsertAll(dishList = dishEntityList)
     }
 
-    override suspend fun deleteMeal(id: Int) {
+    override suspend fun deleteMeal(id: Int) = withContext(Dispatchers.IO) {
         mealDao.deleteById(id = id)
     }
 
     override fun getTotalSpendingForMonth(yearMonth: String): Flow<Double> {
-        return mealDao.getTotalSpendingForMonth(yearMonth = yearMonth)
+        return mealDao.getTotalSpendingForMonth(yearMonth = yearMonth).flowOn(Dispatchers.IO)
     }
 
     override fun getMealCountForMonth(yearMonth: String): Flow<Int> {
-        return mealDao.getMealCountForMonth(yearMonth = yearMonth)
+        return mealDao.getMealCountForMonth(yearMonth = yearMonth).flowOn(Dispatchers.IO)
     }
 
     override fun getUniqueRestaurantCountForMonth(yearMonth: String): Flow<Int> {
-        return mealDao.getUniqueRestaurantCountForMonth(yearMonth = yearMonth)
+        return mealDao.getUniqueRestaurantCountForMonth(yearMonth = yearMonth).flowOn(Dispatchers.IO)
     }
 
     override fun getAverageRatingForMonth(yearMonth: String): Flow<Double> {
-        return mealDao.getAverageRatingForMonth(yearMonth = yearMonth)
+        return mealDao.getAverageRatingForMonth(yearMonth = yearMonth).flowOn(Dispatchers.IO)
     }
 
     override fun getFirstMealYearMonth(): Flow<YearMonth?> {
@@ -94,13 +97,13 @@ class MealRepositoryImpl @Inject constructor(
                 val localDateTime = LocalDateTime.parse(it)
                 YearMonth.from(localDateTime)
             }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun getTopRestaurantIdsBySpendingForMonth(yearMonth: String, limit: Int): Flow<List<Pair<Int, Double>>> {
         return mealDao.getTopRestaurantsBySpendingForMonth(yearMonth = yearMonth, limit = limit).map { resultList ->
             resultList.map { result -> Pair(result.restaurantId, result.totalSpending) }
-        }
+        }.flowOn(Dispatchers.IO)
     }
 
     override fun getNewRestaurantsTriedCount(selectedYearMonth: String): Flow<Int> = flow {
@@ -108,5 +111,5 @@ class MealRepositoryImpl @Inject constructor(
         val restaurantsBeforeThisMonth = mealDao.getUniqueRestaurantIdsBeforeMonth(yearMonth = selectedYearMonth)
         val count = restaurantsThisMonth.count { it !in restaurantsBeforeThisMonth }
         emit(count)
-    }
+    }.flowOn(Dispatchers.IO)
 }
