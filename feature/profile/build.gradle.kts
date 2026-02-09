@@ -10,4 +10,7 @@ android {
 dependencies {
     implementation(projects.core.domain)
     implementation(libs.androidx.compose.material.iconsExtended)
+
+    // Testing
+    testImplementation(projects.core.testing)
 }

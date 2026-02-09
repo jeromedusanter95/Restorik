@@ -23,6 +23,7 @@ dependencyResolutionManagement {
 rootProject.name = "Restorik"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS") // Permit to use projects.core.X in build.gradle.kts
 include(":app")
+include(":core:common")
 include(":core:model")
 include(":core:ui")
 include(":core:design-system")
@@ -34,3 +35,4 @@ include(":core:domain")
 include(":feature:search")
 include(":feature:profile")
 include(":core:datastore")
+include(":core:testing")
