@@ -2,13 +2,13 @@ package com.jeromedusanter.restorik.feature.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeromedusanter.restorik.core.common.network.extensions.combine
 import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.time.YearMonth
@@ -58,6 +58,7 @@ class ProfileViewModel @Inject constructor(
             }
 
             ProfileUiState(
+                currentMonth = YearMonth.now(),
                 selectedMonth = selectedMonth,
                 monthlySpending = monthlySpending,
                 previousMonthSpending = previousMonthSpending,
