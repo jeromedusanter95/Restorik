@@ -15,14 +15,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.domain)
-    implementation(libs.androidx.compose.material.iconsExtended)
-
-    // Testing
-    testImplementation(projects.core.testing)
-    androidTestImplementation(projects.core.testing)
-    androidTestImplementation(libs.androidx.compose.ui.test)
-
-    // Force Espresso 3.7.0 to override transitive dependency from Compose UI test
-    androidTestImplementation(libs.androidx.test.espresso.core)
+    // All common dependencies are now in AndroidFeatureConventionPlugin
 }

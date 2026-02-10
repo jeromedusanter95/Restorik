@@ -24,6 +24,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(project(":core:design-system"))
                 "implementation"(project(":core:model"))
                 "implementation"(project(":core:data"))
+                "implementation"(project(":core:domain"))
 
                 "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
@@ -31,8 +32,10 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
                 "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
+                "implementation"(libs.findLibrary("androidx.compose.material.iconsExtended").get())
 
                 // Unit Tests (JVM - src/test/)
+                "testImplementation"(project(":core:testing"))
                 "testImplementation"(libs.findLibrary("junit").get())
                 "testImplementation"(libs.findLibrary("kotlin.test").get())
                 "testImplementation"(libs.findLibrary("kotlinx.coroutines.test").get())
@@ -42,6 +45,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "testImplementation"(libs.findLibrary("androidx.navigation.testing").get())
 
                 // Android Instrumented Tests (device/emulator - src/androidTest/)
+                "androidTestImplementation"(project(":core:testing"))
                 "androidTestImplementation"(libs.findLibrary("junit").get())
                 "androidTestImplementation"(libs.findLibrary("androidx.test.core").get())
                 "androidTestImplementation"(libs.findLibrary("androidx.test.ext").get())
@@ -54,6 +58,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "androidTestImplementation"(libs.findLibrary("hilt.android.testing").get())
                 "androidTestImplementation"(libs.findLibrary("mockk.android").get())
                 "androidTestImplementation"(libs.findLibrary("mockk.agent").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.test.espresso.core").get())
             }
         }
     }
