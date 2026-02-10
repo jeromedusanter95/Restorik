@@ -9,5 +9,4 @@ android {
 
 dependencies {
     // Feature-specific dependencies only
-    implementation(libs.coil.kt.compose)
 }

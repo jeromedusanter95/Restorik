@@ -30,9 +30,9 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
                 "implementation"(libs.findLibrary("androidx.navigation.compose").get())
-                "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
                 "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
                 "implementation"(libs.findLibrary("androidx.compose.material.iconsExtended").get())
+                "implementation"(libs.findLibrary("coil.kt.compose").get())
 
                 // Unit Tests (JVM - src/test/)
                 "testImplementation"(project(":core:testing"))

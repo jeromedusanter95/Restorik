@@ -10,6 +10,5 @@ android {
 dependencies {
     // Feature-specific dependencies only
     implementation(projects.core.camera)
-    implementation(libs.coil.kt.compose)
     implementation(libs.zoomable.image.coil)
 }

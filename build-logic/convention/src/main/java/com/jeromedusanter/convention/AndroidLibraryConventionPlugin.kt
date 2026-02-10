@@ -28,8 +28,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             dependencies {
                 "androidTestImplementation"(libs.findLibrary("kotlin.test").get())
                 "testImplementation"(libs.findLibrary("kotlin.test").get())
-
-                "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
             }
         }
     }
