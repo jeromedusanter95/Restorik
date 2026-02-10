@@ -1,8 +1,8 @@
 package com.jeromedusanter.restorik.feature.meal.list
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
 import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.core.data.UserPreferencesRepository
@@ -11,7 +11,6 @@ import com.jeromedusanter.restorik.core.model.SortMode
 import com.jeromedusanter.restorik.core.model.SortOrder
 import com.jeromedusanter.restorik.feature.meal.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +27,7 @@ class MealListViewModel @Inject constructor(
     restaurantRepository: RestaurantRepository,
     cityRepository: CityRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    @param:ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
     private val _showFilterDialog = MutableStateFlow(false)
@@ -51,8 +50,8 @@ class MealListViewModel @Inject constructor(
                 val (groupedMealList, restaurantList, cityList) = data
                 val restaurantMap = restaurantList.associateBy { it.id }
                 val cityMap = cityList.associateBy { it.id }
-                val unknownRestaurant = context.getString(R.string.feature_meal_unknown_restaurant)
-                val unknownCity = context.getString(R.string.feature_meal_unknown_city)
+                val unknownRestaurant = resourceProvider.getString(R.string.feature_meal_unknown_restaurant)
+                val unknownCity = resourceProvider.getString(R.string.feature_meal_unknown_city)
 
                 val filterRestaurantName = if (filterRestaurantId != null) {
                     restaurantMap[filterRestaurantId]?.name
@@ -81,7 +80,7 @@ class MealListViewModel @Inject constructor(
                                 }
 
                                 MealGroupUiModel(
-                                    title = mealGroup.groupDate.toLocalizedString(context = context),
+                                    title = mealGroup.groupDate.toLocalizedString(resourceProvider = resourceProvider),
                                     mealList = sortedMeals.map { meal ->
                                         val restaurant = restaurantMap[meal.restaurantId]
                                         val restaurantName = restaurant?.name ?: unknownRestaurant

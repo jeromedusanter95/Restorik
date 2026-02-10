@@ -19,22 +19,46 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
+                "implementation"(project(":core:common"))
                 "implementation"(project(":core:ui"))
                 "implementation"(project(":core:design-system"))
                 "implementation"(project(":core:model"))
                 "implementation"(project(":core:data"))
+                "implementation"(project(":core:domain"))
 
                 "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
                 "implementation"(libs.findLibrary("androidx.navigation.compose").get())
-                "implementation"(libs.findLibrary("androidx.tracing.ktx").get())
                 "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
+                "implementation"(libs.findLibrary("androidx.compose.material.iconsExtended").get())
+                "implementation"(libs.findLibrary("coil.kt.compose").get())
 
+                // Unit Tests (JVM - src/test/)
+                "testImplementation"(project(":core:testing"))
+                "testImplementation"(libs.findLibrary("junit").get())
+                "testImplementation"(libs.findLibrary("kotlin.test").get())
+                "testImplementation"(libs.findLibrary("kotlinx.coroutines.test").get())
+                "testImplementation"(libs.findLibrary("truth").get())
+                "testImplementation"(libs.findLibrary("turbine").get())
+                "testImplementation"(libs.findLibrary("mockk.android").get())
                 "testImplementation"(libs.findLibrary("androidx.navigation.testing").get())
-                "androidTestImplementation"(
-                    libs.findLibrary("androidx.lifecycle.runtimeTesting").get(),
-                )
+
+                // Android Instrumented Tests (device/emulator - src/androidTest/)
+                "androidTestImplementation"(project(":core:testing"))
+                "androidTestImplementation"(libs.findLibrary("junit").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.test.core").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.test.ext").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.test.rules").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.test.runner").get())
+                "androidTestImplementation"(libs.findBundle("androidx.compose.ui.test").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.lifecycle.runtimeTesting").get())
+                "androidTestImplementation"(libs.findLibrary("kotlinx.coroutines.test").get())
+                "androidTestImplementation"(libs.findLibrary("truth").get())
+                "androidTestImplementation"(libs.findLibrary("hilt.android.testing").get())
+                "androidTestImplementation"(libs.findLibrary("mockk.android").get())
+                "androidTestImplementation"(libs.findLibrary("mockk.agent").get())
+                "androidTestImplementation"(libs.findLibrary("androidx.test.espresso.core").get())
             }
         }
     }

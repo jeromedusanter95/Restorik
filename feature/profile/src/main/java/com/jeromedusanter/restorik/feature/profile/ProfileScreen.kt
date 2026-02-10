@@ -24,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +54,8 @@ fun ProfileScreen(
             onClick = onMonthChipClick,
             label = {
                 Text(text = formatMonthYear(yearMonth = uiState.selectedMonth))
-            }
+            },
+            modifier = Modifier.testTag(tag = "month_chip")
         )
 
         // Monthly balance card with navigation arrows
@@ -65,7 +67,8 @@ fun ProfileScreen(
             // Previous month arrow
             IconButton(
                 onClick = { onMonthChange(uiState.selectedMonth.minusMonths(1)) },
-                enabled = uiState.selectedMonth > uiState.minMonth
+                enabled = uiState.selectedMonth > uiState.minMonth,
+                modifier = Modifier.testTag(tag = "previous_month_button")
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronLeft,
@@ -75,7 +78,9 @@ fun ProfileScreen(
 
             // Monthly balance card
             Card(
-                modifier = Modifier.weight(weight = 1f),
+                modifier = Modifier
+                    .weight(weight = 1f)
+                    .testTag(tag = "monthly_balance_card"),
                 elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
@@ -101,7 +106,8 @@ fun ProfileScreen(
                             ),
                             style = MaterialTheme.typography.displayMedium,
                             color = MaterialTheme.colorScheme.primary,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.testTag(tag = "monthly_spending_amount")
                         )
 
                         // Comparison with previous month
@@ -125,7 +131,8 @@ fun ProfileScreen(
                                 } else {
                                     MaterialTheme.colorScheme.tertiary
                                 },
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.testTag(tag = "spending_comparison")
                             )
                         }
                     } else if (uiState.numberOfMeals >= 1) {
@@ -140,7 +147,8 @@ fun ProfileScreen(
                             text = stringResource(id = R.string.feature_profile_no_data),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.testTag(tag = "no_data_message")
                         )
                     }
                 }
@@ -149,7 +157,8 @@ fun ProfileScreen(
             // Next month arrow
             IconButton(
                 onClick = { onMonthChange(uiState.selectedMonth.plusMonths(1)) },
-                enabled = uiState.selectedMonth < YearMonth.now()
+                enabled = uiState.selectedMonth < uiState.currentMonth,
+                modifier = Modifier.testTag(tag = "next_month_button")
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChevronRight,
@@ -171,7 +180,8 @@ fun ProfileScreen(
                 StatCard(
                     title = stringResource(id = R.string.feature_profile_number_of_meals),
                     value = uiState.numberOfMeals.toString(),
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 1f),
+                    testTag = "stat_meals"
                 )
                 StatCard(
                     title = stringResource(id = R.string.feature_profile_average_rating),
@@ -180,7 +190,8 @@ fun ProfileScreen(
                     } else {
                         "-"
                     },
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 1f),
+                    testTag = "stat_rating"
                 )
             }
 
@@ -196,12 +207,14 @@ fun ProfileScreen(
                     } else {
                         "-"
                     },
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 1f),
+                    testTag = "stat_avg_spending"
                 )
                 StatCard(
                     title = stringResource(id = R.string.feature_profile_number_of_restaurants),
                     value = uiState.numberOfRestaurants.toString(),
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 1f),
+                    testTag = "stat_restaurants"
                 )
             }
 
@@ -213,11 +226,13 @@ fun ProfileScreen(
                 StatCard(
                     title = stringResource(id = R.string.feature_profile_new_restaurants_tried),
                     value = uiState.newRestaurantsTried.toString(),
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 1f),
+                    testTag = "stat_new_restaurants"
                 )
                 TopRestaurantsCard(
                     topRestaurantList = uiState.topRestaurantsBySpending,
-                    modifier = Modifier.weight(weight = 1f)
+                    modifier = Modifier.weight(weight = 1f),
+                    testTag = "stat_top_restaurants"
                 )
             }
         }
@@ -228,7 +243,8 @@ fun ProfileScreen(
 private fun StatCard(
     title: String,
     value: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    testTag: String = ""
 ) {
     Card(
         modifier = modifier.aspectRatio(ratio = 1f),
@@ -246,7 +262,8 @@ private fun StatCard(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.testTag(tag = "${testTag}_title")
             )
             Spacer(modifier = Modifier.height(height = 8.dp))
             Text(
@@ -254,7 +271,8 @@ private fun StatCard(
                 style = MaterialTheme.typography.headlineLarge,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.testTag(tag = "${testTag}_value")
             )
         }
     }
@@ -263,7 +281,8 @@ private fun StatCard(
 @Composable
 private fun TopRestaurantsCard(
     topRestaurantList: List<RestaurantSpending>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    testTag: String = ""
 ) {
     Card(
         modifier = modifier.aspectRatio(ratio = 1f),
@@ -281,7 +300,8 @@ private fun TopRestaurantsCard(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 fontWeight = FontWeight.SemiBold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.testTag(tag = "${testTag}_title")
             )
             Spacer(modifier = Modifier.height(height = 6.dp))
             if (topRestaurantList.isEmpty()) {
@@ -290,16 +310,21 @@ private fun TopRestaurantsCard(
                     style = MaterialTheme.typography.headlineLarge,
                     color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.testTag(tag = "${testTag}_value")
                 )
             } else {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(tag = "${testTag}_value"),
                     verticalArrangement = Arrangement.spacedBy(space = 2.dp)
                 ) {
                     topRestaurantList.forEachIndexed { index, restaurant ->
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag(tag = "${testTag}_item_$index"),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
@@ -308,7 +333,8 @@ private fun TopRestaurantsCard(
                                 color = MaterialTheme.colorScheme.onSurface,
                                 fontWeight = FontWeight.Medium,
                                 textAlign = TextAlign.Center,
-                                maxLines = 1
+                                maxLines = 1,
+                                modifier = Modifier.testTag(tag = "${testTag}_item_${index}_name")
                             )
                             Text(
                                 text = String.format(
@@ -318,7 +344,8 @@ private fun TopRestaurantsCard(
                                 ),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.primary,
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.testTag(tag = "${testTag}_item_${index}_spending")
                             )
                         }
                     }

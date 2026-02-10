@@ -3,6 +3,7 @@ package com.jeromedusanter.restorik.feature.profile
 import java.time.YearMonth
 
 data class ProfileUiState(
+    val currentMonth: YearMonth,
     val selectedMonth: YearMonth,
     val monthlySpending: Double,
     val previousMonthSpending: Double,
@@ -17,6 +18,7 @@ data class ProfileUiState(
 ) {
     companion object {
         val EMPTY = ProfileUiState(
+            currentMonth = YearMonth.now(),
             selectedMonth = YearMonth.now(),
             monthlySpending = 0.0,
             previousMonthSpending = 0.0,

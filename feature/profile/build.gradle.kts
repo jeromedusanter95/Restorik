@@ -5,9 +5,15 @@ plugins {
 
 android {
     namespace = "com.jeromedusanter.restorik.feature.profile"
+
+    packaging {
+        resources {
+            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE-notice.md"
+        }
+    }
 }
 
 dependencies {
-    implementation(projects.core.domain)
-    implementation(libs.androidx.compose.material.iconsExtended)
+    // All common dependencies are now in AndroidFeatureConventionPlugin
 }

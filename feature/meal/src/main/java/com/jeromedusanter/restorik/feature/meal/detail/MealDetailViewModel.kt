@@ -1,16 +1,15 @@
 package com.jeromedusanter.restorik.feature.meal.detail
 
-import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
 import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
@@ -26,7 +25,7 @@ class MealDetailViewModel @Inject constructor(
     restaurantRepository: RestaurantRepository,
     cityRepository: CityRepository,
     mapper: MealDetailMapper,
-    @param:ApplicationContext private val context: Context
+    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val mealId: Int = checkNotNull(savedStateHandle[MealDestinations.MealDetail.mealIdArg])
@@ -38,7 +37,7 @@ class MealDetailViewModel @Inject constructor(
                     flow {
                         val city = cityRepository.getById(id = restaurant.cityId)
                         val restaurantName = restaurant.name
-                        val cityName = city?.name ?: context.getString(R.string.feature_meal_unknown_city)
+                        val cityName = city?.name ?: resourceProvider.getString(R.string.feature_meal_unknown_city)
                         emit(mapper.mapToUiModel(meal = meal, restaurantName = restaurantName, cityName = cityName))
                     }
                 }

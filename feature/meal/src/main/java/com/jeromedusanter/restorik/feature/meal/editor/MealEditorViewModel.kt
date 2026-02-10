@@ -1,11 +1,11 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
-import android.content.Context
 import android.database.sqlite.SQLiteException
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
 import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
@@ -14,7 +14,6 @@ import com.jeromedusanter.restorik.core.model.DishType
 import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +30,7 @@ class MealEditorViewModel @Inject constructor(
     private val restaurantRepository: RestaurantRepository,
     private val cityRepository: CityRepository,
     private val mealEditorMapper: MealEditorMapper,
-    @param:ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
 
     private val mealId: Int = savedStateHandle[MealDestinations.MealEditor.mealIdArg] ?: -1
@@ -83,7 +82,7 @@ class MealEditorViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
-                        errorMessage = context.getString(R.string.feature_meal_error_unknown)
+                        errorMessage = resourceProvider.getString(R.string.feature_meal_error_unknown)
                     )
                 }
             }
@@ -225,7 +224,7 @@ class MealEditorViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             fieldErrors = validationErrors,
-                            errorMessage = context.getString(R.string.feature_meal_error_fix_above)
+                            errorMessage = resourceProvider.getString(R.string.feature_meal_error_fix_above)
                         )
                     }
                     return@launch
@@ -268,7 +267,7 @@ class MealEditorViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = e.message
-                            ?: context.getString(R.string.feature_meal_error_invalid_input)
+                            ?: resourceProvider.getString(R.string.feature_meal_error_invalid_input)
                     )
                 }
             } catch (e: SQLiteException) {
@@ -276,7 +275,7 @@ class MealEditorViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = context.getString(
+                        errorMessage = resourceProvider.getString(
                             R.string.feature_meal_error_db_generic,
                             getDatabaseErrorMessage(e)
                         )
@@ -288,7 +287,7 @@ class MealEditorViewModel @Inject constructor(
                     it.copy(
                         isLoading = false,
                         errorMessage = e.message
-                            ?: context.getString(R.string.feature_meal_error_invalid_state)
+                            ?: resourceProvider.getString(R.string.feature_meal_error_invalid_state)
                     )
                 }
             } catch (e: Exception) {
@@ -296,9 +295,9 @@ class MealEditorViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = context.getString(
+                        errorMessage = resourceProvider.getString(
                             R.string.feature_meal_error_save_meal_failed,
-                            e.message ?: context.getString(R.string.feature_meal_error_unknown)
+                            e.message ?: resourceProvider.getString(R.string.feature_meal_error_unknown)
                         )
                     )
                 }
@@ -310,22 +309,22 @@ class MealEditorViewModel @Inject constructor(
         val state = uiState.value
 
         val restaurantNameError = when {
-            state.restaurantName.isBlank() -> context.getString(R.string.feature_meal_error_restaurant_name_required)
+            state.restaurantName.isBlank() -> resourceProvider.getString(R.string.feature_meal_error_restaurant_name_required)
             else -> null
         }
 
         val cityNameError = when {
-            state.cityName.isBlank() -> context.getString(R.string.feature_meal_error_city_name_required)
+            state.cityName.isBlank() -> resourceProvider.getString(R.string.feature_meal_error_city_name_required)
             else -> null
         }
 
         val mealNameError = when {
-            state.name.isBlank() -> context.getString(R.string.feature_meal_error_meal_name_required)
+            state.name.isBlank() -> resourceProvider.getString(R.string.feature_meal_error_meal_name_required)
             else -> null
         }
 
         val dishListError = when {
-            state.dishList.isEmpty() -> context.getString(R.string.feature_meal_error_dish_required)
+            state.dishList.isEmpty() -> resourceProvider.getString(R.string.feature_meal_error_dish_required)
             else -> null
         }
 
@@ -352,15 +351,15 @@ class MealEditorViewModel @Inject constructor(
     private fun getDatabaseErrorMessage(e: SQLiteException): String {
         return when {
             e.message?.contains("disk", ignoreCase = true) == true ->
-                context.getString(R.string.feature_meal_error_db_no_space)
+                resourceProvider.getString(R.string.feature_meal_error_db_no_space)
 
             e.message?.contains("corrupt", ignoreCase = true) == true ->
-                context.getString(R.string.feature_meal_error_db_corrupted)
+                resourceProvider.getString(R.string.feature_meal_error_db_corrupted)
 
             e.message?.contains("lock", ignoreCase = true) == true ->
-                context.getString(R.string.feature_meal_error_db_locked)
+                resourceProvider.getString(R.string.feature_meal_error_db_locked)
 
-            else -> context.getString(R.string.feature_meal_error_db_unable_to_save)
+            else -> resourceProvider.getString(R.string.feature_meal_error_db_unable_to_save)
         }
     }
 
@@ -466,7 +465,7 @@ class MealEditorViewModel @Inject constructor(
         var ratingError: String? = null
 
         if (state.name.isBlank()) {
-            nameError = context.getString(R.string.feature_meal_error_dish_name_required)
+            nameError = resourceProvider.getString(R.string.feature_meal_error_dish_name_required)
             hasError = true
         }
 
@@ -476,18 +475,18 @@ class MealEditorViewModel @Inject constructor(
         if (uiState.value.isSomeoneElsePaying) {
             priceError = null
         } else if (state.priceString.isBlank()) {
-            priceError = context.getString(R.string.feature_meal_error_price_required)
+            priceError = resourceProvider.getString(R.string.feature_meal_error_price_required)
             hasError = true
         } else if (price == null) {
-            priceError = context.getString(R.string.feature_meal_error_invalid_price_format)
+            priceError = resourceProvider.getString(R.string.feature_meal_error_invalid_price_format)
             hasError = true
         } else if (price < 0) {
-            priceError = context.getString(R.string.feature_meal_error_price_negative)
+            priceError = resourceProvider.getString(R.string.feature_meal_error_price_negative)
             hasError = true
         }
 
         if (state.rating == 0f) {
-            ratingError = context.getString(R.string.feature_meal_error_rating_required)
+            ratingError = resourceProvider.getString(R.string.feature_meal_error_rating_required)
             hasError = true
         }
 

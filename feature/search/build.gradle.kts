@@ -8,7 +8,5 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.domain)
-    implementation(libs.androidx.compose.material.iconsExtended)
-    implementation(libs.coil.kt.compose)
+    // Feature-specific dependencies only
 }
