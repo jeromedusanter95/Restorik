@@ -78,7 +78,8 @@ fun NavGraphBuilder.mealSection(
                         ?.set(if (isEditMode) MEAL_EDITED_RESULT_KEY else MEAL_SAVED_RESULT_KEY, true)
                     navController.popBackStack()
                 },
-                snackbarHostState = snackbarHostState
+                snackbarHostState = snackbarHostState,
+                navController = navController
             )
         }
     }

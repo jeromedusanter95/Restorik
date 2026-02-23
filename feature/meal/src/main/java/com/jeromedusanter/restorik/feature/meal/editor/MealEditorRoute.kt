@@ -9,10 +9,12 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.jeromedusanter.restorik.core.camera.CapturePhotoContract
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +23,8 @@ fun MealEditorRoute(
     modifier: Modifier = Modifier,
     viewModel: MealEditorViewModel = hiltViewModel(),
     onMealSaved: () -> Unit = {},
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    navController: NavHostController
 ) {
 
     val uiState = viewModel.uiState.collectAsState()
@@ -51,6 +54,17 @@ fun MealEditorRoute(
         }
     }
 
+    // Observe save trigger from TopAppBar
+    LaunchedEffect(Unit) {
+        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+        savedStateHandle?.getStateFlow("trigger_save_meal", false)?.collect { shouldSave ->
+            if (shouldSave) {
+                viewModel.saveMeal(onSaveMealSuccess = onMealSaved)
+                savedStateHandle["trigger_save_meal"] = false
+            }
+        }
+    }
+
     MealEditorScreen(
         uiState = uiState.value,
         onNameChanged = viewModel::updateMealName,
@@ -63,7 +77,7 @@ fun MealEditorRoute(
         onShowPhotoSelectionBottomSheet = viewModel::showPhotoSelectionBottomSheet,
         onSelectPhotoForView = viewModel::selectPhotoForView,
         onClearSelectedPhoto = viewModel::clearSelectedPhoto,
-        onSaveMeal = { viewModel.saveMeal(onSaveMealSuccess = onMealSaved) },
+        onDownloadPhoto = viewModel::downloadPhoto,
         onMoveFocusDown = { focusManager.moveFocus(focusDirection = FocusDirection.Down) },
         onDeleteDish = viewModel::deleteDish,
         onShowDishDialog = viewModel::showDishDialog,

@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -120,6 +121,18 @@ fun RestorikApp(modifier: Modifier = Modifier) {
                                     contentDescription = stringResource(com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_edit_content_description)
                                 )
                             }
+                        }
+                    }
+                    // Show save icon on meal editor screen
+                    if (currentRoute?.startsWith(MealDestinations.MealEditor.route) == true) {
+                        IconButton(onClick = {
+                            // Trigger save via saved state handle
+                            navController.currentBackStackEntry?.savedStateHandle?.set("trigger_save_meal", true)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = stringResource(com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_save_button)
+                            )
                         }
                     }
                 }

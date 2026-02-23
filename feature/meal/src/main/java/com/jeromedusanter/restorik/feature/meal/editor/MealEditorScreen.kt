@@ -16,10 +16,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -54,7 +52,7 @@ fun MealEditorScreen(
     onShowPhotoSelectionBottomSheet: () -> Unit = {},
     onSelectPhotoForView: (Uri) -> Unit = {},
     onClearSelectedPhoto: () -> Unit = {},
-    onSaveMeal: () -> Unit = {},
+    onDownloadPhoto: (Uri) -> Unit = {},
     onMoveFocusDown: () -> Unit = {},
     onDeleteDish: (Int) -> Unit = {},
     onShowDishDialog: (Dish?) -> Unit = {},
@@ -328,22 +326,11 @@ fun MealEditorScreen(
                     uiState.selectedPhotoUri?.let { photoUri ->
                         PhotoViewDialog(
                             photoUri = photoUri,
-                            onDismiss = onClearSelectedPhoto
+                            onDismiss = onClearSelectedPhoto,
+                            onDownload = { onDownloadPhoto(photoUri) }
                         )
                     }
                 }
-            }
-        }
-
-        Button(
-            onClick = onSaveMeal,
-            modifier = modifier.align(alignment = Alignment.CenterHorizontally),
-            enabled = !uiState.isLoading
-        ) {
-            if (uiState.isLoading) {
-                CircularProgressIndicator()
-            } else {
-                Text(stringResource(R.string.feature_meal_save_button))
             }
         }
     }
