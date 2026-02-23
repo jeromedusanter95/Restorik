@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
 import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.MealRepository
+import com.jeromedusanter.restorik.core.data.PhotoStorageManager
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.core.model.Dish
 import com.jeromedusanter.restorik.core.model.DishType
@@ -17,7 +18,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,6 +31,7 @@ class MealEditorViewModel @Inject constructor(
     private val cityRepository: CityRepository,
     private val mealEditorMapper: MealEditorMapper,
     private val resourceProvider: ResourceProvider,
+    private val photoStorageManager: PhotoStorageManager,
 ) : ViewModel() {
 
     private val mealId: Int = savedStateHandle[MealDestinations.MealEditor.mealIdArg] ?: -1
@@ -179,29 +180,42 @@ class MealEditorViewModel @Inject constructor(
     }
 
     fun addPhoto(uri: Uri) {
-        _uiState.update { state ->
-            val newList = state.photoUriList + uri
-            val count = newList.size
-            state.copy(
-                photoUriList = newList,
-                showAddButtonPhoto = newList.isEmpty(),
-                showAddButtonPhotoItem = count < MAX_PHOTO_COUNT,
-                photoTitleSuffix = "($count/$MAX_PHOTO_COUNT)"
-            )
-        }
+        viewModelScope.launch {
+            // Copy photo to internal storage if it's from gallery (not already in internal storage)
+            val finalUri = if (uri.scheme == "content" && !photoStorageManager.isInternalStorageUri(uri = uri)) {
+                photoStorageManager.copyPhotoToInternalStorage(sourceUri = uri) ?: uri
+            } else {
+                uri
+            }
 
+            _uiState.update { state ->
+                val newList = state.photoUriList + finalUri
+                val count = newList.size
+                state.copy(
+                    photoUriList = newList,
+                    showAddButtonPhoto = newList.isEmpty(),
+                    showAddButtonPhotoItem = count < MAX_PHOTO_COUNT,
+                    photoTitleSuffix = "($count/$MAX_PHOTO_COUNT)"
+                )
+            }
+        }
     }
 
     fun deletePhoto(uri: Uri) {
-        _uiState.update { state ->
-            val newList = state.photoUriList - uri
-            val count = newList.size
-            state.copy(
-                photoUriList = newList,
-                showAddButtonPhoto = newList.isEmpty(),
-                showAddButtonPhotoItem = count < MAX_PHOTO_COUNT,
-                photoTitleSuffix = "($count/$MAX_PHOTO_COUNT)"
-            )
+        viewModelScope.launch {
+            // Delete from internal storage if applicable
+            photoStorageManager.deletePhoto(uri = uri)
+
+            _uiState.update { state ->
+                val newList = state.photoUriList - uri
+                val count = newList.size
+                state.copy(
+                    photoUriList = newList,
+                    showAddButtonPhoto = newList.isEmpty(),
+                    showAddButtonPhotoItem = count < MAX_PHOTO_COUNT,
+                    photoTitleSuffix = "($count/$MAX_PHOTO_COUNT)"
+                )
+            }
         }
     }
 
@@ -381,6 +395,21 @@ class MealEditorViewModel @Inject constructor(
 
     fun clearSelectedPhoto() {
         _uiState.update { it.copy(selectedPhotoUri = null) }
+    }
+
+    fun downloadPhoto(uri: Uri) {
+        viewModelScope.launch {
+            val success = photoStorageManager.downloadPhotoToDownloads(uri = uri)
+            if (success) {
+                _uiState.update {
+                    it.copy(errorMessage = resourceProvider.getString(R.string.feature_meal_photo_downloaded_successfully))
+                }
+            } else {
+                _uiState.update {
+                    it.copy(errorMessage = resourceProvider.getString(R.string.feature_meal_photo_download_failed))
+                }
+            }
+        }
     }
 
     fun showDishDialog(dish: Dish?) {

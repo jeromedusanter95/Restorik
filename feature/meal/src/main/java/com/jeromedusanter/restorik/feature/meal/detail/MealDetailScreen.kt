@@ -58,7 +58,8 @@ import java.util.Locale
 fun MealDetailScreen(
     modifier: Modifier = Modifier,
     uiState: MealDetailUiState,
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onDownloadPhoto: (Uri) -> Unit = {}
 ) {
     var selectedPhotoUri by remember { mutableStateOf<Uri?>(null) }
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -363,7 +364,8 @@ fun MealDetailScreen(
         selectedPhotoUri?.let { photoUri ->
             PhotoViewDialog(
                 photoUri = photoUri,
-                onDismiss = { selectedPhotoUri = null }
+                onDismiss = { selectedPhotoUri = null },
+                onDownload = { onDownloadPhoto(photoUri) }
             )
         }
 

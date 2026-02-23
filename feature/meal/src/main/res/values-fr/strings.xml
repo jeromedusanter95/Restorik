@@ -74,6 +74,8 @@
     <string name="feature_meal_meal_added_successfully">Repas ajouté avec succès</string>
     <string name="feature_meal_meal_edited_successfully">Repas modifié avec succès</string>
     <string name="feature_meal_meal_deleted_successfully">Repas supprimé avec succès</string>
+    <string name="feature_meal_photo_downloaded_successfully">Photo téléchargée avec succès</string>
+    <string name="feature_meal_photo_download_failed">Échec du téléchargement de la photo</string>
     <string name="feature_meal_delete_confirm_title">Supprimer le repas ?</string>
     <string name="feature_meal_delete_confirm_message">Êtes-vous sûr de vouloir supprimer ce repas ? Cette action ne peut pas être annulée.</string>
     <string name="feature_meal_loading_meals">Chargement des repas…</string>

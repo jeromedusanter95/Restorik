@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        WARNING: This path must match PhotoStorageConstants.PHOTOS_DIRECTORY
+        in core/data/src/main/java/com/jeromedusanter/restorik/core/data/PhotoStorageConstants.kt
+
+        Current value: "photos"
+    -->
+    <files-path
+        name="photos"
+        path="photos/" />
+</paths>

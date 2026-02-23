@@ -1,11 +1,13 @@
 package com.jeromedusanter.restorik.feature.meal.detail
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
 import com.jeromedusanter.restorik.core.data.CityRepository
 import com.jeromedusanter.restorik.core.data.MealRepository
+import com.jeromedusanter.restorik.core.data.PhotoStorageManager
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.feature.meal.R
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
@@ -25,7 +27,8 @@ class MealDetailViewModel @Inject constructor(
     restaurantRepository: RestaurantRepository,
     cityRepository: CityRepository,
     mapper: MealDetailMapper,
-    private val resourceProvider: ResourceProvider
+    private val resourceProvider: ResourceProvider,
+    private val photoStorageManager: PhotoStorageManager
 ) : ViewModel() {
 
     private val mealId: Int = checkNotNull(savedStateHandle[MealDestinations.MealDetail.mealIdArg])
@@ -53,5 +56,9 @@ class MealDetailViewModel @Inject constructor(
             mealRepository.deleteMeal(id = mealId)
             onSuccess()
         }
+    }
+
+    suspend fun downloadPhoto(uri: Uri): Boolean {
+        return photoStorageManager.downloadPhotoToDownloads(uri = uri)
     }
 }

@@ -74,6 +74,8 @@
     <string name="feature_meal_meal_added_successfully">Meal added successfully</string>
     <string name="feature_meal_meal_edited_successfully">Meal updated successfully</string>
     <string name="feature_meal_meal_deleted_successfully">Meal deleted successfully</string>
+    <string name="feature_meal_photo_downloaded_successfully">Photo downloaded successfully</string>
+    <string name="feature_meal_photo_download_failed">Failed to download photo</string>
     <string name="feature_meal_delete_confirm_title">Delete meal?</string>
     <string name="feature_meal_delete_confirm_message">Are you sure you want to delete this meal? This action cannot be undone.</string>
     <string name="feature_meal_loading_meals">Loading meals…</string>
