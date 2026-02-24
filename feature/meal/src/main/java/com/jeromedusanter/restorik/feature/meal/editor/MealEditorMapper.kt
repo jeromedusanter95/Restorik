@@ -17,7 +17,7 @@ class MealEditorMapper @Inject constructor() {
             id = mealEditorUiState.id,
             restaurantId = restaurantId,
             name = mealEditorUiState.name,
-            dateTime = LocalDateTime.now(),
+            dateTime = mealEditorUiState.dateTime,
             photoList = mealEditorUiState.photoUriList.map { it.toString() },
             dishList = mealEditorUiState.dishList,
             isSomeoneElsePaying = mealEditorUiState.isSomeoneElsePaying
@@ -38,6 +38,7 @@ class MealEditorMapper @Inject constructor() {
             restaurantName = restaurantName,
             cityName = cityName,
             name = meal.name,
+            dateTime = meal.dateTime,
             dishList = meal.dishList,
             photoUriList = photoUriList,
             isLoading = false,

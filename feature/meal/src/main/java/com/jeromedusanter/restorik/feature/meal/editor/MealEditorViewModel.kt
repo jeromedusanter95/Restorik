@@ -154,6 +154,10 @@ class MealEditorViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(name = name)
     }
 
+    fun updateMealDateTime(dateTime: java.time.LocalDateTime) {
+        _uiState.value = _uiState.value.copy(dateTime = dateTime)
+    }
+
     fun setIsSomeoneElsePaying(isSomeoneElsePaying: Boolean) {
         _uiState.value = _uiState.value.copy(isSomeoneElsePaying = isSomeoneElsePaying)
     }

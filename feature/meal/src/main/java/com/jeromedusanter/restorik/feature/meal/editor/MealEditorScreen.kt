@@ -14,35 +14,54 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.LocationCity
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.jeromedusanter.restorik.core.designsystem.theme.RestorikTheme
 import com.jeromedusanter.restorik.core.model.Dish
 import com.jeromedusanter.restorik.core.model.DishType
 import com.jeromedusanter.restorik.core.ui.PhotoViewDialog
 import com.jeromedusanter.restorik.core.ui.RestorikOutlineTextField
 import com.jeromedusanter.restorik.feature.meal.R
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealEditorScreen(
     uiState: MealEditorUiState,
     modifier: Modifier = Modifier,
     onNameChanged: (String) -> Unit = {},
+    onDateTimeChanged: (java.time.LocalDateTime) -> Unit = {},
     onRestaurantNameChanged: (String) -> Unit = {},
     onSelectRestaurantSuggestion: (RestaurantSuggestionUiModel) -> Unit = {},
     onCityNameChanged: (String) -> Unit = {},
@@ -102,6 +121,91 @@ fun MealEditorScreen(
                     onNext = { onMoveFocusDown() }
                 )
             )
+
+            // Date picker
+            var showDatePicker by remember { mutableStateOf(false) }
+            val dateFormatter = remember { DateTimeFormatter.ofPattern("EEEE, dd MMMM yyyy") }
+
+            OutlinedCard(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .clickable { showDatePicker = true }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(all = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                    Spacer(modifier = Modifier.padding(start = 16.dp))
+                    Text(
+                        text = uiState.dateTime.toLocalDate().format(dateFormatter),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+            }
+
+            if (showDatePicker) {
+                val datePickerState = rememberDatePickerState(
+                    initialSelectedDateMillis = uiState.dateTime
+                        .atZone(ZoneId.systemDefault())
+                        .toInstant()
+                        .toEpochMilli()
+                )
+
+                Dialog(
+                    onDismissRequest = { showDatePicker = false },
+                    properties = DialogProperties(usePlatformDefaultWidth = false)
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = Color.White,
+                        tonalElevation = 6.dp
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(all = 24.dp)
+                        ) {
+                            DatePicker(state = datePickerState)
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(onClick = { showDatePicker = false }) {
+                                    Text(text = "Cancel")
+                                }
+
+                                TextButton(
+                                    onClick = {
+                                        datePickerState.selectedDateMillis?.let { millis ->
+                                            val selectedDate = Instant.ofEpochMilli(millis)
+                                                .atZone(ZoneId.systemDefault())
+                                                .toLocalDate()
+                                            val newDateTime = uiState.dateTime
+                                                .withYear(selectedDate.year)
+                                                .withMonth(selectedDate.monthValue)
+                                                .withDayOfMonth(selectedDate.dayOfMonth)
+                                            onDateTimeChanged(newDateTime)
+                                        }
+                                        showDatePicker = false
+                                    }
+                                ) {
+                                    Text(text = "OK")
+                                }
+                            }
+                        }
+                    }
+                }
+            }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.feature_meal_someone_else_is_paying_label))
@@ -346,6 +450,7 @@ private fun MealEditorPreview() {
                 restaurantName = "Le Bistrot Parisien",
                 cityName = "Paris",
                 name = "Steak Frites",
+                dateTime = java.time.LocalDateTime.now(),
                 dishList = listOf(
                     Dish(
                         id = 1,

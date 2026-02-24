@@ -68,6 +68,7 @@ fun MealEditorRoute(
     MealEditorScreen(
         uiState = uiState.value,
         onNameChanged = viewModel::updateMealName,
+        onDateTimeChanged = viewModel::updateMealDateTime,
         onRestaurantNameChanged = viewModel::updateRestaurantName,
         onSelectRestaurantSuggestion = viewModel::selectRestaurantSuggestion,
         onCityNameChanged = viewModel::updateCityName,

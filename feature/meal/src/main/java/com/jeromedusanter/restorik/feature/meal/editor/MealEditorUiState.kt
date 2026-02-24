@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.runtime.Immutable
 import com.jeromedusanter.restorik.core.model.Dish
 import com.jeromedusanter.restorik.core.model.DishType
+import java.time.LocalDateTime
 
 @Immutable
 data class MealEditorUiState(
@@ -11,6 +12,7 @@ data class MealEditorUiState(
     val restaurantName: String,
     val cityName: String,
     val name: String,
+    val dateTime: LocalDateTime,
     val dishList: List<Dish>,
     val photoUriList: List<Uri>,
     val isLoading: Boolean,
@@ -33,6 +35,7 @@ data class MealEditorUiState(
             restaurantName = "",
             cityName = "",
             name = "",
+            dateTime = LocalDateTime.now(),
             dishList = emptyList(),
             photoUriList = emptyList(),
             isLoading = false,
