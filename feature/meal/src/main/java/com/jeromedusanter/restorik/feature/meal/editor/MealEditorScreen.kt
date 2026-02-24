@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -174,7 +175,12 @@ fun MealEditorScreen(
                         Column(
                             modifier = Modifier.padding(all = 24.dp)
                         ) {
-                            DatePicker(state = datePickerState)
+                            DatePicker(
+                                state = datePickerState,
+                                colors = DatePickerDefaults.colors(
+                                    containerColor = Color.White
+                                )
+                            )
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
