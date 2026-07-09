@@ -29,6 +29,21 @@ android {
         }
     }
 
+    flavorDimensions += "environment"
+    productFlavors {
+        create("prod") {
+            dimension = "environment"
+            // Ships as the base applicationId "com.jeromedusanter.restorik".
+        }
+        create("dev") {
+            dimension = "environment"
+            // Installs alongside prod with its own id (".dev") and the
+            // "Restorik Dev" launcher name (see src/dev/res).
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+        }
+    }
+
     packaging {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
