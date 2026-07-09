@@ -1,6 +1,5 @@
 package com.jeromedusanter.restorik.feature.meal.detail
 
-import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import com.jeromedusanter.restorik.core.testing.MainDispatcherRule
 import com.jeromedusanter.restorik.core.testing.data.FakeMealData
@@ -8,7 +7,7 @@ import com.jeromedusanter.restorik.core.testing.repository.TestCityRepository
 import com.jeromedusanter.restorik.core.testing.repository.TestMealRepository
 import com.jeromedusanter.restorik.core.testing.repository.TestRestaurantRepository
 import com.jeromedusanter.restorik.core.testing.resources.TestResourceProvider
-import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -54,17 +53,14 @@ class MealDetailViewModelTest {
     }
 
     private fun createViewModel(mealId: Int): MealDetailViewModel {
-        val savedStateHandle = SavedStateHandle().apply {
-            set(MealDestinations.MealDetail.mealIdArg, mealId)
-        }
-
         return MealDetailViewModel(
-            savedStateHandle = savedStateHandle,
+            mealId = mealId,
             mealRepository = testMealRepository,
             restaurantRepository = testRestaurantRepository,
             cityRepository = testCityRepository,
             mapper = mapper,
-            resourceProvider = resourceProvider
+            resourceProvider = resourceProvider,
+            photoStorageManager = mockk(relaxed = true)
         )
     }
 

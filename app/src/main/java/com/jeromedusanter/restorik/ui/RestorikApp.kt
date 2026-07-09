@@ -21,26 +21,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.NavOptions
 import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
-import com.jeromedusanter.restorik.feature.meal.navigation.mealBaseRoute
-import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMeal
-import com.jeromedusanter.restorik.feature.meal.navigation.navigateToMealEditor
+import com.jeromedusanter.restorik.feature.meal.navigation.MealDetail
+import com.jeromedusanter.restorik.feature.meal.navigation.MealEditor
+import com.jeromedusanter.restorik.feature.meal.navigation.MealList
+import com.jeromedusanter.restorik.feature.profile.navigation.Profile
 import com.jeromedusanter.restorik.feature.profile.navigation.ProfileDestinations
-import com.jeromedusanter.restorik.feature.profile.navigation.navigateToProfile
-import com.jeromedusanter.restorik.feature.search.navigation.SEARCH_ROUTE
-import com.jeromedusanter.restorik.feature.search.navigation.navigateToSearch
+import com.jeromedusanter.restorik.feature.search.navigation.Search
+import com.jeromedusanter.restorik.core.ui.navigation.Navigator
+import com.jeromedusanter.restorik.core.ui.navigation.ResultEventBus
+import com.jeromedusanter.restorik.core.ui.navigation.rememberNavigationState
 import com.jeromedusanter.restorik.navigation.RestorikNavHost
 
 @Composable
 fun RestorikApp(modifier: Modifier = Modifier) {
 
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val navigationState = rememberNavigationState(
+        startRoute = MealList,
+        topLevelRoutes = setOf(MealList, Profile, Search)
+    )
+    val navigator = remember { Navigator(state = navigationState) }
+    val resultBus = remember { ResultEventBus() }
+
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Get current route from navigation state
+    val currentRoute = navigationState.backStacks[navigationState.topLevelRoute]?.last()
 
     // Track search query and callbacks for the top bar
     val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
@@ -59,22 +65,21 @@ fun RestorikApp(modifier: Modifier = Modifier) {
     }
 
     // Check if we're on search screen
-    val isSearchMode = currentRoute == SEARCH_ROUTE
+    val isSearchMode = currentRoute is Search
 
     // Check if we're in edit mode (meal editor with meal_id argument)
-    val isEditMode = currentRoute?.startsWith(MealDestinations.MealEditor.route) == true &&
-            (navBackStackEntry?.arguments?.getInt(MealDestinations.MealEditor.mealIdArg, -1) ?: -1) != -1
+    val isEditMode = currentRoute is MealEditor && currentRoute.mealId != -1
 
-    val titleResId = when {
-        currentRoute?.startsWith(MealDestinations.MealEditor.route) == true && isEditMode ->
+    val titleResId = when (currentRoute) {
+        is MealEditor -> if (isEditMode) {
             com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_editor_edit_title
-        currentRoute?.startsWith(MealDestinations.MealEditor.route) == true && !isEditMode ->
+        } else {
             com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_editor_title
-        currentRoute == ProfileDestinations.Profile.route ->
-            com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_title
-        currentRoute == ProfileDestinations.MonthSelector.route ->
-            com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_month_selector_title
-        else -> MealDestinations.getLabelByResId(currentRoute)
+        }
+        is Profile -> com.jeromedusanter.restorik.feature.profile.R.string.feature_profile_title
+        is ProfileDestinations -> currentRoute.labelResId
+        is MealDestinations -> currentRoute.labelResId
+        else -> com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_list_title
     }
 
     Scaffold(
@@ -82,10 +87,10 @@ fun RestorikApp(modifier: Modifier = Modifier) {
         topBar = {
             RestorikTopBar(
                 modifier = modifier,
-                title = stringResource(titleResId),
-                shouldShowBackButton = currentRoute != MealDestinations.MealList.route && currentRoute != ProfileDestinations.Profile.route && !isSearchMode,
-                onBackButtonClick = { navController.popBackStack() },
-                onSearchButtonClick = { navController.navigateToSearch() },
+                title = stringResource(id = titleResId),
+                shouldShowBackButton = currentRoute !is MealList && currentRoute !is Profile && !isSearchMode,
+                onBackButtonClick = { navigator.goBack() },
+                onSearchButtonClick = { navigator.navigate(route = Search) },
                 isSearchMode = isSearchMode,
                 searchQuery = searchQuery.value,
                 onSearchQueryChange = { newValue ->
@@ -94,44 +99,42 @@ fun RestorikApp(modifier: Modifier = Modifier) {
                 },
                 onSearchSubmit = { submitSearchCallback.value?.invoke() },
                 onClearSearch = {
-                    searchQuery.value = TextFieldValue("")
+                    searchQuery.value = TextFieldValue(text = "")
                     clearSearchCallback.value?.invoke()
                 },
                 searchFocusRequester = searchFocusRequester,
                 actions = {
                     // Show filter icon on meal list screen
-                    if (currentRoute == MealDestinations.MealList.route) {
+                    if (currentRoute is MealList) {
                         IconButton(onClick = {
-                            // Trigger filter dialog via saved state handle
-                            navController.currentBackStackEntry?.savedStateHandle?.set("show_filter_dialog", true)
+                            // Trigger filter dialog via result event bus
+                            resultBus.sendResult(resultKey = "show_filter_dialog", result = true)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.FilterList,
-                                contentDescription = stringResource(com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_filter_icon_content_description)
+                                contentDescription = stringResource(id = com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_filter_icon_content_description)
                             )
                         }
                     }
                     // Show edit icon only on meal detail screen
-                    if (currentRoute == MealDestinations.MealDetail.routeWithArgs) {
-                        val mealId = navBackStackEntry?.arguments?.getInt(MealDestinations.MealDetail.mealIdArg)
-                        if (mealId != null) {
-                            IconButton(onClick = { navController.navigateToMealEditor(mealId = mealId) }) {
-                                Icon(
-                                    imageVector = Icons.Default.Edit,
-                                    contentDescription = stringResource(com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_edit_content_description)
-                                )
-                            }
+                    if (currentRoute is MealDetail) {
+                        val mealId = currentRoute.mealId
+                        IconButton(onClick = { navigator.navigate(route = MealEditor(mealId = mealId)) }) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = stringResource(id = com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_edit_content_description)
+                            )
                         }
                     }
                     // Show save icon on meal editor screen
-                    if (currentRoute?.startsWith(MealDestinations.MealEditor.route) == true) {
+                    if (currentRoute is MealEditor) {
                         IconButton(onClick = {
-                            // Trigger save via saved state handle
-                            navController.currentBackStackEntry?.savedStateHandle?.set("trigger_save_meal", true)
+                            // Trigger save via result event bus
+                            resultBus.sendResult(resultKey = "trigger_save_meal", result = true)
                         }) {
                             Icon(
                                 imageVector = Icons.Default.Save,
-                                contentDescription = stringResource(com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_save_button)
+                                contentDescription = stringResource(id = com.jeromedusanter.restorik.feature.meal.R.string.feature_meal_save_button)
                             )
                         }
                     }
@@ -139,24 +142,14 @@ fun RestorikApp(modifier: Modifier = Modifier) {
             )
         },
         bottomBar = {
-            if (currentRoute == MealDestinations.MealList.route || currentRoute == ProfileDestinations.Profile.route) {
+            if (currentRoute is MealList || currentRoute is Profile) {
                 RestorikBottomBar(
-                    currentRoute = currentRoute,
+                    topLevelRoute = navigationState.topLevelRoute,
                     onMealClick = {
-                        navController.navigateToMeal(
-                            navOptions = NavOptions.Builder()
-                                .setPopUpTo(route = mealBaseRoute, inclusive = false)
-                                .setLaunchSingleTop(singleTop = true)
-                                .build()
-                        )
+                        navigator.navigate(route = MealList)
                     },
                     onProfileClick = {
-                        navController.navigateToProfile(
-                            navOptions = NavOptions.Builder()
-                                .setPopUpTo(route = mealBaseRoute, inclusive = false)
-                                .setLaunchSingleTop(singleTop = true)
-                                .build()
-                        )
+                        navigator.navigate(route = Profile)
                     }
                 )
             }
@@ -165,16 +158,18 @@ fun RestorikApp(modifier: Modifier = Modifier) {
             SnackbarHost(hostState = snackbarHostState)
         },
         floatingActionButton = {
-            if (currentRoute == MealDestinations.MealList.route) {
-                FloatingActionButton(onClick = { navController.navigateToMealEditor() }) {
-                    Icon(Icons.Filled.Add, "Add meal button")
+            if (currentRoute is MealList) {
+                FloatingActionButton(onClick = { navigator.navigate(route = MealEditor()) }) {
+                    Icon(imageVector = Icons.Filled.Add, contentDescription = "Add meal button")
                 }
             }
         },
     ) { innerPadding ->
         RestorikNavHost(
-            modifier = modifier.padding(innerPadding),
-            navController = navController,
+            modifier = modifier.padding(paddingValues = innerPadding),
+            navigationState = navigationState,
+            navigator = navigator,
+            resultBus = resultBus,
             snackbarHostState = snackbarHostState,
             onSearchQueryChanged = { newText ->
                 // Only update if the text is different to avoid cursor jumping

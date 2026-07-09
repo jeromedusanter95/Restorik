@@ -18,6 +18,8 @@ dependencies {
     implementation(libs.androidx.camera.extensions)
     implementation(libs.coil.kt.compose)
     implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.compose.material.iconsExtended)
+
+    // Camera module still uses Navigation 2 for its internal navigation
+    implementation("androidx.navigation:navigation-compose:2.8.5")
 }

@@ -9,28 +9,33 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.jeromedusanter.restorik.core.camera.CapturePhotoContract
+import com.jeromedusanter.restorik.core.ui.navigation.Navigator
+import com.jeromedusanter.restorik.core.ui.navigation.ResultEffect
+import com.jeromedusanter.restorik.core.ui.navigation.ResultEventBus
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MealEditorRoute(
+    mealId: Int,
     modifier: Modifier = Modifier,
-    viewModel: MealEditorViewModel = hiltViewModel(),
+    viewModel: MealEditorViewModel = hiltViewModel<MealEditorViewModel, MealEditorViewModel.Factory>(
+        creationCallback = { factory -> factory.create(mealId = mealId) }
+    ),
     onMealSaved: () -> Unit = {},
     snackbarHostState: SnackbarHostState,
-    navController: NavHostController
+    resultBus: ResultEventBus,
+    navigator: Navigator
 ) {
 
     val uiState = viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
 
-    val captureLauncher = rememberLauncherForActivityResult(CapturePhotoContract()) { uri ->
+    val captureLauncher = rememberLauncherForActivityResult(contract = CapturePhotoContract()) { uri ->
         if (uri != null) {
             viewModel.addPhoto(uri = uri)
         }
@@ -47,21 +52,17 @@ fun MealEditorRoute(
     val bottomSheetState = rememberModalBottomSheetState()
 
     // Show error snackbar when error message is present
-    LaunchedEffect(uiState.value.errorMessage) {
+    LaunchedEffect(key1 = uiState.value.errorMessage) {
         uiState.value.errorMessage?.let { errorMessage ->
-            snackbarHostState.showSnackbar(errorMessage)
+            snackbarHostState.showSnackbar(message = errorMessage)
             viewModel.clearError()
         }
     }
 
-    // Observe save trigger from TopAppBar
-    LaunchedEffect(Unit) {
-        val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
-        savedStateHandle?.getStateFlow("trigger_save_meal", false)?.collect { shouldSave ->
-            if (shouldSave) {
-                viewModel.saveMeal(onSaveMealSuccess = onMealSaved)
-                savedStateHandle["trigger_save_meal"] = false
-            }
+    // Observe save trigger from TopAppBar via ResultEventBus
+    ResultEffect<Boolean>(resultEventBus = resultBus, resultKey = "trigger_save_meal") { shouldSave ->
+        if (shouldSave) {
+            viewModel.saveMeal(onSaveMealSuccess = onMealSaved)
         }
     }
 

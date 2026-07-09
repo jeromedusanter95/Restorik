@@ -1,7 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.editor
 
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import com.jeromedusanter.restorik.core.model.Dish
 import com.jeromedusanter.restorik.core.model.DishType
@@ -11,7 +10,6 @@ import com.jeromedusanter.restorik.core.testing.repository.TestCityRepository
 import com.jeromedusanter.restorik.core.testing.repository.TestMealRepository
 import com.jeromedusanter.restorik.core.testing.repository.TestRestaurantRepository
 import com.jeromedusanter.restorik.core.testing.resources.TestResourceProvider
-import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -48,30 +46,26 @@ class MealEditorViewModelTest {
     }
 
     private fun createViewModelInAddMode(): MealEditorViewModel {
-        val savedStateHandle = SavedStateHandle()
-
         return MealEditorViewModel(
-            savedStateHandle = savedStateHandle,
+            mealId = -1,
             mealRepository = testMealRepository,
             restaurantRepository = testRestaurantRepository,
             cityRepository = testCityRepository,
             mealEditorMapper = mapper,
-            resourceProvider = resourceProvider
+            resourceProvider = resourceProvider,
+            photoStorageManager = mockk(relaxed = true)
         )
     }
 
     private fun createViewModelInEditMode(mealId: Int): MealEditorViewModel {
-        val savedStateHandle = SavedStateHandle().apply {
-            set(MealDestinations.MealEditor.mealIdArg, mealId)
-        }
-
         return MealEditorViewModel(
-            savedStateHandle = savedStateHandle,
+            mealId = mealId,
             mealRepository = testMealRepository,
             restaurantRepository = testRestaurantRepository,
             cityRepository = testCityRepository,
             mealEditorMapper = mapper,
-            resourceProvider = resourceProvider
+            resourceProvider = resourceProvider,
+            photoStorageManager = mockk(relaxed = true)
         )
     }
 

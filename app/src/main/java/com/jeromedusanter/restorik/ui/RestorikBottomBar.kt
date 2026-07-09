@@ -10,20 +10,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation3.runtime.NavKey
 import com.jeromedusanter.restorik.feature.meal.R as MealR
+import com.jeromedusanter.restorik.feature.meal.navigation.MealList
 import com.jeromedusanter.restorik.feature.profile.R as ProfileR
-import com.jeromedusanter.restorik.feature.profile.navigation.ProfileDestinations
+import com.jeromedusanter.restorik.feature.profile.navigation.Profile
 
 @Composable
 fun RestorikBottomBar(
-    currentRoute: String?,
+    topLevelRoute: NavKey,
     onMealClick: () -> Unit,
     onProfileClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     NavigationBar(modifier = modifier) {
         NavigationBarItem(
-            selected = currentRoute?.startsWith(prefix = "meal") == true,
+            selected = topLevelRoute == MealList,
             onClick = onMealClick,
             icon = {
                 Icon(
@@ -36,7 +38,7 @@ fun RestorikBottomBar(
             }
         )
         NavigationBarItem(
-            selected = currentRoute == ProfileDestinations.Profile.route,
+            selected = topLevelRoute == Profile,
             onClick = onProfileClick,
             icon = {
                 Icon(

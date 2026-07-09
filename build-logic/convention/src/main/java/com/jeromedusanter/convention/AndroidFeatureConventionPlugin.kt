@@ -29,7 +29,8 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "implementation"(libs.findLibrary("androidx.hilt.navigation.compose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 "implementation"(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
-                "implementation"(libs.findLibrary("androidx.navigation.compose").get())
+                "implementation"(libs.findLibrary("androidx.navigation3.runtime").get())
+                "implementation"(libs.findLibrary("androidx.navigation3.ui").get())
                 "implementation"(libs.findLibrary("kotlinx.serialization.json").get())
                 "implementation"(libs.findLibrary("androidx.compose.material.iconsExtended").get())
                 "implementation"(libs.findLibrary("coil.kt.compose").get())
@@ -42,7 +43,6 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 "testImplementation"(libs.findLibrary("truth").get())
                 "testImplementation"(libs.findLibrary("turbine").get())
                 "testImplementation"(libs.findLibrary("mockk.android").get())
-                "testImplementation"(libs.findLibrary("androidx.navigation.testing").get())
 
                 // Android Instrumented Tests (device/emulator - src/androidTest/)
                 "androidTestImplementation"(project(":core:testing"))

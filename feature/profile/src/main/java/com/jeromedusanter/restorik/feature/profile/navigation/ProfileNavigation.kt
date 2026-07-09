@@ -1,61 +1,43 @@
 package com.jeromedusanter.restorik.feature.profile.navigation
 
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.navigation3.runtime.EntryProviderScope
+import androidx.navigation3.runtime.NavKey
+import com.jeromedusanter.restorik.core.ui.navigation.Navigator
+import com.jeromedusanter.restorik.core.ui.navigation.ResultEventBus
 import com.jeromedusanter.restorik.feature.profile.MonthSelectorScreen
 import com.jeromedusanter.restorik.feature.profile.ProfileRoute
 import com.jeromedusanter.restorik.feature.profile.ProfileViewModel
-import androidx.compose.runtime.collectAsState
 
-const val profileBaseRoute = "profile"
+fun EntryProviderScope<NavKey>.profileSection(
+    navigator: Navigator,
+    resultBus: ResultEventBus,
+    viewModelStoreOwner: ViewModelStoreOwner
+) {
+    entry<Profile> {
+        // Profile and MonthSelector share one ViewModel scoped to the activity,
+        // so a month picked in MonthSelector is reflected back in Profile.
+        val viewModel: ProfileViewModel = hiltViewModel(viewModelStoreOwner = viewModelStoreOwner)
 
-fun NavController.navigateToProfile(navOptions: NavOptions) =
-    navigate(route = profileBaseRoute, navOptions)
+        ProfileRoute(
+            onNavigateToMonthSelector = { navigator.navigate(route = MonthSelector) },
+            viewModel = viewModel
+        )
+    }
 
-fun NavController.navigateToMonthSelector() {
-    navigate(route = ProfileDestinations.MonthSelector.route)
-}
+    entry<MonthSelector> {
+        val viewModel: ProfileViewModel = hiltViewModel(viewModelStoreOwner = viewModelStoreOwner)
+        val uiState = viewModel.uiState.collectAsState()
 
-fun NavGraphBuilder.profileSection(navController: NavHostController) {
-    navigation(
-        startDestination = ProfileDestinations.Profile.route,
-        route = profileBaseRoute
-    ) {
-        composable(route = ProfileDestinations.Profile.route) { backStackEntry ->
-            // Get ViewModel from parent navigation entry to share state
-            val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(profileBaseRoute)
+        MonthSelectorScreen(
+            currentMonth = uiState.value.selectedMonth,
+            minMonth = uiState.value.minMonth,
+            onMonthSelected = { yearMonth ->
+                viewModel.selectMonth(yearMonth = yearMonth)
+                navigator.goBack()
             }
-            val viewModel: ProfileViewModel = hiltViewModel(parentEntry)
-
-            ProfileRoute(
-                onNavigateToMonthSelector = { navController.navigateToMonthSelector() },
-                viewModel = viewModel
-            )
-        }
-
-        composable(route = ProfileDestinations.MonthSelector.route) { backStackEntry ->
-            // Get ViewModel from parent navigation entry to share state
-            val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(profileBaseRoute)
-            }
-            val viewModel: ProfileViewModel = hiltViewModel(parentEntry)
-            val uiState = viewModel.uiState.collectAsState()
-
-            MonthSelectorScreen(
-                currentMonth = uiState.value.selectedMonth,
-                minMonth = uiState.value.minMonth,
-                onMonthSelected = { yearMonth ->
-                    viewModel.selectMonth(yearMonth = yearMonth)
-                    navController.popBackStack()
-                }
-            )
-        }
+        )
     }
 }

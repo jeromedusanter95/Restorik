@@ -2,7 +2,6 @@ package com.jeromedusanter.restorik.feature.meal.editor
 
 import android.database.sqlite.SQLiteException
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
@@ -13,7 +12,9 @@ import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.core.model.Dish
 import com.jeromedusanter.restorik.core.model.DishType
 import com.jeromedusanter.restorik.feature.meal.R
-import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,11 +22,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-@HiltViewModel
-class MealEditorViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = MealEditorViewModel.Factory::class)
+class MealEditorViewModel @AssistedInject constructor(
+    @Assisted private val mealId: Int,
     private val mealRepository: MealRepository,
     private val restaurantRepository: RestaurantRepository,
     private val cityRepository: CityRepository,
@@ -34,7 +34,6 @@ class MealEditorViewModel @Inject constructor(
     private val photoStorageManager: PhotoStorageManager,
 ) : ViewModel() {
 
-    private val mealId: Int = savedStateHandle[MealDestinations.MealEditor.mealIdArg] ?: -1
     val isEditMode: Boolean = mealId != -1
 
     private val _uiState = MutableStateFlow(MealEditorUiState.EMPTY)
@@ -569,6 +568,11 @@ class MealEditorViewModel @Inject constructor(
 
             dismissDishDialog()
         }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(mealId: Int): MealEditorViewModel
     }
 
     companion object {

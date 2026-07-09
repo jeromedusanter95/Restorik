@@ -1,7 +1,6 @@
 package com.jeromedusanter.restorik.feature.meal.detail
 
 import android.net.Uri
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jeromedusanter.restorik.core.common.resources.ResourceProvider
@@ -10,7 +9,9 @@ import com.jeromedusanter.restorik.core.data.MealRepository
 import com.jeromedusanter.restorik.core.data.PhotoStorageManager
 import com.jeromedusanter.restorik.core.data.RestaurantRepository
 import com.jeromedusanter.restorik.feature.meal.R
-import com.jeromedusanter.restorik.feature.meal.navigation.MealDestinations
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -18,11 +19,10 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class MealDetailViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+@HiltViewModel(assistedFactory = MealDetailViewModel.Factory::class)
+class MealDetailViewModel @AssistedInject constructor(
+    @Assisted private val mealId: Int,
     private val mealRepository: MealRepository,
     restaurantRepository: RestaurantRepository,
     cityRepository: CityRepository,
@@ -30,8 +30,6 @@ class MealDetailViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val photoStorageManager: PhotoStorageManager
 ) : ViewModel() {
-
-    private val mealId: Int = checkNotNull(savedStateHandle[MealDestinations.MealDetail.mealIdArg])
 
     val uiState: StateFlow<MealDetailUiState> = mealRepository.observeMealById(mealId)
         .flatMapLatest { meal ->
@@ -60,5 +58,10 @@ class MealDetailViewModel @Inject constructor(
 
     suspend fun downloadPhoto(uri: Uri): Boolean {
         return photoStorageManager.downloadPhotoToDownloads(uri = uri)
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(mealId: Int): MealDetailViewModel
     }
 }
